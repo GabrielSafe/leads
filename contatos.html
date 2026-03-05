@@ -374,7 +374,7 @@ function setFiltroIA(f) {
   document.getElementById('filtroTodos').classList.toggle('active', f === 'todos')
   document.getElementById('filtroAtiva').classList.toggle('active', f === 'ativa')
   document.getElementById('filtroPausada').classList.toggle('active', f === 'pausada')
-  filtrar()
+  if (todosContatos.length) filtrar()
 }
 
 function exportarExcel() {
