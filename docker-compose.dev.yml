@@ -1,0 +1,30 @@
+services:
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: always
+    environment:
+      - REDIS_HOST=redis_db
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - PORT=3001
+    networks:
+      - leads-net
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - leads-net
+
+networks:
+  leads-net:
+    external: true

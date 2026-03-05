@@ -21,6 +21,7 @@ redisMensagens.on('connect',  () => console.log('✅ Redis db1 conectado (mensag
 redisRelatorios.on('connect', () => console.log('✅ Redis db2 conectado (relatórios)'))
 
 function hoje() { return new Date().toISOString().split('T')[0] }
+function isAtendente(nome) { return nome === 'Atendente' || nome === 'atendente_ia' || nome === 'atendente_humano' }
 function mesmaData(ts, data) { return ts && ts.split('T')[0] === data }
 
 // BUFF_WINDOW: janela de tolerância do buff de mensagens (10s)
@@ -28,8 +29,8 @@ function mesmaData(ts, data) { return ts && ts.split('T')[0] === data }
 const BUFF_WINDOW_MS = 10 * 1000
 
 function calcularTurnos(msgs) {
-  const msgsCliente   = msgs.filter(m => m.nome !== 'Atendente')
-  const msgsAtendente = msgs.filter(m => m.nome === 'Atendente')
+  const msgsCliente   = msgs.filter(m => !isAtendente(m.nome))
+  const msgsAtendente = msgs.filter(m => isAtendente(m.nome))
 
   // PASSAGEM 1: agrupa msgs do cliente em blocos contíguos (dentro de BUFF_WINDOW)
   // Cada bloco representa um "turno" do cliente
@@ -101,13 +102,13 @@ app.get('/relatorio', async (req, res) => {
       msgsDia.sort((a,b) => {
         const diff = new Date(a.timestamp) - new Date(b.timestamp)
         if (diff !== 0) return diff
-        if (a.nome !== 'Atendente' && b.nome === 'Atendente') return -1
-        if (a.nome === 'Atendente' && b.nome !== 'Atendente') return 1
+        if (!isAtendente(a.nome) && isAtendente(b.nome)) return -1
+        if (isAtendente(a.nome) && !isAtendente(b.nome)) return 1
         return 0
       })
 
-      const msgsCliente   = msgsDia.filter(m => m.nome !== 'Atendente')
-      const msgsAtendente = msgsDia.filter(m => m.nome === 'Atendente')
+      const msgsCliente   = msgsDia.filter(m => !isAtendente(m.nome))
+      const msgsAtendente = msgsDia.filter(m => isAtendente(m.nome))
       if (!msgsCliente.length) continue
 
       // Calcula turnos
@@ -203,14 +204,33 @@ app.get('/relatorio-ia', async (req, res) => {
 app.get('/contatos', async (req, res) => {
   try {
     const keys = await redisContatos.keys('*')
-    if (!keys.length) return res.json([])
+    if (!keys.length) return res.json({ contatos: [] })
     const lista = []
     for (const k of keys) {
+      let contato = {}
       const tipo = await redisContatos.type(k)
-      if (tipo === 'hash') lista.push({ chave:k, ...await redisContatos.hgetall(k) })
-      else if (tipo === 'string') { try { lista.push({ chave:k, ...JSON.parse(await redisContatos.get(k)) }) } catch {} }
+      if (tipo === 'hash') contato = { telefone: k, ...await redisContatos.hgetall(k) }
+      else if (tipo === 'string') { try { contato = { telefone: k, ...JSON.parse(await redisContatos.get(k)) } } catch { continue } }
+      else continue
+
+      // Busca mensagens do contato no db1
+      const tipoMsg = await redisMensagens.type(k)
+      if (tipoMsg === 'list') {
+        const msgs = (await redisMensagens.lrange(k, 0, -1)).map(m => { try { return JSON.parse(m) } catch { return null } }).filter(Boolean)
+        const msgsCliente = msgs.filter(m => !isAtendente(m.nome))
+        const primeira = msgsCliente.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp))[0]
+        contato.primeiro_contato = primeira?.timestamp || contato.primeiro_contato || null
+        contato.primeira_mensagem = primeira?.mensagem || null
+        contato.total_mensagens = msgsCliente.length
+      } else {
+        contato.primeiro_contato = contato.primeiro_contato || null
+        contato.primeira_mensagem = null
+        contato.total_mensagens = 0
+      }
+
+      lista.push(contato)
     }
-    res.json(lista)
+    res.json({ contatos: lista })
   } catch(err) { res.status(500).json({ erro: err.message }) }
 })
 
