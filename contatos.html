@@ -144,6 +144,7 @@
     </div>
     <div class="stats-row">
       <div class="stat-pill">Total <span id="statTotal">—</span></div>
+      <div class="stat-pill">Instâncias <span id="statInst">—</span></div>
       <div class="stat-pill">IA Ativa <span id="statIASim" style="color:#16a34a">—</span></div>
       <div class="stat-pill">IA Pausada <span id="statIANao" style="color:var(--rose)">—</span></div>
       <button class="filter-btn active" id="filtroTodos" onclick="setFiltroIA('todos')">Todos</button>
@@ -262,11 +263,12 @@ function renderTabela() {
   const instancias = new Set(todosContatos.map(c => c.instancia).filter(Boolean))
   const iaSim = todosContatos.filter(c => !c.ia || c.ia === 'sim').length
   const iaNao = todosContatos.filter(c => c.ia === 'nao').length
-  document.getElementById('statTotal').textContent = todosContatos.length
-  document.getElementById('statInst').textContent = instancias.size
-  document.getElementById('statIASim').textContent = iaSim
-  document.getElementById('statIANao').textContent = iaNao
-  document.getElementById('chipTotal').textContent = `${total} contato${total !== 1 ? 's' : ''}`
+  const se = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v }
+  se('statTotal', todosContatos.length)
+  se('statInst', instancias.size)
+  se('statIASim', iaSim)
+  se('statIANao', iaNao)
+  se('chipTotal', `${total} contato${total !== 1 ? 's' : ''}`)
 
   if (!pagina.length) {
     document.getElementById('tableWrap').innerHTML = `
