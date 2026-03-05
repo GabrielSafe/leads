@@ -10,7 +10,9 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - PORT=3001
-    depends_on: []
+    networks:
+      - default
+      - easypanel
 
   dashboard:
     build:
@@ -21,3 +23,10 @@ services:
       - "80"
     depends_on:
       - api
+    networks:
+      - default
+
+networks:
+  default:
+  easypanel:
+    external: true
