@@ -74,7 +74,7 @@ body.dark .ibtn-n{background:rgba(255,255,255,0.06);}
 .dbtn:hover{color:var(--teal);border-color:var(--teal-mid);background:var(--teal-lt);}
 
 /* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
 .sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
 .sc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
 .sc .bgn{position:absolute;right:-8px;bottom:-14px;font-family:'JetBrains Mono',monospace;font-size:72px;font-weight:700;opacity:0.04;color:var(--ink);pointer-events:none;line-height:1;transition:opacity 0.3s;}
@@ -85,6 +85,8 @@ body.dark .ibtn-n{background:rgba(255,255,255,0.06);}
 .stag.green{background:var(--green-lt);color:var(--green);}
 .stag.rose{background:var(--rose-lt);color:var(--rose);}
 .stag.indigo{background:var(--indigo-lt);color:var(--indigo);}
+  .stag.green{background:#dcfce7;color:#16a34a;}
+  .dark .stag.green{background:#052e16;color:#4ade80;}
 .snum{font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;line-height:1;color:var(--ink);margin-bottom:5px;transition:all 0.3s;}
 .snum.bump{transform:scale(1.06);}
 .sdesc{font-size:11px;color:var(--ink4);}
@@ -208,7 +210,7 @@ tbody tr:hover td{background:var(--bg2);}
 .empty-icon{font-size:30px;margin-bottom:10px;opacity:0.35;}
 .empty-txt{font-size:12px;color:var(--ink4);}
 
-@media(max-width:1100px){.stats{grid-template-columns:repeat(4,1fr);}.layout{grid-template-columns:1fr;}}
+@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr);}.layout{grid-template-columns:1fr;}}
 @media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
@@ -289,6 +291,18 @@ tbody tr:hover td{background:var(--bg2);}
       <div class="snum" id="sPico">—</div>
       <div class="sdesc">hora com mais contatos</div>
       <div class="bgn" id="bgPico">—</div>
+    </div>
+    <div class="sc">
+      <div class="stag green">IA Ativa</div>
+      <div class="snum" id="sIASim">—</div>
+      <div class="sdesc">contatos com IA ativa</div>
+      <div class="bgn" id="bgIASim">—</div>
+    </div>
+    <div class="sc">
+      <div class="stag rose">IA Pausada</div>
+      <div class="snum" id="sIANao">—</div>
+      <div class="sdesc">aguardando humano</div>
+      <div class="bgn" id="bgIANao">—</div>
     </div>
   </div>
 
@@ -615,12 +629,23 @@ function irHoje() { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
 
 async function carregar() {
   try {
-    const r = await fetch(`${API}/relatorio?data=${dataAtual}`)
-    if (!r.ok) throw new Error()
-    cache = await r.json()
+    const [r1, r2] = await Promise.all([
+      fetch(`${API}/relatorio?data=${dataAtual}`),
+      fetch(`${API}/contatos`)
+    ])
+    if (!r1.ok) throw new Error()
+    cache = await r1.json()
     setStatus(true)
     renderInstBar(cache.contatos||[])
     renderTudo(filtrar(cache))
+    if (r2.ok) {
+      const cData = await r2.json()
+      const todos = cData.contatos || []
+      const iaSim = todos.filter(c => !c.ia || c.ia === 'sim').length
+      const iaNao = todos.filter(c => c.ia === 'nao').length
+      n('sIASim', iaSim); n('bgIASim', iaSim)
+      n('sIANao', iaNao); n('bgIANao', iaNao)
+    }
   } catch { setStatus(false) }
 }
 

@@ -100,6 +100,14 @@
   .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin 0.7s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;}
+  .ia-badge.ativa{background:#dcfce7;color:#16a34a;}
+  .ia-badge.pausada{background:var(--rose-lt);color:var(--rose);}
+  .dark .ia-badge.ativa{background:#052e16;color:#4ade80;}
+  .filter-btn{padding:5px 12px;border-radius:100px;background:var(--card);border:1px solid var(--border);font-family:'Poppins',sans-serif;font-size:11px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.15s;}
+  .filter-btn:hover{border-color:var(--teal-mid);color:var(--teal);}
+  .filter-btn.active{background:var(--teal-lt);border-color:var(--teal-mid);color:var(--teal);font-weight:600;}
+  .filter-btn.pausada.active{background:var(--rose-lt);border-color:var(--rose);color:var(--rose);}
   .export-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;background:var(--teal-lt);border:1px solid var(--teal-mid);color:var(--teal);font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
   .export-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal);}
   tbody tr{animation:fadeIn 0.2s ease both;}
@@ -136,7 +144,11 @@
     </div>
     <div class="stats-row">
       <div class="stat-pill">Total <span id="statTotal">—</span></div>
-      <div class="stat-pill">Instâncias <span id="statInst">—</span></div>
+      <div class="stat-pill">IA Ativa <span id="statIASim" style="color:#16a34a">—</span></div>
+      <div class="stat-pill">IA Pausada <span id="statIANao" style="color:var(--rose)">—</span></div>
+      <button class="filter-btn active" id="filtroTodos" onclick="setFiltroIA('todos')">Todos</button>
+      <button class="filter-btn" id="filtroAtiva" onclick="setFiltroIA('ativa')">IA Ativa</button>
+      <button class="filter-btn pausada" id="filtroPausada" onclick="setFiltroIA('pausada')">IA Pausada</button>
       <button class="export-btn" onclick="exportarExcel()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Exportar Excel
@@ -173,7 +185,7 @@ const API = '/api'
 const POR_PAGINA = 20
 const CORES = ['#0d9488','#d97706','#4f46e5','#be123c','#059669','#7c3aed','#b45309','#0284c7']
 const colorMap = {}
-let todosContatos = [], filtrados = [], paginaAtual = 1
+let todosContatos = [], filtrados = [], paginaAtual = 1, filtroIA = 'todos'
 
 function dHoje() { return new Date().toISOString().split('T')[0] }
 
@@ -220,12 +232,18 @@ async function carregar() {
 
 function filtrar() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim()
+  let base = filtroIA === 'ativa'
+    ? todosContatos.filter(c => !c.ia || c.ia === 'sim')
+    : filtroIA === 'pausada'
+    ? todosContatos.filter(c => c.ia === 'nao')
+    : [...todosContatos]
+
   filtrados = q
-    ? todosContatos.filter(c =>
+    ? base.filter(c =>
         (c.nome||'').toLowerCase().includes(q) ||
         (c.telefone||'').includes(q)
       )
-    : [...todosContatos]
+    : base
 
   // Ordena pelo primeiro contato mais recente
   filtrados.sort((a,b) => new Date(b.primeiro_contato||0) - new Date(a.primeiro_contato||0))
@@ -242,8 +260,12 @@ function renderTabela() {
 
   // Stats
   const instancias = new Set(todosContatos.map(c => c.instancia).filter(Boolean))
+  const iaSim = todosContatos.filter(c => !c.ia || c.ia === 'sim').length
+  const iaNao = todosContatos.filter(c => c.ia === 'nao').length
   document.getElementById('statTotal').textContent = todosContatos.length
   document.getElementById('statInst').textContent = instancias.size
+  document.getElementById('statIASim').textContent = iaSim
+  document.getElementById('statIANao').textContent = iaNao
   document.getElementById('chipTotal').textContent = `${total} contato${total !== 1 ? 's' : ''}`
 
   if (!pagina.length) {
@@ -266,6 +288,7 @@ function renderTabela() {
           <th>Primeira mensagem</th>
           <th>Mensagens</th>
           <th>Instância</th>
+          <th>IA</th>
         </tr>
       </thead>
       <tbody>
@@ -293,6 +316,7 @@ function renderTabela() {
             <td><div class="first-msg" title="${primMsg}">${primMsg}</div></td>
             <td><span class="msgs-badge">${totalMsgs}</span></td>
             <td><span class="inst-tag">${inst}</span></td>
+            <td><span class="ia-badge ${c.ia === 'nao' ? 'pausada' : 'ativa'}">${c.ia === 'nao' ? '⏸ Pausada' : '▶ Ativa'}</span></td>
           </tr>`
         }).join('')}
       </tbody>
@@ -344,6 +368,14 @@ function toggleTheme() {
   carregar()
   setInterval(carregar, 30000)
 })()
+
+function setFiltroIA(f) {
+  filtroIA = f
+  document.getElementById('filtroTodos').classList.toggle('active', f === 'todos')
+  document.getElementById('filtroAtiva').classList.toggle('active', f === 'ativa')
+  document.getElementById('filtroPausada').classList.toggle('active', f === 'pausada')
+  filtrar()
+}
 
 function exportarExcel() {
   if (!filtrados.length) return

@@ -234,6 +234,24 @@ app.get('/contatos', async (req, res) => {
   } catch(err) { res.status(500).json({ erro: err.message }) }
 })
 
+
+app.get('/mensagens', async (req, res) => {
+  try {
+    const keys = await redisMensagens.keys('*')
+    if (!keys.length) return res.json({ total: 0, contatos: [] })
+    const resultado = []
+    for (const k of keys) {
+      const tipo = await redisMensagens.type(k)
+      if (tipo !== 'list') continue
+      const msgs = (await redisMensagens.lrange(k, 0, -1))
+        .map(m => { try { return JSON.parse(m) } catch { return null } })
+        .filter(Boolean)
+      resultado.push({ telefone: k, total: msgs.length, mensagens: msgs })
+    }
+    res.json({ total: resultado.reduce((s,c) => s + c.total, 0), contatos: resultado })
+  } catch(err) { res.status(500).json({ erro: err.message }) }
+})
+
 app.get('/status', async (req, res) => {
   try {
     await redisContatos.ping(); await redisMensagens.ping(); await redisRelatorios.ping()
