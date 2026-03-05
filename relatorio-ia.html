@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Atendimento</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0d;
+  --bg2: #161614;
+  --card: #1a1a17;
+  --card2: #212120;
+  --border: #2a2a27;
+  --border2: #363633;
+  --ink: #f0ece4;
+  --ink2: #c8c4bc;
+  --ink3: #8a877f;
+  --ink4: #55534e;
+  --gold: #d4a843;
+  --gold-lt: #2a2010;
+  --gold-mid: #e8b95a;
+  --teal: #2dd4bf;
+  --teal-lt: #0a2420;
+  --green: #4ade80;
+  --green-lt: #0a2010;
+  --rose: #fb7185;
+  --rose-lt: #2a0a12;
+  --amber: #fbbf24;
+  --amber-lt: #2a1f05;
+  --indigo: #818cf8;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.5), 0 20px 60px rgba(0,0,0,0.5);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Subtle grid background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 48px 28px 80px; }
+
+/* ── HEADER ── */
+.report-header {
+  margin-bottom: 52px;
+  animation: fadeUp 0.6s ease both;
+}
+.report-header-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 32px; padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.report-logo {
+  display: flex; align-items: center; gap: 14px;
+}
+.report-logo-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--gold-lt), #3a2e10);
+  border: 1px solid #4a3a18;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+}
+.report-logo-name {
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold);
+}
+.report-logo-sub { font-size: 11px; color: var(--ink4); margin-top: 2px; }
+
+.report-meta { text-align: right; }
+.report-meta-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--ink3); margin-bottom: 4px;
+}
+.report-meta-gen { font-size: 10px; color: var(--ink4); letter-spacing: 0.5px; }
+
+.report-title {
+  font-size: 36px; font-weight: 700; letter-spacing: -1px;
+  color: var(--ink); line-height: 1.1; margin-bottom: 8px;
+}
+.report-title em { font-style: italic; font-weight: 300; color: var(--gold); }
+.report-period {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--ink4); letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── DATE NAV ── */
+.date-nav {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 40px;
+  animation: fadeUp 0.6s ease 0.1s both;
+}
+.dnav-btn {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--ink3); cursor: pointer; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.dnav-btn:hover { border-color: var(--border2); color: var(--ink); }
+.dnav-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  padding: 7px 16px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--ink); min-width: 120px; text-align: center;
+}
+.dnav-input {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+  padding: 7px 12px; border-radius: 8px;
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--ink); cursor: pointer; outline: none;
+}
+.dnav-input:focus { border-color: var(--gold); }
+.dnav-today {
+  padding: 7px 14px; border-radius: 8px;
+  background: transparent; border: 1px solid var(--border);
+  font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 500;
+  color: var(--ink3); cursor: pointer; transition: all 0.15s;
+}
+.dnav-today:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── SECTION ── */
+.section {
+  margin-bottom: 28px;
+  animation: fadeUp 0.5s ease both;
+}
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+.section:nth-child(5) { animation-delay: 0.25s; }
+.section:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+.section-label {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--ink4);
+  margin-bottom: 14px;
+}
+.section-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── RESUMO EXECUTIVO ── */
+.exec-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 14px; }
+
+.exec-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px 18px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.exec-card:hover { transform: translateY(-2px); border-color: var(--border2); }
+.exec-card-top { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ink4); margin-bottom: 10px; }
+.exec-card-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 42px; font-weight: 700; line-height: 1; margin-bottom: 4px;
+  color: var(--ink);
+}
+.exec-card-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 500;
+}
+.exec-card-lbl { font-size: 11px; color: var(--ink4); }
+
+.exec-card.fin .exec-card-val { color: var(--green); }
+.exec-card.fin .exec-card-pct { color: var(--green); }
+.exec-card.and .exec-card-val { color: var(--amber); }
+.exec-card.and .exec-card-pct { color: var(--amber); }
+.exec-card.sem .exec-card-val { color: var(--rose); }
+.exec-card.sem .exec-card-pct { color: var(--rose); }
+
+/* Progress bar */
+.exec-progress {
+  display: flex; height: 6px; border-radius: 3px; overflow: hidden;
+  background: var(--card2); margin-bottom: 14px;
+}
+.ep-seg { transition: width 0.8s ease; }
+.ep-seg.fin { background: var(--green); }
+.ep-seg.and { background: var(--amber); }
+.ep-seg.sem { background: var(--rose); }
+
+.tma-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 22px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: var(--shadow);
+}
+.tma-icon { font-size: 22px; }
+.tma-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px; font-weight: 700; color: var(--gold);
+}
+.tma-lbl { font-size: 11px; color: var(--ink4); margin-top: 2px; }
+
+/* ── HORÁRIOS ── */
+.hor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hor-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: var(--shadow); transition: border-color 0.2s;
+}
+.hor-card:hover { border-color: var(--border2); }
+.hor-icon { font-size: 20px; flex-shrink: 0; }
+.hor-lbl { font-size: 10px; color: var(--ink4); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.hor-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1;
+}
+.hor-nome { font-size: 11px; color: var(--ink3); margin-top: 3px; }
+
+/* ── RECLAMAÇÕES ── */
+.recl-grid { display: flex; flex-direction: column; gap: 10px; }
+.recl-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: var(--shadow); transition: border-color 0.2s;
+}
+.recl-card:hover { border-color: var(--border2); }
+.recl-card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+}
+.recl-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  padding: 4px 12px; border-radius: 100px;
+}
+.recl-badge.alta { background: var(--rose-lt); color: var(--rose); border: 1px solid rgba(251,113,133,0.2); }
+.recl-badge.media { background: var(--amber-lt); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+.recl-badge.baixa { background: var(--teal-lt); color: var(--teal); border: 1px solid rgba(45,212,191,0.2); }
+.recl-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink4); }
+.recl-card-body { padding: 16px 20px; display: flex; gap: 20px; align-items: flex-start; }
+.recl-info { flex: 1; }
+.recl-nome { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+.recl-tel { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink4); margin-bottom: 10px; }
+.recl-resumo { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+.recl-empty {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 32px;
+  display: flex; align-items: center; gap: 14px;
+  color: var(--green);
+}
+.recl-empty-icon { font-size: 22px; }
+.recl-empty-txt { font-size: 13px; font-weight: 500; }
+
+/* ── PONTOS DE MELHORIA ── */
+.melhoria-list { display: flex; flex-direction: column; gap: 14px; }
+.melhoria-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.melhoria-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+}
+.melhoria-idx {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  background: var(--card2); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+  color: var(--indigo);
+}
+.melhoria-titulo { font-size: 14px; font-weight: 600; color: var(--ink); }
+.melhoria-desc { padding: 14px 20px; font-size: 12px; color: var(--ink3); line-height: 1.6; border-bottom: 1px solid var(--border); }
+.melhoria-exemplos { padding: 14px 20px; display: flex; flex-direction: column; gap: 10px; }
+.exemplo-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.exemplo-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.exemplo-cliente { font-size: 12px; font-weight: 600; color: var(--ink); }
+.exemplo-tel { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink4); margin-top: 1px; }
+.exemplo-hora { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); }
+.exemplo-msg {
+  margin: 10px 14px 0; padding: 9px 12px;
+  background: var(--card); border-left: 2px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  font-size: 12px; color: var(--ink2); font-style: italic; line-height: 1.5;
+}
+.exemplo-ctx {
+  padding: 8px 14px 10px;
+  font-size: 11px; color: var(--ink4); line-height: 1.5;
+}
+
+/* ── OBSERVAÇÕES ── */
+.obs-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px 26px;
+  box-shadow: var(--shadow); position: relative; overflow: hidden;
+}
+.obs-card::before {
+  content: '"';
+  position: absolute; top: 10px; right: 20px;
+  font-size: 80px; font-family: Georgia, serif;
+  color: var(--border2); line-height: 1; pointer-events: none;
+}
+.obs-txt { font-size: 14px; color: var(--ink2); line-height: 1.8; font-weight: 300; }
+
+/* ── FOOTER ── */
+.report-footer {
+  margin-top: 52px; padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.footer-brand { font-size: 11px; color: var(--ink4); }
+.footer-brand span { color: var(--gold); }
+.footer-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink4); }
+
+/* ── EMPTY ── */
+.page-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 60vh; gap: 16px; text-align: center;
+}
+.page-empty-icon { font-size: 48px; opacity: 0.25; }
+.page-empty-title { font-size: 18px; font-weight: 600; color: var(--ink2); }
+.page-empty-sub { font-size: 13px; color: var(--ink4); font-family: 'JetBrains Mono', monospace; }
+
+/* ── LOADING ── */
+.loading {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px; color: var(--ink4); font-size: 13px;
+}
+.loading-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold); animation: blink 1.2s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+/* ── LINK BACK ── */
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--ink4); text-decoration: none;
+  padding: 7px 14px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--card);
+  transition: all 0.15s; margin-bottom: 32px;
+}
+.back-link:hover { color: var(--gold); border-color: var(--gold); }
+
+@media(max-width: 768px) {
+  .exec-grid { grid-template-columns: repeat(2,1fr); }
+  .hor-grid { grid-template-columns: 1fr; }
+  .report-title { font-size: 26px; }
+  .report-header-top { flex-direction: column; gap: 16px; }
+  .report-meta { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <a href="dashboard-leads.html" class="back-link">← Voltar ao Dashboard</a>
+
+  <!-- HEADER -->
+  <div class="report-header">
+    <div class="report-header-top">
+      <div class="report-logo">
+        <div class="report-logo-icon">📋</div>
+        <div>
+          <div class="report-logo-name" id="hEmpresa">Carregando...</div>
+          <div class="report-logo-sub">Sistema de Análise de Atendimento</div>
+        </div>
+      </div>
+      <div class="report-meta">
+        <div class="report-meta-date" id="hData">--/--/----</div>
+        <div class="report-meta-gen">Gerado automaticamente às 20h</div>
+      </div>
+    </div>
+    <div class="report-title">Relatório de <em>Atendimento</em></div>
+    <div class="report-period">Período: 00h00 às 23h59</div>
+  </div>
+
+  <!-- DATE NAV -->
+  <div class="date-nav">
+    <button class="dnav-btn" onclick="mudarDia(-1)">‹</button>
+    <div class="dnav-label" id="dnLabel">--/--/----</div>
+    <button class="dnav-btn" onclick="mudarDia(1)">›</button>
+    <input type="date" class="dnav-input" id="dnPick" onchange="irData(this.value)">
+    <button class="dnav-today" onclick="irHoje()">Hoje</button>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div id="conteudo">
+    <div class="loading">
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      <div class="loading-dot"></div>
+      Carregando relatório...
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = '/api'
+let dataAtual = dHoje()
+
+setDateLabel(dataAtual)
+carregar()
+
+function dHoje() { return new Date().toISOString().split('T')[0] }
+
+function setDateLabel(d) {
+  const [y,m,dia] = d.split('-')
+  document.getElementById('dnLabel').textContent = `${dia}/${m}/${y}`
+  document.getElementById('dnPick').value = d
+  document.getElementById('hData').textContent = `${dia}/${m}/${y}`
+}
+
+function mudarDia(delta) {
+  const dt = new Date(dataAtual + 'T12:00:00'); dt.setDate(dt.getDate() + delta)
+  dataAtual = dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregar()
+}
+function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregar() }
+function irHoje() { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
+
+async function carregar() {
+  const el = document.getElementById('conteudo')
+  el.innerHTML = `<div class="loading"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>Carregando relatório...</div>`
+  try {
+    const r = await fetch(`${API}/relatorio-ia?data=${dataAtual}`)
+    if (!r.ok) throw new Error()
+    const d = await r.json()
+    renderRelatorio(d)
+  } catch {
+    el.innerHTML = `
+      <div class="page-empty">
+        <div class="page-empty-icon">📭</div>
+        <div class="page-empty-title">Nenhum relatório para este dia</div>
+        <div class="page-empty-sub">O relatório é gerado automaticamente às 20h</div>
+      </div>`
+  }
+}
+
+function renderRelatorio(d) {
+  const r = d.resumo || {}, h = d.horarios || {}
+  const recl = d.reclamacoes || [], mel = d.pontos_melhoria || []
+
+  document.getElementById('hEmpresa').textContent = d.empresa || 'Empresa'
+
+  const gravCls = g => ({ 'ALTA':'alta','MEDIA':'media','BAIXA':'baixa' })[g?.toUpperCase()] || 'baixa'
+
+  // Seção resumo
+  const secResumo = `
+  <div class="section">
+    <div class="section-label"><span>01</span> Resumo Executivo</div>
+    <div class="exec-grid">
+      <div class="exec-card">
+        <div class="exec-card-top">Total</div>
+        <div class="exec-card-val">${r.total_conversas||0}</div>
+        <div class="exec-card-lbl">conversas no dia</div>
+      </div>
+      <div class="exec-card fin">
+        <div class="exec-card-top">Finalizadas</div>
+        <div class="exec-card-val">${r.finalizadas||0}</div>
+        <div class="exec-card-pct">${r.percentual_finalizadas||0}%</div>
+        <div class="exec-card-lbl">concluídas</div>
+      </div>
+      <div class="exec-card and">
+        <div class="exec-card-top">Em andamento</div>
+        <div class="exec-card-val">${r.em_andamento||0}</div>
+        <div class="exec-card-pct">${r.percentual_em_andamento||0}%</div>
+        <div class="exec-card-lbl">em progresso</div>
+      </div>
+      <div class="exec-card sem">
+        <div class="exec-card-top">Sem resposta</div>
+        <div class="exec-card-val">${r.sem_resposta||0}</div>
+        <div class="exec-card-pct">${r.percentual_sem_resposta||0}%</div>
+        <div class="exec-card-lbl">não atendidas</div>
+      </div>
+    </div>
+    <div class="exec-progress">
+      <div class="ep-seg fin" style="width:${r.percentual_finalizadas||0}%"></div>
+      <div class="ep-seg and" style="width:${r.percentual_em_andamento||0}%"></div>
+      <div class="ep-seg sem" style="width:${r.percentual_sem_resposta||0}%"></div>
+    </div>
+    <div class="tma-card">
+      <div class="tma-icon">⏱</div>
+      <div>
+        <div class="tma-val">${r.tma_minutos||0} min</div>
+        <div class="tma-lbl">Tempo médio por atendimento (conversas finalizadas)</div>
+      </div>
+    </div>
+  </div>`
+
+  // Seção horários
+  const secHorarios = `
+  <div class="section">
+    <div class="section-label"><span>02</span> Horários de Operação</div>
+    <div class="hor-grid">
+      <div class="hor-card">
+        <div class="hor-icon">📥</div>
+        <div>
+          <div class="hor-lbl">Primeira mensagem recebida</div>
+          <div class="hor-time">${h.primeira_msg_cliente_hora||'—'}</div>
+          <div class="hor-nome">${h.primeira_msg_cliente_nome||''}</div>
+        </div>
+      </div>
+      <div class="hor-card">
+        <div class="hor-icon">📤</div>
+        <div>
+          <div class="hor-lbl">Primeira resposta da equipe</div>
+          <div class="hor-time">${h.primeira_resposta_hora||'—'}</div>
+        </div>
+      </div>
+      <div class="hor-card">
+        <div class="hor-icon">📥</div>
+        <div>
+          <div class="hor-lbl">Última mensagem recebida</div>
+          <div class="hor-time">${h.ultima_msg_cliente_hora||'—'}</div>
+          <div class="hor-nome">${h.ultima_msg_cliente_nome||''}</div>
+        </div>
+      </div>
+      <div class="hor-card">
+        <div class="hor-icon">📤</div>
+        <div>
+          <div class="hor-lbl">Última resposta da equipe</div>
+          <div class="hor-time">${h.ultima_resposta_hora||'—'}</div>
+        </div>
+      </div>
+    </div>
+  </div>`
+
+  // Seção reclamações
+  const secRecl = `
+  <div class="section">
+    <div class="section-label"><span>03</span> Reclamações e Críticas</div>
+    ${recl.length === 0
+      ? `<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Nenhuma reclamação registrada no período</div></div>`
+      : `<div class="recl-grid">${recl.map(rc => `
+        <div class="recl-card">
+          <div class="recl-card-head">
+            <span class="recl-badge ${gravCls(rc.gravidade)}">${rc.gravidade}</span>
+            <span class="recl-num">Reclamação #${rc.numero}</span>
+          </div>
+          <div class="recl-card-body">
+            <div class="recl-info">
+              <div class="recl-nome">${rc.cliente||'—'}</div>
+              <div class="recl-tel">${rc.telefone||''}</div>
+              <div class="recl-resumo">${rc.resumo||''}</div>
+            </div>
+          </div>
+        </div>`).join('')}</div>`}
+  </div>`
+
+  // Seção pontos de melhoria
+  const secMel = `
+  <div class="section">
+    <div class="section-label"><span>04</span> Pontos de Melhoria</div>
+    ${mel.length === 0
+      ? `<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Atendimento dentro dos padrões de qualidade</div></div>`
+      : `<div class="melhoria-list">${mel.map((m, i) => `
+        <div class="melhoria-card">
+          <div class="melhoria-head">
+            <div class="melhoria-idx">${i+1}</div>
+            <div class="melhoria-titulo">${m.titulo||''}</div>
+          </div>
+          <div class="melhoria-desc">${m.descricao||''}</div>
+          <div class="melhoria-exemplos">
+            ${(m.exemplos||[]).map(e => `
+            <div class="exemplo-card">
+              <div class="exemplo-head">
+                <div>
+                  <div class="exemplo-cliente">${e.cliente||'—'}</div>
+                  <div class="exemplo-tel">${e.telefone||''}</div>
+                </div>
+                <div class="exemplo-hora">${e.horario||''}</div>
+              </div>
+              <div class="exemplo-msg">"${e.mensagem||''}"</div>
+              ${e.contexto ? `<div class="exemplo-ctx">${e.contexto}</div>` : ''}
+            </div>`).join('')}
+          </div>
+        </div>`).join('')}</div>`}
+  </div>`
+
+  // Seção observações
+  const secObs = d.observacoes ? `
+  <div class="section">
+    <div class="section-label"><span>05</span> Observações Gerais</div>
+    <div class="obs-card">
+      <div class="obs-txt">${d.observacoes}</div>
+    </div>
+  </div>` : ''
+
+  // Footer
+  const footer = `
+  <div class="report-footer">
+    <div class="footer-brand">Relatório gerado por <span>${d.empresa||''}</span></div>
+    <div class="footer-date">${dataAtual}</div>
+  </div>`
+
+  document.getElementById('conteudo').innerHTML = secResumo + secHorarios + secRecl + secMel + secObs + footer
+}
+</script>
+</body>
+</html>
