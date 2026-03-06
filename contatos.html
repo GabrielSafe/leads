@@ -3,7 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contatos · Painel de Atendimento</title>
+<title>Contatos</title>
+<script src="/config.js"></script>
+<script>
+(function(){
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  const favicon = cfg.favicon_url || ''
+  const emoji = cfg.favicon_emoji || '💬'
+  const link = document.createElement('link')
+  link.rel = 'icon'
+  link.href = favicon || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + emoji + '</text></svg>'
+  document.head.appendChild(link)
+  if (cfg.empresa) document.title = cfg.empresa + ' · Contatos'
+})()
+</script>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -400,6 +413,18 @@ function exportarExcel() {
   a.click()
   URL.revokeObjectURL(url)
 }
+</script>
+<script>
+(function(){
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  if (cfg.cores) {
+    const r = document.documentElement
+    if (cfg.cores.primaria)   { r.style.setProperty('--teal', cfg.cores.primaria); r.style.setProperty('--teal-mid', cfg.cores.primaria) }
+    if (cfg.cores.secundaria) r.style.setProperty('--rose', cfg.cores.secundaria)
+    if (cfg.cores.terciaria)  r.style.setProperty('--amber', cfg.cores.terciaria)
+    if (cfg.cores.acento)     r.style.setProperty('--indigo', cfg.cores.acento)
+  }
+})()
 </script>
 </body>
 </html>
