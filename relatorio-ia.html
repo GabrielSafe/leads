@@ -417,7 +417,7 @@ body::before {
 </div>
 
 <script>
-const API = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/api'
+const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
 let dataAtual = dHoje()
 
 setDateLabel(dataAtual)

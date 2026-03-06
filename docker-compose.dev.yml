@@ -1,5 +1,4 @@
 services:
-
   api:
     build:
       context: .
@@ -12,18 +11,6 @@ services:
       - PORT=3001
     ports:
       - "3001:3001"
-    networks:
-      - leads-net
-
-  dashboard:
-    build:
-      context: .
-      dockerfile: Dockerfile.dashboard
-    restart: always
-    ports:
-      - "3000:80"
-    depends_on:
-      - api
     networks:
       - leads-net
 

@@ -6,6 +6,9 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
+// Serve static HTML files
+app.use(express.static(__dirname + '/public'))
+
 const redisConfig = {
   host: process.env.REDIS_HOST || '172.17.0.2',
   port: parseInt(process.env.REDIS_PORT) || 6379,

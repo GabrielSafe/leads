@@ -379,7 +379,7 @@ tbody tr:hover td{background:var(--bg2);}
 </div>
 
 <script>
-const API = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/api'
+const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
 const CORES = ['teal','amber','indigo','rose']
 const colorMap = {}, colorIdx = [0]
 
