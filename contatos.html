@@ -161,6 +161,14 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
 .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:10px;color:var(--ink4);font-size:13px}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Icon wrappers svg fix */
+.panel-icon svg,.tool-icon-wrap svg,.hor-icon svg,.sidebar-logo svg{
+  width:18px;height:18px;stroke:var(--green);flex-shrink:0;
+}
+.sidebar-logo svg{width:22px;height:22px;stroke:#111b21;}
+.hor-icon svg{width:16px;height:16px;stroke:var(--ink3);}
+.tool-icon-wrap svg{width:20px;height:20px;stroke:var(--green);}
 </style>
 </head>
 <body>
@@ -168,7 +176,7 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
 
 <nav class="sidebar">
   <div class="sidebar-brand" id="logoArea">
-    <div class="sidebar-logo">💬</div>
+    <div class="sidebar-logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
     <div><div class="sidebar-brand-name">Atendimento</div><div class="sidebar-brand-slug">Painel</div></div>
   </div>
   <div class="sidebar-nav">
@@ -230,7 +238,7 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
     <div class="panel">
       <div class="panel-head">
         <div class="panel-head-left">
-          <div class="panel-icon">👥</div>
+          <div class="panel-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
           <div>
             <div class="panel-title">Contatos cadastrados</div>
             <div class="panel-sub">Todos os contatos que interagiram com o sistema</div>

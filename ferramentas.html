@@ -160,6 +160,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .result.show{display:flex;animation:fadeUp 0.3s ease both}
 .result.success{background:var(--green-lt);border:1px solid rgba(37,211,102,0.25);color:var(--green)}
 .result.error{background:var(--rose-lt);border:1px solid rgba(241,92,109,0.25);color:var(--rose)}
+
+/* Icon wrappers svg fix */
+.panel-icon svg,.tool-icon-wrap svg,.hor-icon svg,.sidebar-logo svg{
+  width:18px;height:18px;stroke:var(--green);flex-shrink:0;
+}
+.sidebar-logo svg{width:22px;height:22px;stroke:#111b21;}
+.hor-icon svg{width:16px;height:16px;stroke:var(--ink3);}
+.tool-icon-wrap svg{width:20px;height:20px;stroke:var(--green);}
 </style>
 </head>
 <body>
@@ -167,7 +175,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 
 <nav class="sidebar">
   <div class="sidebar-brand" id="logoArea">
-    <div class="sidebar-logo">💬</div>
+    <div class="sidebar-logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
     <div><div class="sidebar-brand-name">Atendimento</div><div class="sidebar-brand-slug">Painel</div></div>
   </div>
   <div class="sidebar-nav">
@@ -208,7 +216,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 
       <div class="tool-card">
         <div class="tool-head">
-          <div class="tool-icon-wrap">📤</div>
+          <div class="tool-icon-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
           <div>
             <div class="tool-name">Envio de CSV para Webhook</div>
             <div class="tool-desc">Carregue um CSV e envie os dados para um webhook do N8N</div>
