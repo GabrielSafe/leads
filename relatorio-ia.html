@@ -417,13 +417,13 @@ body::before {
 </div>
 
 <script>
-const API = '/api'
+const API = 'http://localhost:3001'
 let dataAtual = dHoje()
 
 setDateLabel(dataAtual)
 carregar()
 
-function dHoje() { return new Date().toISOString().split('T')[0] }
+function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 
 function setDateLabel(d) {
   const [y,m,dia] = d.split('-')

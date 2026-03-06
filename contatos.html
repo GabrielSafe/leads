@@ -182,13 +182,13 @@
 </main>
 
 <script>
-const API = '/api'
+const API = 'http://localhost:3001'
 const POR_PAGINA = 20
 const CORES = ['#0d9488','#d97706','#4f46e5','#be123c','#059669','#7c3aed','#b45309','#0284c7']
 const colorMap = {}
 let todosContatos = [], filtrados = [], paginaAtual = 1, filtroIA = 'todos'
 
-function dHoje() { return new Date().toISOString().split('T')[0] }
+function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 
 function corContato(tel) {
   if (!colorMap[tel]) colorMap[tel] = CORES[Object.keys(colorMap).length % CORES.length]
