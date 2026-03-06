@@ -8,374 +8,308 @@
 <script>
 (function(){
   const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  const emoji = cfg.favicon_emoji || '💬'
-  const link = document.createElement('link')
-  link.rel = 'icon'
-  link.href = cfg.favicon_url || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + emoji + '</text></svg>'
+  const link = document.createElement('link'); link.rel = 'icon'
+  link.href = cfg.favicon_url || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + (cfg.favicon_emoji||'💬') + '</text></svg>'
   document.head.appendChild(link)
   if (cfg.empresa) document.title = cfg.empresa + ' · Ferramentas'
 })()
 </script>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ── SHARED TOKENS ── */
 :root {
-  --bg:#f5f2ee; --bg2:#edeae4; --card:#faf9f7; --card2:#f0ede8;
-  --border:#e0dbd3; --border2:#cec8be;
-  --ink:#1c1917; --ink2:#44403c; --ink3:#78716c; --ink4:#a8a29e;
-  --teal:#0d9488; --teal-lt:#ccfbf1; --teal-mid:#14b8a6;
-  --amber:#b45309; --amber-lt:#fef3c7;
-  --rose:#be123c; --rose-lt:#ffe4e6;
-  --green:#15803d; --green-lt:#dcfce7;
-  --indigo:#4338ca; --indigo-lt:#e0e7ff;
-  --shadow:0 1px 3px rgba(28,25,23,0.06),0 4px 16px rgba(28,25,23,0.06);
-  --shadow-lg:0 2px 8px rgba(28,25,23,0.08),0 12px 40px rgba(28,25,23,0.10);
+  --bg:#111b21; --bg2:#1e2d35; --bg3:#182229;
+  --card:#1e2d35; --card2:#2a3942; --card3:#354752;
+  --border:#2a3942; --border2:#3b4a54;
+  --ink:#e9edef; --ink2:#aebac1; --ink3:#667781; --ink4:#3b4a54;
+  --green:#25d366; --green2:#00a884; --green-lt:rgba(37,211,102,0.12); --green-dk:rgba(37,211,102,0.06);
+  --rose:#f15c6d; --rose-lt:rgba(241,92,109,0.12);
+  --amber:#f5a623; --amber-lt:rgba(245,166,35,0.12);
+  --blue:#53bdeb; --blue-lt:rgba(83,189,235,0.12);
+  --violet:#bf59cf; --violet-lt:rgba(191,89,207,0.12);
+  --shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.5);
+  --sidebar-w:220px; --topbar-h:56px; --r:10px; --r-lg:14px;
 }
-body.dark {
-  --bg:#111110; --bg2:#1a1917; --card:#1c1b19; --card2:#242320;
-  --border:#2e2b27; --border2:#3d3a35;
-  --ink:#f0ece6; --ink2:#d4cfc8; --ink3:#8c8680; --ink4:#5a5550;
-  --teal:#2dd4bf; --teal-lt:#0d2e2b; --teal-mid:#14b8a6;
-  --amber:#fbbf24; --amber-lt:#2a1f05;
-  --rose:#fb7185; --rose-lt:#2a0a10;
-  --green:#4ade80; --green-lt:#052e16;
-  --indigo:#818cf8; --indigo-lt:#1a1a3a;
-  --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.3);
-  --shadow-lg:0 2px 8px rgba(0,0,0,0.4),0 12px 40px rgba(0,0,0,0.4);
+body.light {
+  --bg:#f0f2f5; --bg2:#ffffff; --bg3:#e9edef;
+  --card:#ffffff; --card2:#f0f2f5; --card3:#e9edef;
+  --border:#d1d7db; --border2:#b0bec5;
+  --ink:#111b21; --ink2:#3b4a54; --ink3:#667781; --ink4:#aebac1;
+  --green:#00a884; --green2:#008069; --green-lt:rgba(0,168,132,0.1);
+  --rose:#e53935; --rose-lt:rgba(229,57,53,0.1);
+  --amber:#f57c00; --amber-lt:rgba(245,124,0,0.1);
+  --blue:#0288d1; --blue-lt:rgba(2,136,209,0.1);
+  --violet:#8e24aa; --violet-lt:rgba(142,36,170,0.1);
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.12);
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background 0.3s,color 0.3s}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+.app{display:flex;min-height:100vh}
 
-/* HEADER */
-.header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:var(--card);border-bottom:1px solid var(--border);box-shadow:var(--shadow);position:sticky;top:0;z-index:100;animation:fadeIn 0.3s ease both}
-.logo{font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.3px;display:flex;align-items:center;gap:8px}
-.hcontrols{display:flex;align-items:center;gap:8px}
-.pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:var(--card2);border:1px solid var(--border);font-size:11px;font-weight:500;color:var(--ink3)}
-.nav-link{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);text-decoration:none;transition:all 0.2s;}
-.nav-link:hover{border-color:var(--teal-mid);color:var(--teal)}
-.nav-link.active{background:var(--teal-lt);border-color:var(--teal-mid);color:var(--teal);font-weight:600}
-.icon-btn{width:32px;height:32px;border-radius:8px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.icon-btn:hover{background:var(--card2);color:var(--ink)}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg3);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:200}
+.sidebar-brand{padding:18px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.sidebar-logo{width:38px;height:38px;border-radius:10px;flex-shrink:0;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
+.sidebar-logo img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.sidebar-brand-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-0.2px;line-height:1.2}
+.sidebar-brand-slug{font-size:10px;color:var(--ink3);margin-top:2px}
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--ink2);text-decoration:none;cursor:pointer;transition:all 0.15s;border:1px solid transparent}
+.nav-item:hover{background:var(--card2);color:var(--ink)}
+.nav-item.active{background:var(--green-lt);color:var(--green);border-color:rgba(37,211,102,0.2);font-weight:600}
+.nav-item svg{flex-shrink:0;opacity:0.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:14px 10px;border-top:1px solid var(--border)}
+.sidebar-ver{font-size:10px;color:var(--ink4);text-align:center;letter-spacing:0.3px}
 
 /* MAIN */
-.main{max-width:800px;margin:0 auto;padding:32px 24px}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0}
 
-/* PAGE TITLE */
-.page-header{margin-bottom:32px;animation:fadeUp 0.4s ease both}
-.page-title{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-0.5px}
-.page-sub{font-size:13px;color:var(--ink3);margin-top:4px}
+/* TOPBAR */
+.topbar{height:var(--topbar-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--bg3);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:8px}
+.page-title{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:500;border:1px solid var(--border);color:var(--ink3);transition:all 0.3s}
+.status-pill.live{background:var(--green-lt);border-color:rgba(37,211,102,0.25);color:var(--green)}
+.status-pill.dead{background:var(--rose-lt);border-color:rgba(241,92,109,0.25);color:var(--rose)}
+.status-pill.waiting{background:var(--amber-lt);border-color:rgba(245,166,35,0.2);color:var(--amber)}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot.live{background:var(--green);animation:pulse 2s infinite}
+.dot.dead{background:var(--rose)}
+.dot.wait{background:var(--amber);animation:blink 1.4s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,0.4)}50%{box-shadow:0 0 0 5px rgba(37,211,102,0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.icon-btn{width:32px;height:32px;border-radius:var(--r);background:transparent;border:1px solid var(--border);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.icon-btn:hover{background:var(--card2);color:var(--ink);border-color:var(--border2)}
+.clock{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink3);padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);letter-spacing:0.5px}
 
-/* TOOL CARD */
-.tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;animation:fadeUp 0.5s ease both;animation-delay:0.1s}
-.tool-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
-.tool-icon{width:40px;height:40px;border-radius:10px;background:var(--teal-lt);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.tool-title{font-size:15px;font-weight:600;color:var(--ink)}
-.tool-desc{font-size:12px;color:var(--ink3);margin-top:2px}
-.tool-body{padding:24px}
+/* CONTENT */
+.content{flex:1;padding:22px 24px 40px;overflow-y:auto}
 
-/* FORM */
-.field{margin-bottom:20px}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:8px;letter-spacing:0.2px;text-transform:uppercase}
-.field input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--ink);font-family:'Poppins',sans-serif;font-size:13px;transition:all 0.2s;outline:none}
-.field input:focus{border-color:var(--teal-mid);box-shadow:0 0 0 3px var(--teal-lt)}
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--card2)}
+.panel-head-left{display:flex;align-items:center;gap:10px}
+.panel-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--green-lt);border:1px solid rgba(37,211,102,0.2)}
+.panel-title{font-size:13px;font-weight:700;color:var(--ink)}
+.panel-sub{font-size:10px;color:var(--ink3);margin-top:1px}
+.chip{padding:3px 9px;border-radius:7px;background:var(--bg);border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)}
+
+/* MISC */
+.empty{padding:44px 20px;text-align:center}
+.empty-icon{font-size:28px;margin-bottom:10px;opacity:0.2}
+.empty-txt{font-size:12px;color:var(--ink4)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+
+/* ── FERRAMENTAS SPECIFIC ── */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:16px;animation:fadeUp 0.4s ease both}
+
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow)}
+.tool-head{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--border);background:var(--card2)}
+.tool-icon-wrap{width:38px;height:38px;border-radius:10px;background:var(--green-lt);border:1px solid rgba(37,211,102,0.2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tool-name{font-size:13px;font-weight:700;color:var(--ink)}
+.tool-desc{font-size:11px;color:var(--ink4);margin-top:2px}
+.tool-body{padding:20px}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:6px;letter-spacing:0.3px}
+.field input[type=url],.field input[type=text]{width:100%;padding:9px 12px;border-radius:var(--r);background:var(--bg2);border:1px solid var(--border);color:var(--ink);font-family:'Inter',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s}
+.field input:focus{border-color:var(--green)}
 .field input::placeholder{color:var(--ink4)}
 
-/* UPLOAD AREA */
-.upload-area{border:2px dashed var(--border2);border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);position:relative}
-.upload-area:hover,.upload-area.dragover{border-color:var(--teal-mid);background:var(--teal-lt)}
+/* Upload */
+.upload-area{position:relative;border:2px dashed var(--border2);border-radius:var(--r);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg2)}
+.upload-area:hover,.upload-area.dragover{border-color:var(--green);background:var(--green-dk)}
+.upload-area.has-file{border-color:var(--green);border-style:solid;background:var(--green-dk)}
 .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upload-icon{font-size:32px;margin-bottom:10px}
-.upload-txt{font-size:13px;font-weight:500;color:var(--ink2)}
+.upload-icon{font-size:28px;margin-bottom:8px;opacity:0.5}
+.upload-txt{font-size:13px;font-weight:500;color:var(--ink3)}
 .upload-sub{font-size:11px;color:var(--ink4);margin-top:4px}
-.upload-area.has-file{border-style:solid;border-color:var(--teal-mid);background:var(--teal-lt)}
-.file-info{display:none;align-items:center;gap:10px;margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--card);border:1px solid var(--border)}
+
+.file-info{display:none;align-items:center;gap:10px;padding:10px 12px;background:var(--green-lt);border:1px solid rgba(37,211,102,0.2);border-radius:var(--r);margin-top:10px}
 .file-info.show{display:flex}
-.file-name{font-size:12px;font-weight:500;color:var(--ink2);font-family:'JetBrains Mono',monospace}
-.file-size{font-size:11px;color:var(--ink4);margin-left:auto}
-.file-remove{background:none;border:none;color:var(--rose);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:background 0.15s}
-.file-remove:hover{background:var(--rose-lt)}
+.file-name{font-size:12px;font-weight:600;color:var(--ink2);flex:1}
+.file-size{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4)}
+.file-remove{width:20px;height:20px;border-radius:5px;background:transparent;border:none;color:var(--ink4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.15s;flex-shrink:0}
+.file-remove:hover{background:var(--rose-lt);color:var(--rose)}
 
-/* PREVIEW TABLE */
-.preview-wrap{margin-top:16px;display:none}
+.preview-wrap{display:none;margin-top:12px}
 .preview-wrap.show{display:block}
-.preview-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:8px}
-.preview-table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);max-height:200px;overflow-y:auto}
-.preview-table{width:100%;border-collapse:collapse;font-size:11px;font-family:'JetBrains Mono',monospace}
-.preview-table th{background:var(--card2);padding:8px 12px;text-align:left;font-weight:600;color:var(--ink2);border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0}
-.preview-table td{padding:7px 12px;border-bottom:1px solid var(--border);color:var(--ink3);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.preview-label{font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:8px}
+.preview-table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--border)}
+.preview-table{width:100%;border-collapse:collapse;font-size:11px}
+.preview-table th{padding:7px 10px;text-align:left;background:var(--card2);border-bottom:1px solid var(--border);color:var(--ink4);font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;white-space:nowrap}
+.preview-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--ink3);white-space:nowrap}
 .preview-table tr:last-child td{border-bottom:none}
-.preview-count{font-size:11px;color:var(--ink4);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.preview-count{font-size:11px;color:var(--ink4);margin-top:8px;font-family:'DM Mono',monospace}
 
-/* BUTTON */
-.btn-send{width:100%;padding:14px;border-radius:12px;background:var(--teal);border:none;color:#fff;font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
-.btn-send:hover{background:var(--teal-mid);transform:translateY(-1px);box-shadow:0 4px 16px rgba(13,148,136,0.3)}
-.btn-send:active{transform:translateY(0)}
-.btn-send:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-send{width:100%;padding:11px;border-radius:var(--r);background:var(--green);border:none;color:#111b21;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px}
+.btn-send:hover:not(:disabled){background:var(--green2);color:#fff}
+.btn-send:disabled{opacity:0.4;cursor:not-allowed}
 .btn-send.loading .btn-txt{display:none}
 .btn-send.loading .btn-spinner{display:block}
-.btn-spinner{display:none;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+.btn-spinner{display:none;width:16px;height:16px;border:2px solid rgba(17,27,33,0.3);border-top-color:#111b21;border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* RESULT */
-.result{margin-top:16px;padding:14px 16px;border-radius:10px;font-size:13px;font-weight:500;display:none;align-items:center;gap:10px;animation:fadeUp 0.3s ease both}
-.result.show{display:flex}
-.result.success{background:var(--green-lt);color:var(--green);border:1px solid #86efac}
-.result.error{background:var(--rose-lt);color:var(--rose);border:1px solid #fca5a5}
-.dark .result.success{border-color:#166534}
-.dark .result.error{border-color:#9f1239}
-
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-
-/* LOGO */
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo-img{height:32px;width:auto;object-fit:contain}
-.logo-emoji{font-size:22px;line-height:1}
-.empresa-nome{font-size:14px;font-weight:600;color:var(--ink)}
-.empresa-slogan{font-size:10px;color:var(--ink3)}
+.result{display:none;margin-top:12px;padding:12px 14px;border-radius:var(--r);font-size:12px;font-weight:500;align-items:center;gap:8px}
+.result.show{display:flex;animation:fadeUp 0.3s ease both}
+.result.success{background:var(--green-lt);border:1px solid rgba(37,211,102,0.25);color:var(--green)}
+.result.error{background:var(--rose-lt);border:1px solid rgba(241,92,109,0.25);color:var(--rose)}
 </style>
 </head>
 <body>
+<div class="app">
 
-<div class="header">
-  <div class="logo" id="logoArea">
-    <span style="font-size:20px">💬</span>
-    <span>Painel de Atendimento</span>
+<nav class="sidebar">
+  <div class="sidebar-brand" id="logoArea">
+    <div class="sidebar-logo">💬</div>
+    <div><div class="sidebar-brand-name">Atendimento</div><div class="sidebar-brand-slug">Painel</div></div>
   </div>
-  <div class="hcontrols">
-    <a href="dashboard-leads.html" class="nav-link">Dashboard</a>
-    <a href="relatorio-ia.html" class="nav-link">Relatório IA</a>
-    <a href="contatos.html" class="nav-link">Contatos</a>
-    <a href="ferramentas.html" class="nav-link active">Ferramentas</a>
-    <button class="icon-btn" onclick="toggleTheme()" title="Alternar tema">
-      <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      <svg id="iconSun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    </button>
+  <div class="sidebar-nav">
+    <a href="dashboard-leads.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="contatos.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Contatos</span>
+    </a>
+    <a href="relatorio-ia.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Relatório IA</span>
+    </a>
+    <a href="ferramentas.html" class="nav-item active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span>Ferramentas</span>
+    </a>
   </div>
-</div>
+  <div class="sidebar-footer"><div class="sidebar-ver">Sistema v1.0</div></div>
+</nav>
 
 <div class="main">
-  <div class="page-header">
-    <div class="page-title">🛠 Ferramentas</div>
-    <div class="page-sub">Utilitários para operação do sistema</div>
-  </div>
-
-  <div class="tool-card">
-    <div class="tool-header">
-      <div class="tool-icon">📤</div>
-      <div>
-        <div class="tool-title">Envio de CSV para Webhook</div>
-        <div class="tool-desc">Carregue um arquivo CSV e envie os dados para um webhook do N8N</div>
-      </div>
-    </div>
-    <div class="tool-body">
-
-      <div class="field">
-        <label>URL do Webhook N8N</label>
-        <input type="url" id="webhookUrl" placeholder="https://n8n.seuservidor.com/webhook/..." autocomplete="off">
-      </div>
-
-      <div class="field">
-        <label>Arquivo CSV</label>
-        <div class="upload-area" id="uploadArea">
-          <input type="file" id="csvInput" accept=".csv" onchange="handleFile(this)">
-          <div class="upload-icon">📁</div>
-          <div class="upload-txt">Clique ou arraste um arquivo CSV</div>
-          <div class="upload-sub">Somente arquivos .csv</div>
-        </div>
-        <div class="file-info" id="fileInfo">
-          <span>📄</span>
-          <span class="file-name" id="fileName">—</span>
-          <span class="file-size" id="fileSize">—</span>
-          <button class="file-remove" onclick="removeFile()" title="Remover arquivo">✕</button>
-        </div>
-        <div class="preview-wrap" id="previewWrap">
-          <div class="preview-label">Prévia dos dados</div>
-          <div class="preview-table-wrap">
-            <table class="preview-table" id="previewTable"></table>
-          </div>
-          <div class="preview-count" id="previewCount"></div>
-        </div>
-      </div>
-
-      <button class="btn-send" id="btnSend" onclick="enviar()" disabled>
-        <span class="btn-txt">Enviar para N8N</span>
-        <div class="btn-spinner"></div>
+  <div class="topbar">
+    <div class="topbar-left"><div class="page-title">Ferramentas</div></div>
+    <div class="topbar-right">
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun"  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+  </div>
 
-      <div class="result" id="result"></div>
+  <div class="content">
+    <div class="tools-grid">
+
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-icon-wrap">📤</div>
+          <div>
+            <div class="tool-name">Envio de CSV para Webhook</div>
+            <div class="tool-desc">Carregue um CSV e envie os dados para um webhook do N8N</div>
+          </div>
+        </div>
+        <div class="tool-body">
+          <div class="field">
+            <label>URL do Webhook N8N</label>
+            <input type="url" id="webhookUrl" placeholder="https://n8n.seuservidor.com/webhook/..." autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Arquivo CSV</label>
+            <div class="upload-area" id="uploadArea">
+              <input type="file" id="csvInput" accept=".csv" onchange="handleFile(this)">
+              <div class="upload-icon">📁</div>
+              <div class="upload-txt">Clique ou arraste um arquivo CSV</div>
+              <div class="upload-sub">Somente arquivos .csv</div>
+            </div>
+            <div class="file-info" id="fileInfo">
+              <span>📄</span>
+              <span class="file-name" id="fileName">—</span>
+              <span class="file-size" id="fileSize">—</span>
+              <button class="file-remove" onclick="removeFile()" title="Remover">✕</button>
+            </div>
+            <div class="preview-wrap" id="previewWrap">
+              <div class="preview-label">Prévia dos dados</div>
+              <div class="preview-table-wrap"><table class="preview-table" id="previewTable"></table></div>
+              <div class="preview-count" id="previewCount"></div>
+            </div>
+          </div>
+          <button class="btn-send" id="btnSend" onclick="enviar()" disabled>
+            <span class="btn-txt">Enviar para N8N</span>
+            <div class="btn-spinner"></div>
+          </button>
+          <div class="result" id="result"></div>
+        </div>
+      </div>
 
     </div>
   </div>
+</div>
 </div>
 
 <script>
-let csvData = []
-let csvFile = null
+let csvData = [], csvFile = null
 
-// Theme
-function toggleTheme() {
-  const dark = document.body.classList.toggle('dark')
-  localStorage.setItem('theme', dark ? 'dark' : 'light')
-  document.getElementById('iconMoon').style.display = dark ? 'none' : ''
-  document.getElementById('iconSun').style.display  = dark ? '' : 'none'
-}
-if (localStorage.getItem('theme') === 'dark') {
-  document.body.classList.add('dark')
-  document.getElementById('iconMoon').style.display = 'none'
-  document.getElementById('iconSun').style.display  = ''
-}
+function toggleTheme() { const l=document.body.classList.toggle('light'); document.getElementById('iconMoon').style.display=l?'none':'block'; document.getElementById('iconSun').style.display=l?'block':'none'; localStorage.setItem('theme',l?'light':'dark') }
 
-// Drag and drop
 const uploadArea = document.getElementById('uploadArea')
-uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover') })
-uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'))
-uploadArea.addEventListener('drop', e => {
-  e.preventDefault()
-  uploadArea.classList.remove('dragover')
-  const file = e.dataTransfer.files[0]
-  if (file && file.name.endsWith('.csv')) {
-    document.getElementById('csvInput').files = e.dataTransfer.files
-    processFile(file)
-  }
-})
+uploadArea.addEventListener('dragover', e=>{ e.preventDefault(); uploadArea.classList.add('dragover') })
+uploadArea.addEventListener('dragleave', ()=>uploadArea.classList.remove('dragover'))
+uploadArea.addEventListener('drop', e=>{ e.preventDefault(); uploadArea.classList.remove('dragover'); const f=e.dataTransfer.files[0]; if(f&&f.name.endsWith('.csv')){ document.getElementById('csvInput').files=e.dataTransfer.files; processFile(f) } })
 
-function handleFile(input) {
-  const file = input.files[0]
-  if (file) processFile(file)
-}
-
-function processFile(file) {
-  csvFile = file
-  const reader = new FileReader()
-  reader.onload = e => {
-    const text = e.target.result
-    parseCSV(text, file)
-  }
-  reader.readAsText(file, 'UTF-8')
-}
+function handleFile(input) { const f=input.files[0]; if(f)processFile(f) }
+function processFile(file) { csvFile=file; const r=new FileReader(); r.onload=e=>parseCSV(e.target.result,file); r.readAsText(file,'UTF-8') }
 
 function parseCSV(text, file) {
-  // Detect separator
-  const firstLine = text.split('\n')[0]
-  const sep = firstLine.includes(';') ? ';' : ','
-
-  const lines = text.trim().split('\n').filter(l => l.trim())
-  if (lines.length < 2) return
-
-  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''))
-
-  csvData = lines.slice(1).map(line => {
-    const vals = line.split(sep).map(v => v.trim().replace(/^"|"$/g, ''))
-    const row = {}
-    headers.forEach((h, i) => {
-      const val = vals[i] !== undefined ? vals[i] : ''
-      row[h] = val === '' ? null : val
-    })
-    return row
-  })
-
-  // Show file info
-  document.getElementById('fileName').textContent = file.name
-  document.getElementById('fileSize').textContent = formatBytes(file.size)
+  const firstLine=text.split('\n')[0], sep=firstLine.includes(';')?';':','
+  const lines=text.trim().split('\n').filter(l=>l.trim()); if(lines.length<2)return
+  const headers=lines[0].split(sep).map(h=>h.trim().replace(/^"|"$/g,''))
+  csvData=lines.slice(1).map(line=>{ const vals=line.split(sep).map(v=>v.trim().replace(/^"|"$/g,'')); const row={}; headers.forEach((h,i)=>{ const val=vals[i]!==undefined?vals[i]:''; row[h]=val===''?null:val }); return row })
+  document.getElementById('fileName').textContent=file.name
+  document.getElementById('fileSize').textContent=fmtBytes(file.size)
   document.getElementById('fileInfo').classList.add('show')
   uploadArea.classList.add('has-file')
-
-  // Preview table
-  const preview = csvData.slice(0, 5)
-  const table = document.getElementById('previewTable')
-  table.innerHTML = `
-    <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
-    ${preview.map(row => `<tr>${headers.map(h => `<td>${row[h] ?? ''}</td>`).join('')}</tr>`).join('')}
-  `
-  document.getElementById('previewCount').textContent = `${csvData.length} registro${csvData.length !== 1 ? 's' : ''} encontrado${csvData.length !== 1 ? 's' : ''}`
+  const preview=csvData.slice(0,5)
+  document.getElementById('previewTable').innerHTML=`<tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr>${preview.map(row=>`<tr>${headers.map(h=>`<td>${row[h]??''}</td>`).join('')}</tr>`).join('')}`
+  document.getElementById('previewCount').textContent=`${csvData.length} registro${csvData.length!==1?'s':''} encontrado${csvData.length!==1?'s':''}`
   document.getElementById('previewWrap').classList.add('show')
-
   checkReady()
 }
 
-function removeFile() {
-  csvFile = null
-  csvData = []
-  document.getElementById('csvInput').value = ''
-  document.getElementById('fileInfo').classList.remove('show')
-  document.getElementById('previewWrap').classList.remove('show')
-  uploadArea.classList.remove('has-file')
-  document.getElementById('result').classList.remove('show')
-  checkReady()
-}
-
-function checkReady() {
-  const url = document.getElementById('webhookUrl').value.trim()
-  document.getElementById('btnSend').disabled = !(url && csvData.length > 0)
-}
-
-document.getElementById('webhookUrl').addEventListener('input', checkReady)
-
-function formatBytes(bytes) {
-  if (bytes < 1024) return bytes + ' B'
-  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB'
-  return (bytes / 1048576).toFixed(1) + ' MB'
-}
+function removeFile() { csvFile=null; csvData=[]; document.getElementById('csvInput').value=''; document.getElementById('fileInfo').classList.remove('show'); document.getElementById('previewWrap').classList.remove('show'); uploadArea.classList.remove('has-file'); document.getElementById('result').classList.remove('show'); checkReady() }
+function checkReady() { const url=document.getElementById('webhookUrl').value.trim(); document.getElementById('btnSend').disabled=!(url&&csvData.length>0) }
+function fmtBytes(b) { if(b<1024)return b+' B'; if(b<1048576)return(b/1024).toFixed(1)+' KB'; return(b/1048576).toFixed(1)+' MB' }
+document.getElementById('webhookUrl').addEventListener('input',checkReady)
 
 async function enviar() {
-  const url = document.getElementById('webhookUrl').value.trim()
-  if (!url || csvData.length === 0) return
-
-  const btn = document.getElementById('btnSend')
-  const result = document.getElementById('result')
-
-  btn.disabled = true
-  btn.classList.add('loading')
-  result.classList.remove('show')
-
+  const url=document.getElementById('webhookUrl').value.trim(); if(!url||csvData.length===0)return
+  const btn=document.getElementById('btnSend'), result=document.getElementById('result')
+  btn.disabled=true; btn.classList.add('loading'); result.classList.remove('show')
   try {
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(csvData)
-    })
-
-    if (resp.ok) {
-      result.className = 'result show success'
-      result.innerHTML = `<span>✅</span> <span>Enviado com sucesso! <strong>${csvData.length} registro${csvData.length !== 1 ? 's' : ''}</strong> enviado${csvData.length !== 1 ? 's' : ''} para o webhook.</span>`
-    } else {
-      const txt = await resp.text()
-      result.className = 'result show error'
-      result.innerHTML = `<span>❌</span> <span>Erro ${resp.status}: ${txt.slice(0, 120)}</span>`
-    }
-  } catch(err) {
-    result.className = 'result show error'
-    result.innerHTML = `<span>❌</span> <span>Erro ao conectar: ${err.message}</span>`
-  }
-
-  btn.disabled = false
-  btn.classList.remove('loading')
+    const resp=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(csvData)})
+    if(resp.ok){ result.className='result show success'; result.innerHTML=`<span>✅</span><span>Enviado! <strong>${csvData.length} registro${csvData.length!==1?'s':''}</strong> enviados com sucesso.</span>` }
+    else { const txt=await resp.text(); result.className='result show error'; result.innerHTML=`<span>❌</span><span>Erro ${resp.status}: ${txt.slice(0,120)}</span>` }
+  } catch(err) { result.className='result show error'; result.innerHTML=`<span>❌</span><span>Erro: ${err.message}</span>` }
+  btn.disabled=false; btn.classList.remove('loading')
 }
 
-// Apply CONFIG
 ;(function(){
-  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  const logoArea = document.getElementById('logoArea')
-  if (logoArea && cfg.empresa) {
-    const hasLogo = cfg.logo_url && cfg.logo_url.trim()
-    const logoHtml = hasLogo
-      ? `<img src="${cfg.logo_url}" class="logo-img" alt="${cfg.empresa}">`
-      : `<span class="logo-emoji">${cfg.logo_emoji || '💬'}</span>`
-    logoArea.innerHTML = `
-      <div class="logo-wrap">
-        ${logoHtml}
-        <div>
-          <div class="empresa-nome">${cfg.empresa}</div>
-          ${cfg.slogan ? `<div class="empresa-slogan">${cfg.slogan}</div>` : ''}
-        </div>
-      </div>`
-  }
-  if (cfg.cores) {
-    const r = document.documentElement
-    if (cfg.cores.primaria)   { r.style.setProperty('--teal', cfg.cores.primaria); r.style.setProperty('--teal-mid', cfg.cores.primaria) }
-    if (cfg.cores.secundaria) r.style.setProperty('--rose', cfg.cores.secundaria)
-  }
+  const t=localStorage.getItem('theme')
+  if(t==='light'){document.body.classList.add('light');document.getElementById('iconMoon').style.display='none';document.getElementById('iconSun').style.display='block'}
+  setInterval(()=>{const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString('pt-BR')},1000)
+})()
+</script>
+<script>
+;(function(){
+  const cfg=typeof CONFIG!=='undefined'?CONFIG:{}
+  const la=document.getElementById('logoArea')
+  if(la&&cfg.empresa){const h=cfg.logo_url&&cfg.logo_url.trim();la.innerHTML=`<div class="sidebar-logo">${h?`<img src="${cfg.logo_url}" alt="${cfg.empresa}">`:cfg.logo_emoji||'💬'}</div><div><div class="sidebar-brand-name">${cfg.empresa}</div><div class="sidebar-brand-slug">${cfg.slogan||'Painel'}</div></div>`}
+  if(cfg.cores){const r=document.documentElement;if(cfg.cores.primaria){r.style.setProperty('--green',cfg.cores.primaria);r.style.setProperty('--green2',cfg.cores.primaria)}if(cfg.cores.secundaria)r.style.setProperty('--rose',cfg.cores.secundaria)}
 })()
 </script>
 </body>

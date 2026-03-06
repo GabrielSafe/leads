@@ -8,422 +8,340 @@
 <script>
 (function(){
   const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  const favicon = cfg.favicon_url || ''
-  const emoji = cfg.favicon_emoji || '💬'
-  const link = document.createElement('link')
-  link.rel = 'icon'
-  link.href = favicon || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + emoji + '</text></svg>'
+  const link = document.createElement('link'); link.rel = 'icon'
+  link.href = cfg.favicon_url || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + (cfg.favicon_emoji||'💬') + '</text></svg>'
   document.head.appendChild(link)
   if (cfg.empresa) document.title = cfg.empresa + ' · Contatos'
 })()
 </script>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#f5f2ee; --bg2:#edeae4; --card:#faf9f7; --card2:#f0ede8;
-    --border:#e0dbd4; --border2:#c9c3bb; --shadow:0 1px 3px rgba(0,0,0,0.06);
-    --ink:#1c1917; --ink2:#44403c; --ink3:#78716c; --ink4:#a8a29e;
-    --teal:#0d9488; --teal-lt:#ccfbf1; --teal-mid:#14b8a6;
-    --amber:#d97706; --amber-lt:#fef3c7;
-    --rose:#be123c; --rose-lt:#ffe4e6;
-    --indigo:#4f46e5; --indigo-lt:#e0e7ff;
-  }
-  .dark {
-    --bg:#111110; --bg2:#1a1917; --card:#1c1b19; --card2:#242320;
-    --border:#2e2b27; --border2:#3d3a35; --shadow:0 1px 3px rgba(0,0,0,0.3);
-    --ink:#f0ece6; --ink2:#d4cfc8; --ink3:#8c8680; --ink4:#5a5550;
-    --teal:#2dd4bf; --teal-lt:#0d2e2b; --teal-mid:#14b8a6;
-    --amber:#fbbf24; --amber-lt:#1c1500;
-    --rose:#fb7185; --rose-lt:#2a0a10;
-    --indigo:#818cf8; --indigo-lt:#1e1b4b;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--bg);color:var(--ink);font-family:'Poppins',sans-serif;min-height:100vh;font-size:14px;transition:background 0.3s,color 0.3s;}
+/* ── SHARED TOKENS ── */
+:root {
+  --bg:#111b21; --bg2:#1e2d35; --bg3:#182229;
+  --card:#1e2d35; --card2:#2a3942; --card3:#354752;
+  --border:#2a3942; --border2:#3b4a54;
+  --ink:#e9edef; --ink2:#aebac1; --ink3:#667781; --ink4:#3b4a54;
+  --green:#25d366; --green2:#00a884; --green-lt:rgba(37,211,102,0.12); --green-dk:rgba(37,211,102,0.06);
+  --rose:#f15c6d; --rose-lt:rgba(241,92,109,0.12);
+  --amber:#f5a623; --amber-lt:rgba(245,166,35,0.12);
+  --blue:#53bdeb; --blue-lt:rgba(83,189,235,0.12);
+  --violet:#bf59cf; --violet-lt:rgba(191,89,207,0.12);
+  --shadow:0 1px 3px rgba(0,0,0,0.4),0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.5);
+  --sidebar-w:220px; --topbar-h:56px; --r:10px; --r-lg:14px;
+}
+body.light {
+  --bg:#f0f2f5; --bg2:#ffffff; --bg3:#e9edef;
+  --card:#ffffff; --card2:#f0f2f5; --card3:#e9edef;
+  --border:#d1d7db; --border2:#b0bec5;
+  --ink:#111b21; --ink2:#3b4a54; --ink3:#667781; --ink4:#aebac1;
+  --green:#00a884; --green2:#008069; --green-lt:rgba(0,168,132,0.1);
+  --rose:#e53935; --rose-lt:rgba(229,57,53,0.1);
+  --amber:#f57c00; --amber-lt:rgba(245,124,0,0.1);
+  --blue:#0288d1; --blue-lt:rgba(2,136,209,0.1);
+  --violet:#8e24aa; --violet-lt:rgba(142,36,170,0.1);
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+.app{display:flex;min-height:100vh}
 
-  /* HEADER */
-  .header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;gap:16px;border-bottom:1px solid var(--border);background:var(--bg);}
-  .brand-title{font-size:24px;font-weight:700;letter-spacing:-0.6px;color:var(--ink);line-height:1;}
-  .brand-title em{font-style:normal;color:var(--teal);}
-  .header-right{display:flex;align-items:center;gap:8px;}
-  .pill{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);}
-  .pdot{width:7px;height:7px;border-radius:50%;}
-  .pdot.green{background:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,0.2);}
-  .pdot.amber{background:#f59e0b;}
-  .icon-btn{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-  .icon-btn:hover{border-color:var(--border2);color:var(--ink);}
-  .nav-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);text-decoration:none;transition:all 0.2s;cursor:pointer;}
-  .nav-btn:hover{border-color:var(--teal-mid);color:var(--teal);}
-  .clock{font-family:'JetBrains Mono',monospace;font-size:13px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink3);}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg3);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:200}
+.sidebar-brand{padding:18px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:11px}
+.sidebar-logo{width:38px;height:38px;border-radius:10px;flex-shrink:0;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
+.sidebar-logo img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.sidebar-brand-name{font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-0.2px;line-height:1.2}
+.sidebar-brand-slug{font-size:10px;color:var(--ink3);margin-top:2px}
+.sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--ink2);text-decoration:none;cursor:pointer;transition:all 0.15s;border:1px solid transparent}
+.nav-item:hover{background:var(--card2);color:var(--ink)}
+.nav-item.active{background:var(--green-lt);color:var(--green);border-color:rgba(37,211,102,0.2);font-weight:600}
+.nav-item svg{flex-shrink:0;opacity:0.7}
+.nav-item.active svg{opacity:1}
+.sidebar-footer{padding:14px 10px;border-top:1px solid var(--border)}
+.sidebar-ver{font-size:10px;color:var(--ink4);text-align:center;letter-spacing:0.3px}
 
-  /* MAIN */
-  .main{padding:28px 32px;max-width:1400px;margin:0 auto;}
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0}
 
-  /* SEARCH + STATS BAR */
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
-  .search-wrap{position:relative;flex:1;max-width:360px;}
-  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink4);pointer-events:none;}
-  .search-input{width:100%;padding:9px 12px 9px 36px;border-radius:10px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-family:'Poppins',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color 0.2s;}
-  .search-input::placeholder{color:var(--ink4);}
-  .search-input:focus{border-color:var(--teal-mid);}
-  .stats-row{display:flex;align-items:center;gap:8px;}
-  .stat-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 12px;border-radius:100px;background:var(--card);border:1px solid var(--border);color:var(--ink3);}
-  .stat-pill span{color:var(--ink);font-weight:600;}
+/* TOPBAR */
+.topbar{height:var(--topbar-h);flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--bg3);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:8px}
+.page-title{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-0.2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.status-pill{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:500;border:1px solid var(--border);color:var(--ink3);transition:all 0.3s}
+.status-pill.live{background:var(--green-lt);border-color:rgba(37,211,102,0.25);color:var(--green)}
+.status-pill.dead{background:var(--rose-lt);border-color:rgba(241,92,109,0.25);color:var(--rose)}
+.status-pill.waiting{background:var(--amber-lt);border-color:rgba(245,166,35,0.2);color:var(--amber)}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot.live{background:var(--green);animation:pulse 2s infinite}
+.dot.dead{background:var(--rose)}
+.dot.wait{background:var(--amber);animation:blink 1.4s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,0.4)}50%{box-shadow:0 0 0 5px rgba(37,211,102,0)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.icon-btn{width:32px;height:32px;border-radius:var(--r);background:transparent;border:1px solid var(--border);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.icon-btn:hover{background:var(--card2);color:var(--ink);border-color:var(--border2)}
+.clock{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink3);padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);letter-spacing:0.5px}
 
-  /* TABLE */
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
-  .panel-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
-  .panel-title{font-size:13px;font-weight:600;color:var(--ink);}
-  .panel-sub{font-size:11px;color:var(--ink4);margin-top:2px;}
-  .chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);color:var(--ink3);}
+/* CONTENT */
+.content{flex:1;padding:22px 24px 40px;overflow-y:auto}
 
-  table{width:100%;border-collapse:collapse;}
-  thead tr{border-bottom:1px solid var(--border);}
-  thead th{padding:10px 16px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);white-space:nowrap;}
-  tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s;cursor:default;}
-  tbody tr:last-child{border-bottom:none;}
-  tbody tr:hover{background:var(--card2);}
-  td{padding:14px 16px;font-size:13px;color:var(--ink2);vertical-align:middle;}
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--card2)}
+.panel-head-left{display:flex;align-items:center;gap:10px}
+.panel-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--green-lt);border:1px solid rgba(37,211,102,0.2)}
+.panel-title{font-size:13px;font-weight:700;color:var(--ink)}
+.panel-sub{font-size:10px;color:var(--ink3);margin-top:1px}
+.chip{padding:3px 9px;border-radius:7px;background:var(--bg);border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)}
 
-  .contact-cell{display:flex;align-items:center;gap:12px;}
-  .avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;letter-spacing:-0.5px;}
-  .contact-name{font-weight:600;color:var(--ink);font-size:13px;}
-  .contact-phone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink4);margin-top:2px;}
+/* MISC */
+.empty{padding:44px 20px;text-align:center}
+.empty-icon{font-size:28px;margin-bottom:10px;opacity:0.2}
+.empty-txt{font-size:12px;color:var(--ink4)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-  .first-msg{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink3);font-size:12px;}
-  .date-cell{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);white-space:nowrap;}
-  .msgs-badge{display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px;background:var(--teal-lt);color:var(--teal);min-width:36px;}
-  .inst-tag{font-size:11px;padding:3px 9px;border-radius:6px;background:var(--bg2);border:1px solid var(--border);color:var(--ink4);font-family:'JetBrains Mono',monospace;}
 
-  /* EMPTY */
-  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;gap:12px;}
-  .empty-icon{width:48px;height:48px;border-radius:14px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--ink4);}
-  .empty-txt{font-size:14px;font-weight:500;color:var(--ink3);}
-  .empty-sub{font-size:12px;color:var(--ink4);}
+/* ── CONTATOS SPECIFIC ── */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;animation:fadeUp 0.4s ease both}
+.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 
-  /* PAGINATION */
-  .pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--border);}
-  .page-info{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink4);}
-  .page-btns{display:flex;gap:4px;}
-  .page-btn{width:28px;height:28px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-  .page-btn:hover{border-color:var(--teal-mid);color:var(--teal);}
-  .page-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink4);pointer-events:none}
+.search-input{padding:7px 12px 7px 32px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);font-family:'Inter',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color 0.2s;width:240px}
+.search-input::placeholder{color:var(--ink4)}
+.search-input:focus{border-color:var(--green)}
 
-  /* LOADING */
-  .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:10px;color:var(--ink4);font-size:13px;}
-  .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin 0.7s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
-  .ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;}
-  .ia-badge.ativa{background:#dcfce7;color:#16a34a;}
-  .ia-badge.pausada{background:var(--rose-lt);color:var(--rose);}
-  .dark .ia-badge.ativa{background:#052e16;color:#4ade80;}
-  .filter-btn{padding:5px 12px;border-radius:100px;background:var(--card);border:1px solid var(--border);font-family:'Poppins',sans-serif;font-size:11px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.15s;}
-  .filter-btn:hover{border-color:var(--teal-mid);color:var(--teal);}
-  .filter-btn.active{background:var(--teal-lt);border-color:var(--teal-mid);color:var(--teal);font-weight:600;}
-  .filter-btn.pausada.active{background:var(--rose-lt);border-color:var(--rose);color:var(--rose);}
-  .export-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:10px;background:var(--teal-lt);border:1px solid var(--teal-mid);color:var(--teal);font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
-  .export-btn:hover{background:var(--teal);color:#fff;border-color:var(--teal);}
-  tbody tr{animation:fadeIn 0.2s ease both;}
+.filter-btn{padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);font-size:11px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.15s}
+.filter-btn:hover{border-color:var(--border2);color:var(--ink2)}
+.filter-btn.active{background:var(--green-lt);border-color:rgba(37,211,102,0.3);color:var(--green);font-weight:600}
+.filter-btn.pausada.active{background:var(--rose-lt);border-color:rgba(241,92,109,0.3);color:var(--rose)}
+
+.stat-pill{font-family:'DM Mono',monospace;font-size:11px;padding:5px 10px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);color:var(--ink3)}
+.stat-pill b{color:var(--ink);font-weight:600}
+
+.export-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:var(--r);background:var(--green-lt);border:1px solid rgba(37,211,102,0.25);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.export-btn:hover{background:var(--green);color:#111b21;border-color:var(--green)}
+
+/* TABLE */
+.twrap{overflow-x:auto}
+.twrap::-webkit-scrollbar{height:3px}
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--border)}
+th{padding:9px 16px;text-align:left;font-size:9px;font-weight:700;letter-spacing:0.7px;text-transform:uppercase;color:var(--ink4);background:var(--card);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--card2)}
+td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
+
+.contact-cell{display:flex;align-items:center;gap:10px}
+.avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
+.contact-name{font-size:12px;font-weight:600;color:var(--ink2)}
+.contact-phone{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px}
+.first-msg{max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;color:var(--ink3)}
+.date-cell{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)}
+.msgs-badge{display:inline-flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:var(--green-lt);color:var(--green);min-width:32px}
+.inst-tag{font-size:10px;padding:2px 8px;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--ink4);font-family:'DM Mono',monospace}
+.ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:7px}
+.ia-badge.ativa{background:var(--green-lt);color:var(--green)}
+.ia-badge.pausada{background:var(--rose-lt);color:var(--rose)}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-top:1px solid var(--border)}
+.page-info{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:28px;height:28px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.page-btn:hover{border-color:var(--green);color:var(--green)}
+.page-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+.loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:10px;color:var(--ink4);font-size:13px}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+<div class="app">
 
-<header class="header">
-  <div class="brand-title">Painel de <em>Atendimento</em></div>
-  <div class="header-right">
-    <div class="pill"><div class="pdot green" id="sdot"></div><span id="stxt">Conectando</span></div>
-    <a href="dashboard-leads.html" class="nav-btn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      Dashboard
-    </a>
-    <a href="relatorio-ia.html" class="nav-btn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Relatório IA
-    </a>
-    <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Alternar tema">
-      <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      <svg id="iconSun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    </button>
-    <div class="clock" id="clock">--:--:--</div>
+<nav class="sidebar">
+  <div class="sidebar-brand" id="logoArea">
+    <div class="sidebar-logo">💬</div>
+    <div><div class="sidebar-brand-name">Atendimento</div><div class="sidebar-brand-slug">Painel</div></div>
   </div>
-</header>
+  <div class="sidebar-nav">
+    <a href="dashboard-leads.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="contatos.html" class="nav-item active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Contatos</span>
+    </a>
+    <a href="relatorio-ia.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Relatório IA</span>
+    </a>
+    <a href="ferramentas.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span>Ferramentas</span>
+    </a>
+  </div>
+  <div class="sidebar-footer"><div class="sidebar-ver">Sistema v1.0</div></div>
+</nav>
 
-<main class="main">
-
+<div class="main">
   <div class="topbar">
-    <div class="search-wrap">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-input" id="searchInput" type="text" placeholder="Buscar por nome ou telefone..." oninput="filtrar()">
-    </div>
-    <div class="stats-row">
-      <div class="stat-pill">Total <span id="statTotal">—</span></div>
-      <div class="stat-pill">Instâncias <span id="statInst">—</span></div>
-      <div class="stat-pill">IA Ativa <span id="statIASim" style="color:#16a34a">—</span></div>
-      <div class="stat-pill">IA Pausada <span id="statIANao" style="color:var(--rose)">—</span></div>
-      <button class="filter-btn active" id="filtroTodos" onclick="setFiltroIA('todos')">Todos</button>
-      <button class="filter-btn" id="filtroAtiva" onclick="setFiltroIA('ativa')">IA Ativa</button>
-      <button class="filter-btn pausada" id="filtroPausada" onclick="setFiltroIA('pausada')">IA Pausada</button>
-      <button class="export-btn" onclick="exportarExcel()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Exportar Excel
+    <div class="topbar-left"><div class="page-title">Contatos</div></div>
+    <div class="topbar-right">
+      <div class="status-pill waiting" id="statusPill"><div class="dot wait" id="sdot"></div><span id="stxt">Conectando</span></div>
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun"  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
+      <div class="clock" id="clock">--:--:--</div>
     </div>
   </div>
 
-  <div class="panel">
-    <div class="panel-header">
-      <div>
-        <div class="panel-title">Contatos cadastrados</div>
-        <div class="panel-sub">todos os contatos que interagiram com o sistema</div>
+  <div class="content">
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="searchInput" type="text" placeholder="Buscar nome ou telefone..." oninput="filtrar()">
+        </div>
+        <button class="filter-btn active" id="filtroTodos" onclick="setFiltroIA('todos')">Todos</button>
+        <button class="filter-btn" id="filtroAtiva" onclick="setFiltroIA('ativa')">IA Ativa</button>
+        <button class="filter-btn pausada" id="filtroPausada" onclick="setFiltroIA('pausada')">IA Pausada</button>
       </div>
-      <span class="chip" id="chipTotal">—</span>
+      <div class="toolbar-right">
+        <div class="stat-pill">Total <b id="statTotal">—</b></div>
+        <div class="stat-pill">IA Ativa <b id="statIASim" style="color:var(--green)">—</b></div>
+        <div class="stat-pill">IA Pausada <b id="statIANao" style="color:var(--rose)">—</b></div>
+        <button class="export-btn" onclick="exportarExcel()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Exportar CSV
+        </button>
+      </div>
     </div>
 
-    <div id="tableWrap">
-      <div class="loading"><div class="spinner"></div> Carregando contatos...</div>
-    </div>
-
-    <div class="pagination" id="paginacao" style="display:none">
-      <div class="page-info" id="pageInfo"></div>
-      <div class="page-btns">
-        <button class="page-btn" id="btnPrev" onclick="mudarPagina(-1)">&#8592;</button>
-        <button class="page-btn" id="btnNext" onclick="mudarPagina(1)">&#8594;</button>
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-head-left">
+          <div class="panel-icon">👥</div>
+          <div>
+            <div class="panel-title">Contatos cadastrados</div>
+            <div class="panel-sub">Todos os contatos que interagiram com o sistema</div>
+          </div>
+        </div>
+        <div class="chip" id="chipTotal">—</div>
+      </div>
+      <div id="tableWrap"><div class="loading"><div class="spinner"></div> Carregando contatos...</div></div>
+      <div class="pagination" id="paginacao" style="display:none">
+        <div class="page-info" id="pageInfo"></div>
+        <div class="page-btns">
+          <button class="page-btn" id="btnPrev" onclick="mudarPagina(-1)">←</button>
+          <button class="page-btn" id="btnNext" onclick="mudarPagina(1)">→</button>
+        </div>
       </div>
     </div>
   </div>
-
-</main>
+</div>
+</div>
 
 <script>
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
 const POR_PAGINA = 20
-const CORES = ['#0d9488','#d97706','#4f46e5','#be123c','#059669','#7c3aed','#b45309','#0284c7']
+const CORES = ['#25d366','#53bdeb','#f5a623','#f15c6d','#bf59cf','#00a884','#0288d1','#e91e8c']
 const colorMap = {}
 let todosContatos = [], filtrados = [], paginaAtual = 1, filtroIA = 'todos'
 
-function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
-
-function corContato(tel) {
-  if (!colorMap[tel]) colorMap[tel] = CORES[Object.keys(colorMap).length % CORES.length]
-  return colorMap[tel]
-}
-
-function inicial(nome) {
-  if (!nome) return '?'
-  return nome.trim().split(' ').map(p => p[0]).slice(0,2).join('').toUpperCase()
-}
-
-function fData(ts) {
-  if (!ts) return '—'
-  const d = new Date(ts)
-  return d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'})
-}
-
-function fHora(ts) {
-  if (!ts) return ''
-  const d = new Date(ts)
-  return d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'})
-}
+function corC(tel) { if (!colorMap[tel]) colorMap[tel] = CORES[Object.keys(colorMap).length % CORES.length]; return colorMap[tel] }
+function inicial(nome) { if (!nome) return '?'; return nome.trim().split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() }
+function fData(ts) { if (!ts) return '—'; return new Date(ts).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}) }
+function fHora(ts) { if (!ts) return ''; return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) }
 
 async function carregar() {
   try {
-    const r = await fetch(`${API}/contatos`)
-    if (!r.ok) throw new Error()
-    const data = await r.json()
-    todosContatos = data.contatos || []
-    setStatus(true)
-    filtrar()
+    const r = await fetch(`${API}/contatos`); if (!r.ok) throw new Error()
+    const data = await r.json(); todosContatos = data.contatos || []
+    setStatus(true); filtrar()
   } catch {
     setStatus(false)
-    document.getElementById('tableWrap').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-        <div class="empty-txt">Não foi possível carregar</div>
-        <div class="empty-sub">Verifique a conexão com a API</div>
-      </div>`
+    document.getElementById('tableWrap').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-txt">Não foi possível carregar</div></div>`
   }
 }
 
 function filtrar() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim()
-  let base = filtroIA === 'ativa'
-    ? todosContatos.filter(c => !c.ia || c.ia === 'sim')
-    : filtroIA === 'pausada'
-    ? todosContatos.filter(c => c.ia === 'nao')
-    : [...todosContatos]
-
-  filtrados = q
-    ? base.filter(c =>
-        (c.nome||'').toLowerCase().includes(q) ||
-        (c.telefone||'').includes(q)
-      )
-    : base
-
-  // Ordena pelo primeiro contato mais recente
-  filtrados.sort((a,b) => new Date(b.primeiro_contato||0) - new Date(a.primeiro_contato||0))
-
-  paginaAtual = 1
-  renderTabela()
+  let base = filtroIA==='ativa' ? todosContatos.filter(c=>!c.ia||c.ia==='sim')
+           : filtroIA==='pausada' ? todosContatos.filter(c=>c.ia==='nao')
+           : [...todosContatos]
+  filtrados = q ? base.filter(c=>(c.nome||'').toLowerCase().includes(q)||(c.telefone||'').includes(q)) : base
+  filtrados.sort((a,b)=>new Date(b.primeiro_contato||0)-new Date(a.primeiro_contato||0))
+  paginaAtual = 1; renderTabela()
 }
 
 function renderTabela() {
-  const total = filtrados.length
-  const totalPags = Math.ceil(total / POR_PAGINA)
-  const inicio = (paginaAtual - 1) * POR_PAGINA
-  const pagina = filtrados.slice(inicio, inicio + POR_PAGINA)
-
-  // Stats
-  const instancias = new Set(todosContatos.map(c => c.instancia).filter(Boolean))
-  const iaSim = todosContatos.filter(c => !c.ia || c.ia === 'sim').length
-  const iaNao = todosContatos.filter(c => c.ia === 'nao').length
-  const se = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v }
-  se('statTotal', todosContatos.length)
-  se('statInst', instancias.size)
-  se('statIASim', iaSim)
-  se('statIANao', iaNao)
-  se('chipTotal', `${total} contato${total !== 1 ? 's' : ''}`)
-
+  const total = filtrados.length, totalPags = Math.ceil(total/POR_PAGINA)
+  const inicio = (paginaAtual-1)*POR_PAGINA, pagina = filtrados.slice(inicio, inicio+POR_PAGINA)
+  const instancias = new Set(todosContatos.map(c=>c.instancia).filter(Boolean))
+  const iaSim = todosContatos.filter(c=>!c.ia||c.ia==='sim').length
+  const iaNao = todosContatos.filter(c=>c.ia==='nao').length
+  const se = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v }
+  se('statTotal',todosContatos.length); se('statIASim',iaSim); se('statIANao',iaNao)
+  se('chipTotal',`${total} contato${total!==1?'s':''}`)
   if (!pagina.length) {
-    document.getElementById('tableWrap').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="empty-txt">Nenhum contato encontrado</div>
-        <div class="empty-sub">Tente outro termo de busca</div>
-      </div>`
-    document.getElementById('paginacao').style.display = 'none'
-    return
+    document.getElementById('tableWrap').innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-txt">Nenhum contato encontrado</div></div>`
+    document.getElementById('paginacao').style.display = 'none'; return
   }
-
-  document.getElementById('tableWrap').innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Contato</th>
-          <th>Primeiro contato</th>
-          <th>Primeira mensagem</th>
-          <th>Mensagens</th>
-          <th>Instância</th>
-          <th>IA</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${pagina.map(c => {
-          const cor = corContato(c.telefone)
-          const data = fData(c.primeiro_contato)
-          const hora = fHora(c.primeiro_contato)
-          const primMsg = c.primeira_mensagem || '—'
-          const totalMsgs = c.total_mensagens || 0
-          const inst = c.instancia || '—'
-          return `<tr>
-            <td>
-              <div class="contact-cell">
-                <div class="avatar" style="background:${cor}">${inicial(c.nome)}</div>
-                <div>
-                  <div class="contact-name">${c.nome || 'Desconhecido'}</div>
-                  <div class="contact-phone">${c.telefone || ''}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <div class="date-cell">${data}</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:2px">${hora}</div>
-            </td>
-            <td><div class="first-msg" title="${primMsg}">${primMsg}</div></td>
-            <td><span class="msgs-badge">${totalMsgs}</span></td>
-            <td><span class="inst-tag">${inst}</span></td>
-            <td><span class="ia-badge ${c.ia === 'nao' ? 'pausada' : 'ativa'}">${c.ia === 'nao' ? '⏸ Pausada' : '▶ Ativa'}</span></td>
-          </tr>`
-        }).join('')}
-      </tbody>
-    </table>`
-
-  // Paginação
+  document.getElementById('tableWrap').innerHTML = `<div class="twrap"><table>
+    <thead><tr><th>Contato</th><th>Primeiro contato</th><th>Primeira mensagem</th><th>Msgs</th><th>Instância</th><th>IA</th></tr></thead>
+    <tbody>${pagina.map(c=>`<tr>
+      <td><div class="contact-cell"><div class="avatar" style="background:${corC(c.telefone)}">${inicial(c.nome)}</div><div><div class="contact-name">${c.nome||'Desconhecido'}</div><div class="contact-phone">${c.telefone||''}</div></div></div></td>
+      <td><div class="date-cell">${fData(c.primeiro_contato)}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px">${fHora(c.primeiro_contato)}</div></td>
+      <td><div class="first-msg" title="${c.primeira_mensagem||''}">${c.primeira_mensagem||'—'}</div></td>
+      <td><span class="msgs-badge">${c.total_mensagens||0}</span></td>
+      <td><span class="inst-tag">${c.instancia||'—'}</span></td>
+      <td><span class="ia-badge ${c.ia==='nao'?'pausada':'ativa'}">${c.ia==='nao'?'⏸ Pausada':'▶ Ativa'}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div>`
   const pag = document.getElementById('paginacao')
-  if (totalPags > 1) {
-    pag.style.display = 'flex'
-    document.getElementById('pageInfo').textContent = `${inicio+1}–${Math.min(inicio+POR_PAGINA, total)} de ${total}`
-    document.getElementById('btnPrev').disabled = paginaAtual === 1
-    document.getElementById('btnNext').disabled = paginaAtual === totalPags
-  } else {
-    pag.style.display = 'none'
-  }
+  if (totalPags>1) {
+    pag.style.display='flex'
+    se('pageInfo',`${inicio+1}–${Math.min(inicio+POR_PAGINA,total)} de ${total}`)
+    document.getElementById('btnPrev').disabled = paginaAtual===1
+    document.getElementById('btnNext').disabled = paginaAtual===totalPags
+  } else { pag.style.display='none' }
 }
 
-function mudarPagina(delta) {
-  paginaAtual += delta
-  renderTabela()
-  window.scrollTo({top:0, behavior:'smooth'})
-}
-
-function setStatus(ok) {
-  document.getElementById('sdot').className = `pdot ${ok ? 'green' : 'amber'}`
-  document.getElementById('stxt').textContent = ok ? 'Ao vivo' : 'Offline'
-}
-
-function toggleTheme() {
-  document.body.classList.toggle('dark')
-  const d = document.body.classList.contains('dark')
-  localStorage.setItem('theme', d ? 'dark' : 'light')
-  document.getElementById('iconMoon').style.display = d ? 'none' : 'block'
-  document.getElementById('iconSun').style.display  = d ? 'block' : 'none'
-}
-
-// INIT
-;(function() {
-  const t = localStorage.getItem('theme')
-  if (t === 'dark') {
-    document.body.classList.add('dark')
-    document.getElementById('iconMoon').style.display = 'none'
-    document.getElementById('iconSun').style.display  = 'block'
-  }
-  setInterval(() => {
-    const el = document.getElementById('clock')
-    if (el) el.textContent = new Date().toLocaleTimeString('pt-BR')
-  }, 1000)
-  carregar()
-  setInterval(carregar, 30000)
-})()
-
-function setFiltroIA(f) {
-  filtroIA = f
-  document.getElementById('filtroTodos').classList.toggle('active', f === 'todos')
-  document.getElementById('filtroAtiva').classList.toggle('active', f === 'ativa')
-  document.getElementById('filtroPausada').classList.toggle('active', f === 'pausada')
-  if (todosContatos.length) filtrar()
-}
-
+function mudarPagina(delta) { paginaAtual+=delta; renderTabela(); window.scrollTo({top:0,behavior:'smooth'}) }
+function setFiltroIA(f) { filtroIA=f; ['Todos','Ativa','Pausada'].forEach(n=>document.getElementById('filtro'+n)?.classList.toggle('active',f===n.toLowerCase())); document.getElementById('filtroTodos').classList.toggle('active',f==='todos'); if(todosContatos.length) filtrar() }
+function setStatus(ok) { const pill=document.getElementById('statusPill'),dot=document.getElementById('sdot'),txt=document.getElementById('stxt'); if(ok){pill.className='status-pill live';dot.className='dot live';txt.textContent='Ao vivo'}else{pill.className='status-pill dead';dot.className='dot dead';txt.textContent='Offline'} }
+function toggleTheme() { const l=document.body.classList.toggle('light'); document.getElementById('iconMoon').style.display=l?'none':'block'; document.getElementById('iconSun').style.display=l?'block':'none'; localStorage.setItem('theme',l?'light':'dark') }
 function exportarExcel() {
   if (!filtrados.length) return
-  const bom = '\uFEFF'
-  const header = ['Nome', 'Telefone', 'Instancia', 'Primeiro Contato', 'Primeira Mensagem', 'Total Mensagens']
-  const rows = filtrados.map(c => [
-    c.nome || '',
-    "'" + (c.telefone || ''),
-    c.instancia || '',
-    c.primeiro_contato ? new Date(c.primeiro_contato).toLocaleString('pt-BR') : '',
-    (c.primeira_mensagem || '').replace(/"/g, '""'),
-    c.total_mensagens || 0
-  ].map(v => '"' + v + '"').join(';'))
-  const csv = bom + [header.join(';'), ...rows].join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'contatos_' + new Date().toISOString().split('T')[0] + '.csv'
-  a.click()
-  URL.revokeObjectURL(url)
+  const bom='\uFEFF', header=['Nome','Telefone','Instancia','Primeiro Contato','Primeira Mensagem','Total Mensagens']
+  const rows=filtrados.map(c=>[c.nome||'', "'"+( c.telefone||''), c.instancia||'', c.primeiro_contato?new Date(c.primeiro_contato).toLocaleString('pt-BR'):'', (c.primeira_mensagem||'').replace(/"/g,'""'), c.total_mensagens||0].map(v=>'"'+v+'"').join(';'))
+  const csv=bom+[header.join(';'),...rows].join('\n')
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}), url=URL.createObjectURL(blob), a=document.createElement('a')
+  a.href=url; a.download='contatos_'+new Date().toISOString().split('T')[0]+'.csv'; a.click(); URL.revokeObjectURL(url)
 }
+;(function(){
+  const t=localStorage.getItem('theme')
+  if(t==='light'){document.body.classList.add('light');document.getElementById('iconMoon').style.display='none';document.getElementById('iconSun').style.display='block'}
+  setInterval(()=>{const el=document.getElementById('clock');if(el)el.textContent=new Date().toLocaleTimeString('pt-BR')},1000)
+  carregar(); setInterval(carregar,30000)
+})()
 </script>
 <script>
-(function(){
-  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  if (cfg.cores) {
-    const r = document.documentElement
-    if (cfg.cores.primaria)   { r.style.setProperty('--teal', cfg.cores.primaria); r.style.setProperty('--teal-mid', cfg.cores.primaria) }
-    if (cfg.cores.secundaria) r.style.setProperty('--rose', cfg.cores.secundaria)
-    if (cfg.cores.terciaria)  r.style.setProperty('--amber', cfg.cores.terciaria)
-    if (cfg.cores.acento)     r.style.setProperty('--indigo', cfg.cores.acento)
-  }
+;(function(){
+  const cfg=typeof CONFIG!=='undefined'?CONFIG:{}
+  const la=document.getElementById('logoArea')
+  if(la&&cfg.empresa){const h=cfg.logo_url&&cfg.logo_url.trim();la.innerHTML=`<div class="sidebar-logo">${h?`<img src="${cfg.logo_url}" alt="${cfg.empresa}">`:cfg.logo_emoji||'💬'}</div><div><div class="sidebar-brand-name">${cfg.empresa}</div><div class="sidebar-brand-slug">${cfg.slogan||'Painel'}</div></div>`}
+  if(cfg.cores){const r=document.documentElement;if(cfg.cores.primaria){r.style.setProperty('--green',cfg.cores.primaria);r.style.setProperty('--green2',cfg.cores.primaria)}if(cfg.cores.secundaria)r.style.setProperty('--rose',cfg.cores.secundaria)}
 })()
 </script>
 </body>
