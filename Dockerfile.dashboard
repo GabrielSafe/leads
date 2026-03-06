@@ -1,4 +1,5 @@
 FROM nginx:alpine
+# cache-bust 20260306003437
 COPY dashboard-leads.html /usr/share/nginx/html/
 COPY relatorio-ia.html /usr/share/nginx/html/
 COPY contatos.html /usr/share/nginx/html/
