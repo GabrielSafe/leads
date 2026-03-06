@@ -8,6 +8,7 @@ app.use(express.json())
 
 // Serve static HTML files
 app.use(express.static(__dirname + '/public'))
+app.get('/', (req, res) => res.redirect('/dashboard-leads.html'))
 
 const redisConfig = {
   host: process.env.REDIS_HOST || '172.17.0.2',
