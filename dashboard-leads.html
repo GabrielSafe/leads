@@ -3,7 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fluxo · Atendimento</title>
+<title>Painel de Atendimento</title>
+<script src="/config.js"></script>
+<script>
+// Apply favicon from config
+(function(){
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  const favicon = cfg.favicon_url || ''
+  const emoji = cfg.favicon_emoji || '💬'
+  const link = document.createElement('link')
+  link.rel = 'icon'
+  if (favicon) {
+    link.href = favicon
+  } else {
+    link.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + emoji + '</text></svg>'
+  }
+  document.head.appendChild(link)
+  // Set title
+  if (cfg.empresa) document.title = cfg.empresa + ' · Atendimento'
+})()
+</script>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -85,6 +104,43 @@ body.dark .ibtn-n{background:rgba(255,255,255,0.06);}
 .stag.green{background:var(--green-lt);color:var(--green);}
 .stag.rose{background:var(--rose-lt);color:var(--rose);}
 .stag.indigo{background:var(--indigo-lt);color:var(--indigo);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.stats .sc{animation:fadeUp 0.5s ease both}
+.stats .sc:nth-child(1){animation-delay:0.05s}
+.stats .sc:nth-child(2){animation-delay:0.10s}
+.stats .sc:nth-child(3){animation-delay:0.15s}
+.stats .sc:nth-child(4){animation-delay:0.20s}
+.stats .sc:nth-child(5){animation-delay:0.25s}
+.stats .sc:nth-child(6){animation-delay:0.30s}
+.stats .sc:nth-child(7){animation-delay:0.35s}
+.stats .sc:nth-child(8){animation-delay:0.40s}
+.stats .sc:nth-child(9){animation-delay:0.45s}
+
+.panel{animation:scaleIn 0.4s ease both;animation-delay:0.2s}
+
+.sc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);transition:transform 0.2s ease, box-shadow 0.2s ease}
+
+.header{animation:fadeIn 0.3s ease both}
+
+/* Skeleton loading */
+.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;color:transparent!important}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Logo header */
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-img{height:36px;width:auto;object-fit:contain}
+.logo-emoji{font-size:26px;line-height:1}
+.empresa-nome{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.3px}
+.empresa-slogan{font-size:11px;color:var(--ink3);margin-top:1px}
+
+/* Row hover */
+.tr:hover td{background:var(--card2)!important;transition:background 0.15s}
+
   .stag.green{background:#dcfce7;color:#16a34a;}
   .dark .stag.green{background:#052e16;color:#4ade80;}
 .snum{font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;line-height:1;color:var(--ink);margin-bottom:5px;transition:all 0.3s;}
@@ -927,6 +983,38 @@ function fTMA(seg) {
   const m = Math.floor(seg/60), s = seg%60
   return s > 0 ? `${m}m ${s}s` : `${m}m`
 }
+</script>
+<script>
+// Apply CONFIG to dashboard
+(function(){
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  
+  // Logo/empresa
+  const logoArea = document.getElementById('logoArea')
+  if (logoArea && cfg.empresa) {
+    const hasLogo = cfg.logo_url && cfg.logo_url.trim()
+    const logoHtml = hasLogo
+      ? `<img src="${cfg.logo_url}" class="logo-img" alt="${cfg.empresa}">`
+      : `<span class="logo-emoji">${cfg.logo_emoji || '💬'}</span>`
+    logoArea.innerHTML = `
+      <div class="logo-wrap">
+        ${logoHtml}
+        <div>
+          <div class="empresa-nome">${cfg.empresa}</div>
+          ${cfg.slogan ? `<div class="empresa-slogan">${cfg.slogan}</div>` : ''}
+        </div>
+      </div>`
+  }
+
+  // Cores customizadas
+  if (cfg.cores) {
+    const r = document.documentElement
+    if (cfg.cores.primaria)   { r.style.setProperty('--teal', cfg.cores.primaria); r.style.setProperty('--teal-mid', cfg.cores.primaria) }
+    if (cfg.cores.secundaria) r.style.setProperty('--rose', cfg.cores.secundaria)
+    if (cfg.cores.terciaria)  r.style.setProperty('--amber', cfg.cores.terciaria)
+    if (cfg.cores.acento)     r.style.setProperty('--indigo', cfg.cores.acento)
+  }
+})()
 </script>
 </body>
 </html>
