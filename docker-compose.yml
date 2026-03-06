@@ -23,9 +23,9 @@ services:
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT:-6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - PORT=3001
+      - PORT=80
     expose:
-      - "3001"
+      - "80"
     networks:
       - easypanel
 
