@@ -14,7 +14,7 @@
   if (cfg.empresa) document.title = cfg.empresa + ' · Contatos'
 })()
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ── SHARED TOKENS ── */
 :root {
@@ -45,7 +45,7 @@ body.light {
   --shadow-lg:0 8px 40px rgba(0,0,0,0.12);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
 .app{display:flex;min-height:100vh}
 
@@ -85,7 +85,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
 .icon-btn{width:32px;height:32px;border-radius:var(--r);background:transparent;border:1px solid var(--border);color:var(--ink3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
 .icon-btn:hover{background:var(--card2);color:var(--ink);border-color:var(--border2)}
-.clock{font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:var(--ink3);padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);letter-spacing:0.5px}
+.clock{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--ink3);padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);letter-spacing:0.5px}
 
 /* CONTENT */
 .content{flex:1;padding:22px 24px 40px;overflow-y:auto}
@@ -97,7 +97,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .panel-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--green-lt);border:1px solid rgba(37,211,102,0.2)}
 .panel-title{font-size:13px;font-weight:700;color:var(--ink)}
 .panel-sub{font-size:10px;color:var(--ink3);margin-top:1px}
-.chip{padding:3px 9px;border-radius:7px;background:var(--bg);border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)}
+.chip{padding:3px 9px;border-radius:7px;background:var(--bg);border:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)}
 
 /* MISC */
 .empty{padding:44px 20px;text-align:center}
@@ -112,7 +112,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 
 .search-wrap{position:relative}
 .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink4);pointer-events:none}
-.search-input{padding:7px 12px 7px 32px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);font-family:'Inter',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color 0.2s;width:240px}
+.search-input{padding:7px 12px 7px 32px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color 0.2s;width:240px}
 .search-input::placeholder{color:var(--ink4)}
 .search-input:focus{border-color:var(--green)}
 
@@ -121,7 +121,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--i
 .filter-btn.active{background:var(--green-lt);border-color:rgba(37,211,102,0.3);color:var(--green);font-weight:600}
 .filter-btn.pausada.active{background:var(--rose-lt);border-color:rgba(241,92,109,0.3);color:var(--rose)}
 
-.stat-pill{font-family:'DM Mono',monospace;font-size:11px;padding:5px 10px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);color:var(--ink3)}
+.stat-pill{font-family:'JetBrains Mono',monospace;font-size:11px;padding:5px 10px;border-radius:var(--r);background:var(--card);border:1px solid var(--border);color:var(--ink3)}
 .stat-pill b{color:var(--ink);font-weight:600}
 
 .export-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:var(--r);background:var(--green-lt);border:1px solid rgba(37,211,102,0.25);color:var(--green);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s}
@@ -141,18 +141,18 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
 .contact-cell{display:flex;align-items:center;gap:10px}
 .avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff}
 .contact-name{font-size:12px;font-weight:600;color:var(--ink2)}
-.contact-phone{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px}
+.contact-phone{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px}
 .first-msg{max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;color:var(--ink3)}
-.date-cell{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)}
-.msgs-badge{display:inline-flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:var(--green-lt);color:var(--green);min-width:32px}
-.inst-tag{font-size:10px;padding:2px 8px;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--ink4);font-family:'DM Mono',monospace}
+.date-cell{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)}
+.msgs-badge{display:inline-flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;background:var(--green-lt);color:var(--green);min-width:32px}
+.inst-tag{font-size:10px;padding:2px 8px;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--ink4);font-family:'JetBrains Mono',monospace}
 .ia-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:7px}
 .ia-badge.ativa{background:var(--green-lt);color:var(--green)}
 .ia-badge.pausada{background:var(--rose-lt);color:var(--rose)}
 
 /* PAGINATION */
 .pagination{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-top:1px solid var(--border)}
-.page-info{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink4)}
+.page-info{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink4)}
 .page-btns{display:flex;gap:4px}
 .page-btn{width:28px;height:28px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
 .page-btn:hover{border-color:var(--green);color:var(--green)}
@@ -309,7 +309,7 @@ function renderTabela() {
     <thead><tr><th>Contato</th><th>Primeiro contato</th><th>Primeira mensagem</th><th>Msgs</th><th>Instância</th><th>IA</th></tr></thead>
     <tbody>${pagina.map(c=>`<tr>
       <td><div class="contact-cell"><div class="avatar" style="background:${corC(c.telefone)}">${inicial(c.nome)}</div><div><div class="contact-name">${c.nome||'Desconhecido'}</div><div class="contact-phone">${c.telefone||''}</div></div></div></td>
-      <td><div class="date-cell">${fData(c.primeiro_contato)}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px">${fHora(c.primeiro_contato)}</div></td>
+      <td><div class="date-cell">${fData(c.primeiro_contato)}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px">${fHora(c.primeiro_contato)}</div></td>
       <td><div class="first-msg" title="${c.primeira_mensagem||''}">${c.primeira_mensagem||'—'}</div></td>
       <td><span class="msgs-badge">${c.total_mensagens||0}</span></td>
       <td><span class="inst-tag">${c.instancia||'—'}</span></td>
