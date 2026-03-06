@@ -6,430 +6,525 @@
 <title>Painel de Atendimento</title>
 <script src="/config.js"></script>
 <script>
-// Apply favicon from config
 (function(){
   const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  const favicon = cfg.favicon_url || ''
-  const emoji = cfg.favicon_emoji || '💬'
-  const link = document.createElement('link')
-  link.rel = 'icon'
-  if (favicon) {
-    link.href = favicon
-  } else {
-    link.href = 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + emoji + '</text></svg>'
-  }
+  const link = document.createElement('link'); link.rel = 'icon'
+  link.href = cfg.favicon_url || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>' + (cfg.favicon_emoji||'💬') + '</text></svg>'
   document.head.appendChild(link)
-  // Set title
   if (cfg.empresa) document.title = cfg.empresa + ' · Painel de Atendimento'
 })()
 </script>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ── TOKENS ── */
 :root {
-  --bg:#f5f2ee; --bg2:#edeae4; --card:#faf9f7; --card2:#f0ede8;
-  --border:#e0dbd3; --border2:#cec8be;
-  --ink:#1c1917; --ink2:#44403c; --ink3:#78716c; --ink4:#a8a29e;
-  --teal:#0d9488; --teal-lt:#ccfbf1; --teal-mid:#14b8a6;
-  --amber:#b45309; --amber-lt:#fef3c7;
-  --rose:#be123c; --rose-lt:#ffe4e6;
-  --green:#15803d; --green-lt:#dcfce7;
-  --indigo:#4338ca; --indigo-lt:#e0e7ff;
-  --shadow:0 1px 3px rgba(28,25,23,0.06),0 4px 16px rgba(28,25,23,0.06);
-  --shadow-lg:0 2px 8px rgba(28,25,23,0.08),0 12px 40px rgba(28,25,23,0.10);
+  /* WhatsApp dark palette */
+  --bg:       #111b21;
+  --bg2:      #1e2d35;
+  --bg3:      #182229;
+  --card:     #1e2d35;
+  --card2:    #2a3942;
+  --card3:    #354752;
+  --border:   #2a3942;
+  --border2:  #3b4a54;
+  --ink:      #e9edef;
+  --ink2:     #aebac1;
+  --ink3:     #667781;
+  --ink4:     #3b4a54;
+  --green:    #25d366;
+  --green2:   #00a884;
+  --green-lt: rgba(37,211,102,0.12);
+  --green-dk: rgba(37,211,102,0.06);
+  --rose:     #f15c6d;
+  --rose-lt:  rgba(241,92,109,0.12);
+  --amber:    #f5a623;
+  --amber-lt: rgba(245,166,35,0.12);
+  --blue:     #53bdeb;
+  --blue-lt:  rgba(83,189,235,0.12);
+  --violet:   #bf59cf;
+  --violet-lt:rgba(191,89,207,0.12);
+  --shadow:   0 1px 3px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.5);
+  --sidebar-w:220px;
+  --topbar-h: 56px;
+  --r:        10px;
+  --r-lg:     14px;
 }
-body.dark {
-  --bg:#111110; --bg2:#1a1917; --card:#1c1b19; --card2:#242320;
-  --border:#2e2b27; --border2:#3d3a35;
-  --ink:#f0ece6; --ink2:#d4cfc8; --ink3:#8c8680; --ink4:#5a5550;
-  --teal:#2dd4bf; --teal-lt:#0d2e2b; --teal-mid:#14b8a6;
-  --amber:#fbbf24; --amber-lt:#2a1f05;
-  --rose:#fb7185; --rose-lt:#2a0a10;
-  --green:#4ade80; --green-lt:#052e16;
-  --indigo:#818cf8; --indigo-lt:#1a1a3a;
-  --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.3);
-  --shadow-lg:0 2px 8px rgba(0,0,0,0.4),0 12px 40px rgba(0,0,0,0.4);
+body.light {
+  --bg:       #f0f2f5;
+  --bg2:      #ffffff;
+  --bg3:      #e9edef;
+  --card:     #ffffff;
+  --card2:    #f0f2f5;
+  --card3:    #e9edef;
+  --border:   #d1d7db;
+  --border2:  #b0bec5;
+  --ink:      #111b21;
+  --ink2:     #3b4a54;
+  --ink3:     #667781;
+  --ink4:     #aebac1;
+  --green:    #00a884;
+  --green2:   #008069;
+  --green-lt: rgba(0,168,132,0.1);
+  --green-dk: rgba(0,168,132,0.05);
+  --rose:     #e53935;
+  --rose-lt:  rgba(229,57,53,0.1);
+  --amber:    #f57c00;
+  --amber-lt: rgba(245,124,0,0.1);
+  --blue:     #0288d1;
+  --blue-lt:  rgba(2,136,209,0.1);
+  --violet:   #8e24aa;
+  --violet-lt:rgba(142,36,170,0.1);
+  --shadow:   0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg:0 8px 40px rgba(0,0,0,0.12);
 }
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--ink);font-family:'Poppins',sans-serif;min-height:100vh;font-size:14px;transition:background 0.3s,color 0.3s;}
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:999;opacity:0.4;}
-.wrap{max-width:1360px;margin:0 auto;padding:28px 24px;}
 
-/* HEADER */
-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
-.brand-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:5px;}
-.brand-title{font-size:24px;font-weight:700;letter-spacing:-0.6px;color:var(--ink);line-height:1;}
-.brand-title em{font-style:normal;color:var(--teal);}
-.brand-desc{font-size:11px;color:var(--ink4);margin-top:5px;}
-.hcontrols{display:flex;align-items:center;gap:8px;}
-.pill{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);transition:all 0.2s;}
-.pdot{width:6px;height:6px;border-radius:50%;}
-.pdot.green{background:#22c55e;animation:breathe 2.5s ease-in-out infinite;}
-.pdot.amber{background:#f59e0b;}
-@keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.7)}}
-.mono{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.5px;}
-.icon-btn{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink3);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.icon-btn:hover{border-color:var(--border2);color:var(--ink);transform:scale(1.05);}
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0 }
+html { height:100% }
+body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column }
+::-webkit-scrollbar { width:4px; height:4px }
+::-webkit-scrollbar-track { background:transparent }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:99px }
 
-/* INSTANCE BAR */
-.inst-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-.ibar-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-right:4px;}
-.ibtn{display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-family:'Poppins',sans-serif;font-size:12px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.18s;}
-.ibtn:hover{border-color:var(--border2);color:var(--ink);}
-.ibtn.active{background:var(--teal-lt);border-color:var(--teal-mid);color:var(--teal);font-weight:600;}
-.ibtn-dot{width:6px;height:6px;border-radius:50%;background:var(--ink4);transition:background 0.18s;}
-.ibtn.active .ibtn-dot{background:var(--teal);animation:breathe 2.5s ease-in-out infinite;}
-.ibtn-n{font-family:'JetBrains Mono',monospace;font-size:10px;padding:2px 7px;border-radius:100px;background:rgba(0,0,0,0.06);}
-body.dark .ibtn-n{background:rgba(255,255,255,0.06);}
+/* ── APP SHELL ── */
+.app { display:flex; min-height:100vh }
 
-/* DATE BAR */
-.date-bar{display:flex;align-items:center;gap:8px;margin-bottom:24px;}
-.dnav{width:32px;height:32px;border-radius:8px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.dnav:hover{background:var(--card2);color:var(--ink);border-color:var(--border2);}
-.dnav:active{transform:scale(0.94);}
-.dlabel{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;padding:7px 18px;border-radius:8px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink);letter-spacing:0.5px;min-width:130px;text-align:center;}
-.dinput{font-family:'JetBrains Mono',monospace;font-size:12px;padding:7px 12px;border-radius:8px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);color:var(--ink);cursor:pointer;outline:none;}
-.dinput:focus{border-color:var(--teal-mid);}
-.dbtn{padding:7px 16px;border-radius:8px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-family:'Poppins',sans-serif;font-size:12px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.15s;}
-.dbtn:hover{color:var(--teal);border-color:var(--teal-mid);background:var(--teal-lt);}
-
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
-.sc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
-.sc .bgn{position:absolute;right:-8px;bottom:-14px;font-family:'JetBrains Mono',monospace;font-size:72px;font-weight:700;opacity:0.04;color:var(--ink);pointer-events:none;line-height:1;transition:opacity 0.3s;}
-.sc:hover .bgn{opacity:0.07;}
-.stag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:12px;}
-.stag.teal{background:var(--teal-lt);color:var(--teal);}
-.stag.amber{background:var(--amber-lt);color:var(--amber);}
-.stag.green{background:var(--green-lt);color:var(--green);}
-.stag.rose{background:var(--rose-lt);color:var(--rose);}
-.stag.indigo{background:var(--indigo-lt);color:var(--indigo);}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes scaleIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
-@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-.stats .sc{animation:fadeUp 0.5s ease both}
-.stats .sc:nth-child(1){animation-delay:0.05s}
-.stats .sc:nth-child(2){animation-delay:0.10s}
-.stats .sc:nth-child(3){animation-delay:0.15s}
-.stats .sc:nth-child(4){animation-delay:0.20s}
-.stats .sc:nth-child(5){animation-delay:0.25s}
-.stats .sc:nth-child(6){animation-delay:0.30s}
-.stats .sc:nth-child(7){animation-delay:0.35s}
-.stats .sc:nth-child(8){animation-delay:0.40s}
-.stats .sc:nth-child(9){animation-delay:0.45s}
-
-.panel{animation:scaleIn 0.4s ease both;animation-delay:0.2s}
-
-.sc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);transition:transform 0.2s ease, box-shadow 0.2s ease}
-
-.header{animation:fadeIn 0.3s ease both}
-
-/* Skeleton loading */
-.skeleton{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;color:transparent!important}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Logo header */
-.logo-wrap{display:flex;align-items:center;gap:10px}
-.logo-img{height:36px;width:auto;object-fit:contain}
-.logo-emoji{font-size:26px;line-height:1}
-.empresa-nome{font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.3px}
-.empresa-slogan{font-size:11px;color:var(--ink3);margin-top:1px}
-
-/* Row hover */
-.tr:hover td{background:var(--card2)!important;transition:background 0.15s}
-
-  .stag.green{background:#dcfce7;color:#16a34a;}
-  .dark .stag.green{background:#052e16;color:#4ade80;}
-.snum{font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;line-height:1;color:var(--ink);margin-bottom:5px;transition:all 0.3s;}
-.snum.bump{transform:scale(1.06);}
-.sdesc{font-size:11px;color:var(--ink4);}
-
-/* LAYOUT */
-.layout{display:grid;grid-template-columns:1fr 290px;gap:14px;}
-
-/* PANEL */
-.panel{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);}
-.ph-left{display:flex;align-items:center;gap:10px;}
-.ph-icon{font-size:15px;}
-.ph-title{font-size:13px;font-weight:600;color:var(--ink);}
-.ph-sub{font-size:11px;color:var(--ink4);margin-top:1px;}
-.chip{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 12px;border-radius:100px;background:var(--card2);border:1px solid var(--border);color:var(--ink3);}
-
-/* TABLE */
-.twrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;}
-thead tr{background:var(--bg2);}
-th{padding:10px 18px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);border-bottom:1px solid var(--border);white-space:nowrap;}
-td{padding:14px 18px;border-bottom:1px solid var(--border);vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-tbody tr{transition:background 0.12s;cursor:pointer;}
-tbody tr:hover td{background:var(--bg2);}
-
-.cwrap{display:flex;align-items:center;gap:11px;}
-.av{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:1px solid;}
-.av.teal{background:var(--teal-lt);color:var(--teal);border-color:#99f6e4;}
-.av.amber{background:var(--amber-lt);color:var(--amber);border-color:#fde68a;}
-.av.indigo{background:var(--indigo-lt);color:var(--indigo);border-color:#c7d2fe;}
-.av.rose{background:var(--rose-lt);color:var(--rose);border-color:#fecdd3;}
-.cname{font-size:13px;font-weight:600;color:var(--ink);}
-.cphone{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:2px;}
-
-.mcell{}
-.mtxt{font-size:12px;color:var(--ink2);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mhr{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:2px;}
-
-/* Status badge */
-.sbadge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;}
-.sbadge.resp{background:var(--green-lt);color:var(--green);}
-.sbadge.nresp{background:var(--rose-lt);color:var(--rose);}
-.sbadge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-
-/* Tempo espera */
-.tespera{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;}
-.tespera.fast{color:var(--green);}
-.tespera.mid{color:var(--amber);}
-.tespera.slow{color:var(--rose);}
-.tespera.none{color:var(--ink4);}
-
-/* SIDEBAR */
-.sidebar{display:flex;flex-direction:column;gap:12px;}
-.ult-item{
-  display:flex;flex-direction:column;gap:3px;
-  padding:12px 18px;border-bottom:1px solid var(--border);
-  cursor:pointer;transition:background 0.15s;
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar-w); flex-shrink:0;
+  background:var(--bg3); border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  position:fixed; left:0; top:0; bottom:0; z-index:200;
+  transition:transform 0.3s;
 }
-.ult-item:last-child{border-bottom:none;}
-.ult-item:hover{background:var(--card2);}
-.ult-item-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
-.ult-item-nome{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ult-item-hora{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);flex-shrink:0;}
-.ult-item-msg{font-size:11px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ult-item-badges{display:flex;align-items:center;gap:5px;margin-top:2px;}
-.ult-pend{font-size:9px;font-weight:700;letter-spacing:0.5px;padding:2px 7px;border-radius:100px;background:var(--rose-lt);color:var(--rose);}
-.ult-resp{font-size:9px;font-weight:700;letter-spacing:0.5px;padding:2px 7px;border-radius:100px;background:var(--teal-lt);color:var(--teal);}
-.ult-inst{font-size:9px;color:var(--ink4);padding:2px 7px;border-radius:100px;background:var(--bg2);border:1px solid var(--border);}
-.side-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+.sidebar-brand {
+  padding:18px 20px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:11px;
+}
+.sidebar-logo {
+  width:38px; height:38px; border-radius:10px; flex-shrink:0;
+  background:var(--green); display:flex; align-items:center; justify-content:center;
+  font-size:20px; overflow:hidden;
+}
+.sidebar-logo img { width:100%; height:100%; object-fit:cover; border-radius:10px }
+.sidebar-brand-name  { font-size:13px; font-weight:700; color:var(--ink); letter-spacing:-0.2px; line-height:1.2 }
+.sidebar-brand-slug  { font-size:10px; color:var(--ink3); margin-top:2px }
 
-/* HORA PICO */
-.bars{padding:16px 20px 12px;}
-.bars-wrap{display:flex;align-items:flex-end;gap:3px;height:72px;margin-top:12px;}
-.bw{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
-.bbar{width:100%;background:var(--teal-lt);border-radius:3px 3px 0 0;transition:height 0.5s ease;border:1px solid rgba(13,148,136,0.2);min-height:2px;}
-.bbar.active{background:var(--teal-mid);border-color:var(--teal);}
-.blabel{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink4);}
+.sidebar-nav { flex:1; padding:12px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto }
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 12px; border-radius:var(--r);
+  font-size:13px; font-weight:500; color:var(--ink2);
+  text-decoration:none; cursor:pointer; transition:all 0.15s;
+  border:1px solid transparent;
+}
+.nav-item:hover { background:var(--card2); color:var(--ink) }
+.nav-item.active {
+  background:var(--green-lt); color:var(--green);
+  border-color:rgba(37,211,102,0.2); font-weight:600;
+}
+.nav-item svg { flex-shrink:0; opacity:0.7 }
+.nav-item.active svg { opacity:1 }
+.nav-item span { flex:1 }
 
-/* INST LIST */
-.irow{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);}
-.irow:last-child{border-bottom:none;}
-.iname{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--ink2);}
-.ipip{width:7px;height:7px;border-radius:50%;background:#22c55e;}
-.icount{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:var(--teal);}
+.sidebar-footer {
+  padding:14px 10px;
+  border-top:1px solid var(--border);
+}
+.sidebar-ver { font-size:10px; color:var(--ink4); text-align:center; letter-spacing:0.3px }
 
-/* DRAWER */
-.overlay{position:fixed;inset:0;background:rgba(28,25,23,0.2);z-index:199;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(2px);}
-.overlay.show{opacity:1;pointer-events:all;}
-.drawer{position:fixed;right:0;top:0;bottom:0;width:420px;background:var(--card);border-left:1px solid var(--border);box-shadow:-4px 0 40px rgba(28,25,23,0.12);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
-.drawer.open{transform:translateX(0);}
-.dhead{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
-.dname{font-size:15px;font-weight:700;color:var(--ink);}
-.dphone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink4);margin-top:3px;}
-.dclose{width:30px;height:30px;border-radius:8px;background:var(--card2);border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-.dclose:hover{background:var(--rose-lt);color:var(--rose);border-color:#fecdd3;}
-.dbody{flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:16px;}
-.dbody::-webkit-scrollbar{width:3px;}
-.dbody::-webkit-scrollbar-thumb{background:var(--border2);}
+/* ── MAIN ── */
+.main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; min-width:0 }
 
-/* Timeline de atendimento no drawer */
-.dmsg{padding:10px 0;border-bottom:1px solid var(--border);}
-.dmsg:last-child{border-bottom:none;}
-.dmsg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-.dmsg-who{font-size:11px;font-weight:600;}
-.dmsg-who.cliente{color:var(--teal);}
-.dmsg-who.atendente{color:var(--amber);}
-.dmsg-hr{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);}
-.dmsg-txt{font-size:13px;color:var(--ink2);line-height:1.55;}
+/* ── TOPBAR ── */
+.topbar {
+  height:var(--topbar-h); flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px; background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:100;
+}
+.topbar-left { display:flex; align-items:center; gap:8px }
+.page-title  { font-size:15px; font-weight:700; color:var(--ink); letter-spacing:-0.2px }
+.topbar-right { display:flex; align-items:center; gap:10px }
 
-/* Resumo do atendimento no drawer */
-.dresume{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;}
-.dresume-title{font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:12px;}
-.dresume-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
-.dresume-row:last-child{border-bottom:none;}
-.dresume-label{font-size:12px;color:var(--ink3);}
-.dresume-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--ink);}
+.status-pill {
+  display:flex; align-items:center; gap:6px;
+  padding:5px 12px; border-radius:99px;
+  font-size:11px; font-weight:500; border:1px solid var(--border); color:var(--ink3);
+  transition:all 0.3s;
+}
+.status-pill.live   { background:var(--green-lt);  border-color:rgba(37,211,102,0.25); color:var(--green) }
+.status-pill.dead   { background:var(--rose-lt);   border-color:rgba(241,92,109,0.25); color:var(--rose) }
+.status-pill.waiting{ background:var(--amber-lt);  border-color:rgba(245,166,35,0.2);  color:var(--amber) }
+.dot { width:6px; height:6px; border-radius:50%; flex-shrink:0 }
+.dot.live { background:var(--green); animation:pulse 2s infinite }
+.dot.dead { background:var(--rose) }
+.dot.wait { background:var(--amber); animation:blink 1.4s infinite }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,0.4)} 50%{box-shadow:0 0 0 5px rgba(37,211,102,0)} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.icon-btn {
+  width:32px; height:32px; border-radius:var(--r);
+  background:transparent; border:1px solid var(--border);
+  color:var(--ink3); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all 0.15s;
+}
+.icon-btn:hover { background:var(--card2); color:var(--ink); border-color:var(--border2) }
+
+.clock {
+  font-family:'DM Mono',monospace; font-size:12px; font-weight:500;
+  color:var(--ink3); padding:5px 12px; border-radius:99px;
+  background:var(--card); border:1px solid var(--border); letter-spacing:0.5px;
+}
+
+/* ── CONTENT ── */
+.content { flex:1; padding:22px 24px 40px; overflow-y:auto }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px; flex-wrap:wrap; gap:10px;
+  animation:fadeUp 0.4s ease both; animation-delay:0.04s;
+}
+.toolbar-left,.toolbar-right { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
+.inst-lbl { font-size:10px; font-weight:600; letter-spacing:0.8px; text-transform:uppercase; color:var(--ink3); margin-right:4px }
+.itab {
+  display:flex; align-items:center; gap:6px; padding:5px 12px;
+  border-radius:99px; background:var(--card); border:1px solid var(--border);
+  font-size:11px; font-weight:500; color:var(--ink3); cursor:pointer; transition:all 0.15s;
+}
+.itab:hover { border-color:var(--border2); color:var(--ink2) }
+.itab.active { background:var(--green-lt); border-color:rgba(37,211,102,0.3); color:var(--green); font-weight:600 }
+.itab-n { padding:1px 6px; border-radius:5px; background:var(--bg); font-family:'DM Mono',monospace; font-size:10px; color:var(--ink4) }
+.itab.active .itab-n { background:rgba(37,211,102,0.15); color:var(--green) }
+.itab-dot { width:5px; height:5px; border-radius:50%; background:var(--green); opacity:0.4 }
+.itab.active .itab-dot { opacity:1 }
+
+.date-nav { display:flex; align-items:center; gap:5px }
+.dnavbtn {
+  width:28px; height:28px; border-radius:8px; background:var(--card);
+  border:1px solid var(--border); color:var(--ink3); cursor:pointer;
+  font-size:15px; display:flex; align-items:center; justify-content:center; transition:all 0.15s;
+}
+.dnavbtn:hover { background:var(--card2); color:var(--ink) }
+.dnavbtn:active { transform:scale(0.9) }
+.dlabel {
+  font-family:'DM Mono',monospace; font-size:12px; font-weight:500;
+  color:var(--ink); padding:5px 12px; min-width:90px; text-align:center;
+  background:var(--card); border:1px solid var(--border); border-radius:8px;
+}
+input[type=date].dpick {
+  background:var(--card); border:1px solid var(--border); border-radius:8px;
+  padding:4px 8px; color:var(--ink); font-size:11px; font-family:'DM Mono',monospace; cursor:pointer; outline:none;
+}
+.today-btn {
+  padding:5px 12px; border-radius:8px; background:var(--green-lt);
+  border:1px solid rgba(37,211,102,0.25); color:var(--green);
+  font-size:11px; font-weight:600; cursor:pointer; transition:all 0.15s;
+}
+.today-btn:hover { background:var(--green); color:#111b21; border-color:var(--green) }
+
+/* ── STATS ── */
+.stats { display:grid; grid-template-columns:repeat(9,1fr); gap:10px; margin-bottom:20px }
+.sc {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:16px 14px;
+  position:relative; overflow:hidden;
+  transition:transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  box-shadow:var(--shadow);
+  animation:cardIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+.sc:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--border2) }
+.sc::before { content:''; position:absolute; top:-16px; right:-16px; width:64px; height:64px; border-radius:50%; background:var(--glow,transparent); filter:blur(18px); pointer-events:none }
+.sc::after  { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; border-radius:0 0 var(--r-lg) var(--r-lg); background:var(--line,transparent); opacity:0; transition:opacity 0.18s }
+.sc:hover::after { opacity:1 }
+.sc.g { --glow:var(--green-lt); --line:var(--green) }
+.sc.r { --glow:var(--rose-lt);  --line:var(--rose) }
+.sc.a { --glow:var(--amber-lt); --line:var(--amber) }
+.sc.b { --glow:var(--blue-lt);  --line:var(--blue) }
+.sc.v { --glow:var(--violet-lt);--line:var(--violet) }
+.sc:nth-child(1){animation-delay:.03s}.sc:nth-child(2){animation-delay:.06s}.sc:nth-child(3){animation-delay:.09s}
+.sc:nth-child(4){animation-delay:.12s}.sc:nth-child(5){animation-delay:.15s}.sc:nth-child(6){animation-delay:.18s}
+.sc:nth-child(7){animation-delay:.21s}.sc:nth-child(8){animation-delay:.24s}.sc:nth-child(9){animation-delay:.27s}
+@keyframes cardIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+.sc-label { font-size:9px; font-weight:700; letter-spacing:0.9px; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; gap:5px }
+.sc-label.g  { color:var(--green) }
+.sc-label.r  { color:var(--rose) }
+.sc-label.a  { color:var(--amber) }
+.sc-label.b  { color:var(--blue) }
+.sc-label.v  { color:var(--violet) }
+.sc-dot { width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0 }
+.sc-val { font-family:'DM Mono',monospace; font-size:26px; font-weight:700; color:var(--ink); letter-spacing:-1px; line-height:1; margin-bottom:5px }
+.sc-desc { font-size:10px; color:var(--ink3); line-height:1.35 }
+.bgn { display:none }
+@keyframes bump { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
+.bump { animation:bump 0.25s ease }
+
+/* ── GRID ── */
+.grid { display:grid; grid-template-columns:1fr 300px; gap:14px; animation:fadeUp 0.5s ease both; animation-delay:0.15s }
+
+/* ── PANEL ── */
+.panel { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow) }
+.panel-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); background:var(--card2) }
+.panel-head-left { display:flex; align-items:center; gap:10px }
+.panel-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:14px; background:var(--green-lt); border:1px solid rgba(37,211,102,0.2) }
+.panel-title { font-size:13px; font-weight:700; color:var(--ink) }
+.panel-sub   { font-size:10px; color:var(--ink3); margin-top:1px }
+.chip { padding:3px 9px; border-radius:7px; background:var(--bg); border:1px solid var(--border); font-family:'DM Mono',monospace; font-size:11px; color:var(--ink3) }
+
+/* ── TABLE ── */
+.twrap { overflow-x:auto }
+.twrap::-webkit-scrollbar { height:3px }
+table { width:100%; border-collapse:collapse }
+thead tr { border-bottom:1px solid var(--border) }
+th { padding:9px 16px; text-align:left; font-size:9px; font-weight:700; letter-spacing:0.7px; text-transform:uppercase; color:var(--ink4); background:var(--card); white-space:nowrap }
+tbody tr { border-bottom:1px solid var(--border); cursor:pointer; transition:background 0.1s }
+tbody tr:last-child { border-bottom:none }
+tbody tr:hover { background:var(--card2) }
+td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle }
+.cwrap { display:flex; align-items:center; gap:10px }
+.av { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff }
+.av.g { background:linear-gradient(135deg,#128c7e,#25d366) }
+.av.a { background:linear-gradient(135deg,#c07a10,#f5a623) }
+.av.b { background:linear-gradient(135deg,#0277bd,#53bdeb) }
+.av.r { background:linear-gradient(135deg,#c62828,#f15c6d) }
+.cname  { font-size:12px; font-weight:600; color:var(--ink2) }
+.cphone { font-family:'DM Mono',monospace; font-size:10px; color:var(--ink4); margin-top:1px }
+.mtxt   { font-size:11px; color:var(--ink3); max-width:150px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.mhr    { font-family:'DM Mono',monospace; font-size:10px; color:var(--ink4); margin-top:2px }
+.tespera { display:inline-flex; align-items:center; padding:3px 8px; border-radius:6px; font-family:'DM Mono',monospace; font-size:10px; font-weight:600 }
+.tespera.fast { background:var(--green-lt); color:var(--green) }
+.tespera.mid  { background:var(--amber-lt); color:var(--amber) }
+.tespera.slow { background:var(--rose-lt);  color:var(--rose) }
+.tespera.none { color:var(--ink4) }
+.sbadge { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:600 }
+.sbadge-dot { width:5px; height:5px; border-radius:50% }
+.sbadge.resp  { background:var(--green-lt); color:var(--green) }
+.sbadge.resp  .sbadge-dot { background:var(--green) }
+.sbadge.nresp { background:var(--rose-lt);  color:var(--rose) }
+.sbadge.nresp .sbadge-dot { background:var(--rose) }
+
+/* ── RIGHT SIDEBAR ── */
+.rsidebar { display:flex; flex-direction:column; gap:12px }
+.side-card { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow) }
+.side-head { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:1px solid var(--border); background:var(--card2) }
+.side-title { font-size:12px; font-weight:700; color:var(--ink) }
+.side-chip  { padding:2px 8px; border-radius:6px; font-size:10px; font-weight:600; font-family:'DM Mono',monospace; background:var(--bg); border:1px solid var(--border); color:var(--ink4) }
+.side-body  { padding:14px 16px }
+
+/* CHART */
+.chart-wrap { height:68px; display:flex; align-items:flex-end; gap:2px; padding-bottom:4px }
+.bw  { display:flex; flex-direction:column; align-items:center; flex:1; gap:3px }
+.bbar { width:100%; border-radius:3px 3px 0 0; background:var(--border2); min-height:2px; transition:height 0.4s cubic-bezier(0.16,1,0.3,1) }
+.bbar.active { background:var(--green); box-shadow:0 0 8px rgba(37,211,102,0.3) }
+.blabel { font-family:'DM Mono',monospace; font-size:8px; color:var(--ink4); line-height:1 }
+
+/* LATEST */
+.ult-item { padding:10px 0; border-bottom:1px solid var(--border); cursor:pointer; transition:all 0.12s }
+.ult-item:last-child { border-bottom:none }
+.ult-item:hover { padding-left:4px }
+.ult-top  { display:flex; justify-content:space-between; align-items:center; margin-bottom:3px }
+.ult-nome { font-size:12px; font-weight:600; color:var(--ink2) }
+.ult-hora { font-family:'DM Mono',monospace; font-size:10px; color:var(--ink4) }
+.ult-msg  { font-size:11px; color:var(--ink4); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px }
+.ult-pend { display:inline-flex; padding:1px 6px; border-radius:4px; background:var(--rose-lt);  color:var(--rose);  font-size:9px; font-weight:700 }
+.ult-resp { display:inline-flex; padding:1px 6px; border-radius:4px; background:var(--green-lt); color:var(--green); font-size:9px; font-weight:700 }
+
+/* INST */
+.irow { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border) }
+.irow:last-child { border-bottom:none }
+.iname  { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:500; color:var(--ink2) }
+.ipip   { width:6px; height:6px; border-radius:50%; background:var(--green) }
+.icount { font-family:'DM Mono',monospace; font-size:13px; font-weight:700; color:var(--green) }
+
+/* ── DRAWER ── */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:299; opacity:0; pointer-events:none; transition:opacity 0.3s; backdrop-filter:blur(4px) }
+.overlay.show { opacity:1; pointer-events:all }
+.drawer { position:fixed; right:0; top:0; bottom:0; width:440px; background:var(--card); border-left:1px solid var(--border); box-shadow:var(--shadow-lg); z-index:300; display:flex; flex-direction:column; transform:translateX(100%); transition:transform 0.32s cubic-bezier(0.32,0,0.08,1) }
+.drawer.open { transform:translateX(0) }
+.dhead { padding:20px 22px; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; flex-shrink:0; background:var(--card2) }
+.dname  { font-size:16px; font-weight:700; color:var(--ink) }
+.dphone { font-family:'DM Mono',monospace; font-size:10px; color:var(--ink4); margin-top:4px }
+.dclose { width:28px; height:28px; border-radius:8px; background:var(--card3); border:1px solid var(--border); color:var(--ink3); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.15s }
+.dclose:hover { background:var(--rose-lt); color:var(--rose) }
+.dbody { flex:1; overflow-y:auto; padding:18px 22px; display:flex; flex-direction:column; gap:14px }
+.dbody::-webkit-scrollbar { width:3px }
+.dbody::-webkit-scrollbar-thumb { background:var(--border2) }
+.dmsg { padding:10px 0; border-bottom:1px solid var(--border) }
+.dmsg:last-child { border-bottom:none }
+.dmsg-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px }
+.dmsg-who { font-size:10px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase }
+.dmsg-who.cliente   { color:var(--green) }
+.dmsg-who.atendente { color:var(--amber) }
+.dmsg-hr { font-family:'DM Mono',monospace; font-size:10px; color:var(--ink4) }
+.dmsg-txt { font-size:12px; color:var(--ink2); line-height:1.6; background:var(--bg2); border-radius:8px; padding:8px 10px; border:1px solid var(--border) }
+.dresume { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:14px }
+.dresume-title { font-size:9px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--ink4); margin-bottom:10px }
+.dresume-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border) }
+.dresume-row:last-child { border-bottom:none }
+.dresume-label { font-size:11px; color:var(--ink3) }
+.dresume-val   { font-family:'DM Mono',monospace; font-size:11px; font-weight:600; color:var(--ink) }
 
 /* EMPTY */
-.empty{padding:52px 20px;text-align:center;}
-.empty-icon{font-size:30px;margin-bottom:10px;opacity:0.35;}
-.empty-txt{font-size:12px;color:var(--ink4);}
+.empty { padding:44px 20px; text-align:center }
+.empty-icon { font-size:28px; margin-bottom:10px; opacity:0.2 }
+.empty-txt  { font-size:12px; color:var(--ink4) }
 
-@media(max-width:1100px){.stats{grid-template-columns:repeat(3,1fr);}.layout{grid-template-columns:1fr;}}
-@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}}
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* RESPONSIVE */
+@media(max-width:1300px) { .stats{grid-template-columns:repeat(5,1fr)} }
+@media(max-width:960px)  { .stats{grid-template-columns:repeat(3,1fr)}; .grid{grid-template-columns:1fr} }
+@media(max-width:700px)  { .sidebar{transform:translateX(-100%)}; .main{margin-left:0}; .stats{grid-template-columns:repeat(2,1fr)} }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
 
-  <header>
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar">
+  <div class="sidebar-brand" id="logoArea">
+    <div class="sidebar-logo">💬</div>
     <div>
-      
-      <div class="brand-title">Painel de <em>Atendimento</em></div>
-      
+      <div class="sidebar-brand-name">Atendimento</div>
+      <div class="sidebar-brand-slug">Painel</div>
     </div>
-    <div class="hcontrols">
-      <div class="pill"><div class="pdot green" id="sdot"></div><span id="stxt">Conectando</span></div>
-      <a href="relatorio-ia.html" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal-mid)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink2)'">Relatório IA</a>
-      <a href="contatos.html" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal-mid)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink2)'">Contatos</a>
-      <a href="ferramentas.html" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);font-size:12px;font-weight:500;color:var(--ink2);text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--teal-mid)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink2)'">Ferramentas</a>
-      <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="Alternar tema">
-        <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        <svg id="iconSun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  </div>
+
+  <div class="sidebar-nav">
+    <a href="dashboard-leads.html" class="nav-item active">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="contatos.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Contatos</span>
+    </a>
+    <a href="relatorio-ia.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Relatório IA</span>
+    </a>
+    <a href="ferramentas.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <span>Ferramentas</span>
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-ver" id="sideVer">Sistema v1.0</div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-pill waiting" id="statusPill">
+        <div class="dot wait" id="sdot"></div>
+        <span id="stxt">Conectando</span>
+      </div>
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema">
+        <svg id="iconMoon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg id="iconSun"  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
-      <div class="pill mono" id="clock">--:--:--</div>
-    </div>
-  </header>
-
-  <!-- INSTÂNCIAS -->
-  <div class="inst-bar" id="instBar"><span class="ibar-label">Instância</span></div>
-
-  <!-- DATA -->
-  <div class="date-bar">
-    <button class="dnav" onclick="mudarDia(-1)">‹</button>
-    <div class="dlabel" id="dlabel">--/--/----</div>
-    <button class="dnav" onclick="mudarDia(1)">›</button>
-    <input type="date" class="dinput" id="dpick" onchange="irData(this.value)">
-    <button class="dbtn" onclick="irHoje()">Hoje</button>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats">
-    <div class="sc">
-      <div class="stag teal">Conversas</div>
-      <div class="snum" id="sTotal">0</div>
-      <div class="sdesc">contatos no dia</div>
-      <div class="bgn" id="bgTotal">0</div>
-    </div>
-    <div class="sc">
-      <div class="stag green">Respondidas</div>
-      <div class="snum" id="sResp">0</div>
-      <div class="sdesc">atendente interagiu</div>
-      <div class="bgn" id="bgResp">0</div>
-    </div>
-    <div class="sc">
-      <div class="stag rose">Sem resposta</div>
-      <div class="snum" id="sNResp">0</div>
-      <div class="sdesc">aguardando atendimento</div>
-      <div class="bgn" id="bgNResp">0</div>
-    </div>
-
-    <div class="sc">
-      <div class="stag teal">Msgs clientes</div>
-      <div class="snum" id="sMsgsTotal">0</div>
-      <div class="sdesc">total de mensagens</div>
-      <div class="bgn" id="bgMsgsTotal">0</div>
-    </div>
-    <div class="sc">
-      <div class="stag rose">Pendentes</div>
-      <div class="snum" id="sPend">0</div>
-      <div class="sdesc">msgs sem resposta agora</div>
-      <div class="bgn" id="bgPend">0</div>
-    </div>
-    <div class="sc">
-      <div class="stag amber">TMA</div>
-      <div class="snum" id="sTMA">—</div>
-      <div class="sdesc">tempo médio real por turno</div>
-      <div class="bgn" id="bgTMA">—</div>
-    </div>
-    <div class="sc">
-      <div class="stag indigo">Pico</div>
-      <div class="snum" id="sPico">—</div>
-      <div class="sdesc">hora com mais contatos</div>
-      <div class="bgn" id="bgPico">—</div>
-    </div>
-    <div class="sc">
-      <div class="stag green">IA Ativa</div>
-      <div class="snum" id="sIASim">—</div>
-      <div class="sdesc">contatos com IA ativa</div>
-      <div class="bgn" id="bgIASim">—</div>
-    </div>
-    <div class="sc">
-      <div class="stag rose">IA Pausada</div>
-      <div class="snum" id="sIANao">—</div>
-      <div class="sdesc">aguardando humano</div>
-      <div class="bgn" id="bgIANao">—</div>
+      <div class="clock" id="clock">--:--:--</div>
     </div>
   </div>
 
-  <!-- LAYOUT -->
-  <div class="layout">
+  <!-- CONTENT -->
+  <div class="content">
 
-    <!-- TABELA -->
-    <div class="panel">
-      <div class="ph">
-        <div class="ph-left">
-          <span class="ph-icon">💬</span>
-          <div>
-            <div class="ph-title">Conversas do dia</div>
-            <div class="ph-sub">clique para ver detalhes do atendimento</div>
-          </div>
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <span class="inst-lbl">Instância</span>
+        <div id="instBar"></div>
+      </div>
+      <div class="toolbar-right">
+        <div class="date-nav">
+          <button class="dnavbtn" onclick="mudarDia(-1)">‹</button>
+          <div class="dlabel" id="dlabel">--/--/----</div>
+          <button class="dnavbtn" onclick="mudarDia(1)">›</button>
+          <input type="date" class="dpick" id="dpick" onchange="irData(this.value)">
+          <button class="today-btn" onclick="irHoje()">Hoje</button>
         </div>
-        <span class="chip" id="chipC">—</span>
-      </div>
-      <div class="twrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>1ª msg cliente</th>
-              <th>1ª resposta atendente</th>
-              <th>Msgs</th>
-              <th>Espera 1ª</th>
-              <th>Turnos</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tbody">
-            <tr><td colspan="5"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-txt">Carregando...</div></div></td></tr>
-          </tbody>
-        </table>
       </div>
     </div>
 
-    <!-- SIDEBAR -->
-    <div class="sidebar">
+    <!-- STATS -->
+    <div class="stats">
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="bgn" id="bgTotal">0</div></div>
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="bgn" id="bgResp">0</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="bgn" id="bgNResp">0</div></div>
+      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="bgn" id="bgMsgsTotal">0</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="bgn" id="bgPend">0</div></div>
+      <div class="sc a"><div class="sc-label a"><span class="sc-dot"></span>TMA</div><div class="sc-val" id="sTMA">—</div><div class="sc-desc">tempo médio por turno</div><div class="bgn" id="bgTMA">—</div></div>
+      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Pico</div><div class="sc-val" id="sPico">—</div><div class="sc-desc">hora com mais contatos</div><div class="bgn" id="bgPico">—</div></div>
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>IA Ativa</div><div class="sc-val" id="sIASim">—</div><div class="sc-desc">contatos com IA ativa</div><div class="bgn" id="bgIASim">—</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>IA Pausada</div><div class="sc-val" id="sIANao">—</div><div class="sc-desc">aguardando humano</div><div class="bgn" id="bgIANao">—</div></div>
+    </div>
 
-      <div class="side-panel" style="flex:1;display:flex;flex-direction:column;">
-        <div class="ph">
-          <div class="ph-left">
+    <!-- GRID -->
+    <div class="grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-head-left">
+            <div class="panel-icon">💬</div>
             <div>
-              <div class="ph-title">Últimas conversas</div>
-              <div class="ph-sub">atividade recente</div>
+              <div class="panel-title">Conversas do dia</div>
+              <div class="panel-sub">Clique para ver histórico completo</div>
             </div>
           </div>
-          <span class="chip" id="chipUlt">—</span>
+          <div class="chip" id="chipC">—</div>
         </div>
-        <div id="ultList" style="flex:1;overflow-y:auto;padding:8px 0;">
-          <div class="empty"><div class="empty-txt">Carregando...</div></div>
+        <div class="twrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>1ª mensagem</th><th>1ª resposta</th><th>Msgs</th><th>Espera</th><th>Turnos</th><th>Status</th></tr></thead>
+            <tbody id="tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-txt">Carregando...</div></div></td></tr></tbody>
+          </table>
         </div>
       </div>
 
+      <div class="rsidebar">
+        <div class="side-card">
+          <div class="side-head">
+            <div class="side-title">Por hora</div>
+            <div class="side-chip" id="chipPico">—</div>
+          </div>
+          <div class="side-body"><div class="chart-wrap" id="bars"></div></div>
+        </div>
+        <div class="side-card">
+          <div class="side-head">
+            <div class="side-title">Últimas conversas</div>
+            <div class="side-chip" id="chipUlt">0</div>
+          </div>
+          <div class="side-body" id="ultList"><div class="empty"><div class="empty-txt">Nenhuma conversa</div></div></div>
+        </div>
+        <div class="side-card">
+          <div class="side-head"><div class="side-title">Por instância</div></div>
+          <div class="side-body" id="instList"><div class="empty"><div class="empty-txt">Nenhuma instância</div></div></div>
+        </div>
+      </div>
     </div>
-  </div>
-  </div><!-- /layout -->
 
-</div><!-- /wrap -->
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
 
 <!-- DRAWER -->
 <div class="overlay" id="overlay" onclick="fecharDrawer()"></div>
 <div class="drawer" id="drawer">
   <div class="dhead">
-    <div>
-      <div class="dname" id="dname">—</div>
-      <div class="dphone" id="dphone">—</div>
-    </div>
+    <div><div class="dname" id="dname">—</div><div class="dphone" id="dphone">—</div></div>
     <button class="dclose" onclick="fecharDrawer()">✕</button>
   </div>
   <div class="dbody" id="dbody"></div>
@@ -437,583 +532,167 @@ tbody tr:hover td{background:var(--bg2);}
 
 <script>
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
-const CORES = ['teal','amber','indigo','rose']
+const CORES = ['g','a','b','r']
 const colorMap = {}, colorIdx = [0]
-
-// dHoje definida aqui antes de qualquer uso
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
-
 let dataAtual = dHoje(), cache = null, instAtual = 'todas'
 
-// Aguarda DOM pronto e inicia
 function inicializar() {
-  // Tema salvo
   const t = localStorage.getItem('theme')
-  if (t === 'dark') {
-    document.body.classList.add('dark')
-    const moon = document.getElementById('iconMoon')
-    const sun  = document.getElementById('iconSun')
-    if (moon) moon.style.display = 'none'
-    if (sun)  sun.style.display  = 'block'
+  if (t === 'light') {
+    document.body.classList.add('light')
+    document.getElementById('iconMoon').style.display = 'none'
+    document.getElementById('iconSun').style.display  = 'block'
   }
-  // Data padrão = hoje
-  dataAtual = dHoje()
-  setDateLabel(dataAtual)
-  // Primeira carga
-  carregar()
-  conectarSSE()
-  // Relógio
-  setInterval(() => {
-    const el = document.getElementById('clock')
-    if (el) el.textContent = new Date().toLocaleTimeString('pt-BR')
-  }, 1000)
-  // Polling 15s
+  dataAtual = dHoje(); setDateLabel(dataAtual); initBars(); carregar(); conectarSSE()
+  setInterval(() => { const el = document.getElementById('clock'); if(el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
   setInterval(carregar, 15000)
 }
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', inicializar)
-} else {
-  inicializar()
-}
-// ── RELATÓRIO IA (página separada) ──
-async function carregarRelatorioIA() {
-  const wrap = document.getElementById('reportWrap')
-  try {
-    const r = await fetch(`${API}/relatorio-ia?data=${dataAtual}`)
-    if (!r.ok) throw new Error('sem dados')
-    const d = await r.json()
-    renderRelatorio(d)
-  } catch {
-    wrap.innerHTML = `
-      <div class="report-empty">
-        <div class="report-empty-icon">📋</div>
-        <div class="report-empty-txt">Nenhum relatório gerado para este dia</div>
-        <div class="report-empty-sub">O relatório é gerado automaticamente às 20h</div>
-      </div>`
-  }
-}
-
-function renderRelatorio(d) {
-  const wrap = document.getElementById('reportWrap')
-  const resumo = d.resumo || {}
-  const horarios = d.horarios || {}
-  const recl = d.reclamacoes || []
-  const melhorias = d.pontos_melhoria || []
-
-  const pctFin  = resumo.percentual_finalizadas || 0
-  const pctAnd  = resumo.percentual_em_andamento || 0
-  const pctSem  = resumo.percentual_sem_resposta || 0
-
-  // Resumo executivo
-  const secResumo = `
-  <div class="rcard">
-    <div class="rcard-head">
-      <div class="rcard-title"><span class="rcard-icon">📊</span> Resumo Executivo</div>
-      <span class="chip">${d.empresa || ''}</span>
-    </div>
-    <div class="rcard-body">
-      <div class="exec-grid">
-        <div class="exec-item">
-          <div class="exec-val">${resumo.total_conversas || 0}</div>
-          <div class="exec-lbl">Total de conversas</div>
-        </div>
-        <div class="exec-item">
-          <div class="exec-val" style="color:var(--green)">${resumo.finalizadas || 0}</div>
-          <div class="exec-lbl">Finalizadas</div>
-          <div class="exec-sub" style="color:var(--green)">${pctFin}%</div>
-        </div>
-        <div class="exec-item">
-          <div class="exec-val" style="color:var(--amber)">${resumo.em_andamento || 0}</div>
-          <div class="exec-lbl">Em andamento</div>
-          <div class="exec-sub" style="color:var(--amber)">${pctAnd}%</div>
-        </div>
-        <div class="exec-item">
-          <div class="exec-val" style="color:var(--rose)">${resumo.sem_resposta || 0}</div>
-          <div class="exec-lbl">Sem resposta</div>
-          <div class="exec-sub" style="color:var(--rose)">${pctSem}%</div>
-        </div>
-      </div>
-      <div style="margin-top:12px;padding:12px 16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-        <span style="font-size:16px">⏱</span>
-        <div>
-          <div style="font-size:11px;color:var(--ink4)">Tempo médio por atendimento (conversas finalizadas)</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:var(--ink)">${resumo.tma_minutos || 0} min</div>
-        </div>
-      </div>
-    </div>
-  </div>`
-
-  // Horários
-  const secHorarios = `
-  <div class="rcard">
-    <div class="rcard-head">
-      <div class="rcard-title"><span class="rcard-icon">🕐</span> Horários de Operação</div>
-    </div>
-    <div class="rcard-body">
-      <div class="horarios-grid">
-        <div class="hitem">
-          <div class="hitem-icon">📥</div>
-          <div>
-            <div class="hitem-lbl">Primeira mensagem recebida</div>
-            <div class="hitem-val">${horarios.primeira_msg_cliente_hora || '—'}</div>
-            <div class="hitem-nome">${horarios.primeira_msg_cliente_nome || ''}</div>
-          </div>
-        </div>
-        <div class="hitem">
-          <div class="hitem-icon">📤</div>
-          <div>
-            <div class="hitem-lbl">Primeira resposta da equipe</div>
-            <div class="hitem-val">${horarios.primeira_resposta_hora || '—'}</div>
-          </div>
-        </div>
-        <div class="hitem">
-          <div class="hitem-icon">📥</div>
-          <div>
-            <div class="hitem-lbl">Última mensagem recebida</div>
-            <div class="hitem-val">${horarios.ultima_msg_cliente_hora || '—'}</div>
-            <div class="hitem-nome">${horarios.ultima_msg_cliente_nome || ''}</div>
-          </div>
-        </div>
-        <div class="hitem">
-          <div class="hitem-icon">📤</div>
-          <div>
-            <div class="hitem-lbl">Última resposta da equipe</div>
-            <div class="hitem-val">${horarios.ultima_resposta_hora || '—'}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>`
-
-  // Reclamações
-  const gravClass = g => g?.toLowerCase() === 'alta' ? 'alta' : g?.toLowerCase() === 'media' ? 'media' : 'baixa'
-  const secRecl = `
-  <div class="rcard">
-    <div class="rcard-head">
-      <div class="rcard-title"><span class="rcard-icon">⚠️</span> Reclamações e Críticas</div>
-      <span class="chip">${recl.length} registrada${recl.length !== 1 ? 's' : ''}</span>
-    </div>
-    <div class="rcard-body">
-      ${recl.length === 0
-        ? `<div style="text-align:center;padding:20px;color:var(--green);font-size:13px;">✅ Nenhuma reclamação registrada no período</div>`
-        : `<div class="recl-list">${recl.map(r => `
-          <div class="recl-item ${gravClass(r.gravidade)}">
-            <div class="recl-header">
-              <span class="recl-grav ${gravClass(r.gravidade)}">${r.gravidade}</span>
-              <span class="recl-num">#${r.numero}</span>
-            </div>
-            <div class="recl-cliente">${r.cliente || '—'}</div>
-            <div class="recl-tel">${r.telefone || ''}</div>
-            <div class="recl-resumo">${r.resumo || ''}</div>
-          </div>`).join('')}</div>`}
-    </div>
-  </div>`
-
-  // Pontos de melhoria
-  const secMelhorias = `
-  <div class="rcard">
-    <div class="rcard-head">
-      <div class="rcard-title"><span class="rcard-icon">💡</span> Pontos de Melhoria</div>
-      <span class="chip">${melhorias.length} identificado${melhorias.length !== 1 ? 's' : ''}</span>
-    </div>
-    <div class="rcard-body">
-      ${melhorias.length === 0
-        ? `<div style="text-align:center;padding:20px;color:var(--green);font-size:13px;">✅ Atendimento dentro dos padrões de qualidade</div>`
-        : `<div class="melhoria-list">${melhorias.map((m, i) => `
-          <div class="melhoria-item">
-            <div class="melhoria-head">
-              <div class="melhoria-num">${i+1}</div>
-              <div class="melhoria-titulo">${m.titulo || ''}</div>
-            </div>
-            <div class="melhoria-desc">${m.descricao || ''}</div>
-            <div class="melhoria-exemplos">
-              ${(m.exemplos||[]).map(e => `
-              <div class="exemplo-item">
-                <div class="exemplo-header">
-                  <div>
-                    <div class="exemplo-cliente">${e.cliente || '—'}</div>
-                    <div class="exemplo-tel">${e.telefone || ''}</div>
-                  </div>
-                  <div class="exemplo-hora">${e.horario || ''}</div>
-                </div>
-                <div class="exemplo-msg">"${e.mensagem || ''}"</div>
-                ${e.contexto ? `<div class="exemplo-ctx">${e.contexto}</div>` : ''}
-              </div>`).join('')}
-            </div>
-          </div>`).join('')}</div>`}
-    </div>
-  </div>`
-
-  // Observações
-  const secObs = d.observacoes ? `
-  <div class="rcard">
-    <div class="rcard-head">
-      <div class="rcard-title"><span class="rcard-icon">📝</span> Observações Gerais</div>
-    </div>
-    <div class="rcard-body">
-      <div class="obs-txt">${d.observacoes}</div>
-    </div>
-    <div class="report-meta">
-      <span>Relatório gerado automaticamente · ${d.empresa || ''}</span>
-      <span>${d.data || ''}</span>
-    </div>
-  </div>` : ''
-
-  wrap.innerHTML = secResumo + secHorarios + secRecl + secMelhorias + secObs
-}
-
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializar)
+else inicializar()
 
 function toggleTheme() {
-  const d = document.body.classList.toggle('dark')
-  document.getElementById('iconMoon').style.display = d ? 'none' : 'block'; document.getElementById('iconSun').style.display = d ? 'block' : 'none'
-  localStorage.setItem('theme', d ? 'dark' : 'light')
+  const isLight = document.body.classList.toggle('light')
+  document.getElementById('iconMoon').style.display = isLight ? 'none'  : 'block'
+  document.getElementById('iconSun').style.display  = isLight ? 'block' : 'none'
+  localStorage.setItem('theme', isLight ? 'light' : 'dark')
 }
-
-
-function setDateLabel(d) {
-  const [y,m,dia] = d.split('-')
-  document.getElementById('dlabel').textContent = `${dia}/${m}/${y}`
-  document.getElementById('dpick').value = d
-}
-
-function mudarDia(delta) {
-  const dt = new Date(dataAtual + 'T12:00:00'); dt.setDate(dt.getDate()+delta)
-  dataAtual = dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregar()
-}
+function setDateLabel(d) { const [y,m,dia]=d.split('-'); document.getElementById('dlabel').textContent=`${dia}/${m}/${y}`; document.getElementById('dpick').value=d }
+function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(dt.getDate()+delta); dataAtual=dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregar() }
 function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregar() }
-function irHoje() { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
+function irHoje()  { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
 
 async function carregar() {
   try {
-    const [r1, r2] = await Promise.all([
-      fetch(`${API}/relatorio?data=${dataAtual}`),
-      fetch(`${API}/contatos`)
-    ])
+    const [r1,r2] = await Promise.all([fetch(`${API}/relatorio?data=${dataAtual}`), fetch(`${API}/contatos`)])
     if (!r1.ok) throw new Error()
-    cache = await r1.json()
-    setStatus(true)
-    renderInstBar(cache.contatos||[])
-    renderTudo(filtrar(cache))
+    cache = await r1.json(); setStatus(true)
+    renderInstBar(cache.contatos||[]); renderTudo(filtrar(cache))
     if (r2.ok) {
-      const cData = await r2.json()
-      const todos = cData.contatos || []
-      const iaSim = todos.filter(c => !c.ia || c.ia === 'sim').length
-      const iaNao = todos.filter(c => c.ia === 'nao').length
-      n('sIASim', iaSim); n('bgIASim', iaSim)
-      n('sIANao', iaNao); n('bgIANao', iaNao)
+      const cData = await r2.json(), todos = cData.contatos||[]
+      const iaSim = todos.filter(c=>!c.ia||c.ia==='sim').length
+      const iaNao = todos.filter(c=>c.ia==='nao').length
+      n('sIASim',iaSim); n('sIANao',iaNao)
     }
   } catch { setStatus(false) }
 }
-
 function filtrar(d) {
-  if (instAtual === 'todas') return d
-  const c = (d.contatos||[]).filter(x => x.instancia === instAtual)
-  const resp = c.filter(x=>x.respondida)
-  const tempos = resp.map(x=>x.tempo_espera_segundos).filter(t=>t!==null)
-  return { ...d, total_conversas:c.length, respondidas:resp.length, nao_respondidas:c.length-resp.length,
-    tma_segundos: tempos.length ? Math.round(tempos.reduce((a,b)=>a+b,0)/tempos.length) : 0, contatos:c }
+  if (instAtual==='todas') return d
+  const c=(d.contatos||[]).filter(x=>x.instancia===instAtual)
+  const resp=c.filter(x=>x.respondida), tempos=resp.map(x=>x.tempo_espera_segundos).filter(t=>t!==null)
+  return {...d,total_conversas:c.length,respondidas:resp.length,nao_respondidas:c.length-resp.length,tma_segundos:tempos.length?Math.round(tempos.reduce((a,b)=>a+b,0)/tempos.length):0,contatos:c}
 }
-
-function trocarInstancia(inst) {
-  instAtual = inst; if (!cache) return
-  renderInstBar(cache.contatos||[]); renderTudo(filtrar(cache))
-}
-
+function trocarInstancia(inst) { instAtual=inst; if(!cache)return; renderInstBar(cache.contatos||[]); renderTudo(filtrar(cache)) }
 function renderInstBar(contatos) {
-  const inst = {}
-  contatos.forEach(c => { inst[c.instancia] = (inst[c.instancia]||0)+1 })
-  const bar = document.getElementById('instBar')
-  const total = contatos.length
-  bar.innerHTML = `<span class="ibar-label">Instância</span>
-    <button class="ibtn ${instAtual==='todas'?'active':''}" onclick="trocarInstancia('todas')">
-      <div class="ibtn-dot"></div>Todas<span class="ibtn-n">${total}</span>
-    </button>` +
-    Object.entries(inst).map(([n,c]) => `
-    <button class="ibtn ${instAtual===n?'active':''}" onclick="trocarInstancia('${n}')">
-      <div class="ibtn-dot"></div>${n}<span class="ibtn-n">${c}</span>
-    </button>`).join('')
+  const inst={}; contatos.forEach(c=>{inst[c.instancia]=(inst[c.instancia]||0)+1})
+  const bar=document.getElementById('instBar'), total=contatos.length
+  bar.innerHTML=`<button class="itab ${instAtual==='todas'?'active':''}" onclick="trocarInstancia('todas')"><div class="itab-dot"></div>Todas<span class="itab-n">${total}</span></button>`+
+    Object.entries(inst).map(([nm,c])=>`<button class="itab ${instAtual===nm?'active':''}" onclick="trocarInstancia('${nm}')"><div class="itab-dot"></div>${nm}<span class="itab-n">${c}</span></button>`).join('')
 }
-
 function setStatus(ok) {
-  document.getElementById('sdot').className = `pdot ${ok?'green':'amber'}`
-  document.getElementById('stxt').textContent = ok ? 'Ao vivo' : 'Offline'
+  const pill=document.getElementById('statusPill'),dot=document.getElementById('sdot'),txt=document.getElementById('stxt')
+  if(ok){pill.className='status-pill live';dot.className='dot live';txt.textContent='Ao vivo'}
+  else{pill.className='status-pill dead';dot.className='dot dead';txt.textContent='Offline'}
 }
-
 function renderTudo(d) {
-  const conv = d.total_conversas||0, resp = d.respondidas||0, nresp = d.nao_respondidas||0, pend = d.com_pendencia||0
-  const totalMsgsClientes = (d.contatos||[]).reduce((acc,c) => acc + (c.total_msgs_cliente||0), 0)
-  n('sTotal',conv); n('bgTotal',conv)
-  n('sResp',resp); n('bgResp',resp)
-  n('sNResp',nresp); n('bgNResp',nresp)
-  n('sMsgsTotal',totalMsgsClientes); n('bgMsgsTotal',totalMsgsClientes)
-  n('sPend',pend); n('bgPend',pend)
-
-  const tma = fTMA(d.tma_segundos||0)
-  document.getElementById('sTMA').textContent = tma
-  document.getElementById('bgTMA').textContent = tma
-  const pico = d.hora_pico !== undefined ? `${String(d.hora_pico).padStart(2,'0')}h` : '—'
-  document.getElementById('sPico').textContent = pico
-  document.getElementById('bgPico').textContent = pico
-
-  document.getElementById('chipC').textContent = `${conv} conversa${conv!==1?'s':''}`
-  renderTabela(d.contatos||[])
-  renderUltList(d.contatos||[])
+  const conv=d.total_conversas||0,resp=d.respondidas||0,nresp=d.nao_respondidas||0,pend=d.com_pendencia||0
+  const totalMsgs=(d.contatos||[]).reduce((acc,c)=>acc+(c.total_msgs_cliente||0),0)
+  n('sTotal',conv);n('sResp',resp);n('sNResp',nresp);n('sMsgsTotal',totalMsgs);n('sPend',pend)
+  const tma=fTMA(d.tma_segundos||0);document.getElementById('sTMA').textContent=tma
+  const pico=d.hora_pico!==undefined?`${String(d.hora_pico).padStart(2,'0')}h`:'—'
+  document.getElementById('sPico').textContent=pico
+  document.getElementById('chipPico').textContent=d.hora_pico!==undefined?`pico ${pico}`:'—'
+  document.getElementById('chipC').textContent=`${conv} conversa${conv!==1?'s':''}`
+  renderBars(d.por_hora||Array(24).fill(0),d.hora_pico)
+  renderTabela(d.contatos||[]); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
 }
-
-function n(id, v) {
-  const el = document.getElementById(id); if(!el)return
-  el.textContent = v; el.classList.add('bump'); setTimeout(()=>el.classList.remove('bump'),300)
-}
-
-function corC(tel) {
-  if (!colorMap[tel]) { colorMap[tel] = CORES[colorIdx[0]%CORES.length]; colorIdx[0]++ }
-  return colorMap[tel]
-}
+function n(id,v){const el=document.getElementById(id);if(!el)return;el.textContent=v;el.classList.add('bump');setTimeout(()=>el.classList.remove('bump'),280)}
+function corC(tel){if(!colorMap[tel]){colorMap[tel]=CORES[colorIdx[0]%CORES.length];colorIdx[0]++};return colorMap[tel]}
 
 function renderUltList(contatos) {
-  const el = document.getElementById('ultList')
-  const chip = document.getElementById('chipUlt')
-  if (!el) return
-
-  if (!contatos || !contatos.length) {
-    el.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--ink4);">Nenhuma conversa</div>'
-    if (chip) chip.textContent = '0'
-    return
-  }
-
-  // Ordena pela última mensagem mais recente
-  const sorted = [...contatos].sort((a, b) => {
-    const getMsgs = c => c.mensagens || []
-    const ta = getMsgs(a).slice(-1)[0]?.timestamp || ''
-    const tb = getMsgs(b).slice(-1)[0]?.timestamp || ''
-    return new Date(tb) - new Date(ta)
-  })
-
-  if (chip) chip.textContent = sorted.length
-
-  el.innerHTML = sorted.map(c => {
-    const msgs = c.mensagens || []
-    const ultima = msgs.slice(-1)[0]
-    const hora = ultima ? fH(ultima.timestamp) : fH(c.primeira_msg_cliente?.horario || '')
-    const txt = ultima ? ultima.mensagem : (c.primeira_msg_cliente?.texto || '—')
-    const isAtendente = ultima && ['Atendente','atendente_ia','atendente_humano'].includes(ultima.nome)
-    const remetente = isAtendente ? '← IA' : '→ Cliente'
-    const badge = c.tem_pendencia
-      ? '<span class="ult-pend">Pendente</span>'
-      : '<span class="ult-resp">Respondida</span>'
+  const el=document.getElementById('ultList'),chip=document.getElementById('chipUlt')
+  if(!contatos||!contatos.length){el.innerHTML='<div class="empty"><div class="empty-txt">Nenhuma conversa</div></div>';if(chip)chip.textContent='0';return}
+  const sorted=[...contatos].sort((a,b)=>{const ta=(a.mensagens||[]).slice(-1)[0]?.timestamp||'',tb=(b.mensagens||[]).slice(-1)[0]?.timestamp||'';return new Date(tb)-new Date(ta)})
+  if(chip)chip.textContent=sorted.length
+  el.innerHTML=sorted.map(c=>{
+    const ultima=(c.mensagens||[]).slice(-1)[0]
+    const hora=ultima?fH(ultima.timestamp):fH(c.primeira_msg_cliente?.horario||'')
+    const txt=ultima?ultima.mensagem:(c.primeira_msg_cliente?.texto||'—')
+    const isAtt=ultima&&['Atendente','atendente_ia','atendente_humano'].includes(ultima.nome)
+    const badge=c.tem_pendencia?'<span class="ult-pend">Pendente</span>':'<span class="ult-resp">Respondida</span>'
     return `<div class="ult-item" onclick="abrirDrawer('${c.telefone}')">
-      <div class="ult-item-top">
-        <div class="ult-item-nome">${c.nome || 'Desconhecido'}</div>
-        <div class="ult-item-hora">${hora}</div>
-      </div>
-      <div class="ult-item-msg" style="color:${isAtendente?'var(--ink4)':'var(--ink3)'}">
-        <span style="font-size:9px;margin-right:4px;opacity:0.6">${remetente}</span>${txt}
-      </div>
-      <div class="ult-item-badges" style="margin-top:4px">${badge}</div>
-    </div>`
-  }).join('')
+      <div class="ult-top"><div class="ult-nome">${c.nome||'Desconhecido'}</div><div class="ult-hora">${hora}</div></div>
+      <div class="ult-msg"><span style="font-size:9px;opacity:0.5;margin-right:3px">${isAtt?'← IA':'→'}</span>${txt}</div>
+      ${badge}</div>`}).join('')
 }
-
 function renderTabela(contatos) {
-  const tb = document.getElementById('tbody')
-  if (!contatos.length) {
-    tb.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">Nenhuma conversa neste dia</div></div></td></tr>`
-    return
-  }
-  tb.innerHTML = contatos.map(c => {
-    const cor = corC(c.telefone)
-    const espera = c.respondida ? teClass(c.tempo_espera_segundos) : null
-    const turnosBadge = c.turnos_pendentes > 0
-      ? `<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} <span style="color:var(--rose);font-size:10px">⚠ ${c.turnos_pendentes} pend.</span></span>`
-      : `<span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--teal)">${c.turnos_respondidos}/${c.total_turnos}</span>`
+  const tb=document.getElementById('tbody')
+  if(!contatos.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">Nenhuma conversa neste dia</div></div></td></tr>`;return}
+  tb.innerHTML=contatos.map(c=>{
+    const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
+    const turnosBadge=c.turnos_pendentes>0
+      ?`<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ⚠${c.turnos_pendentes}</span>`
+      :`<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
     return `<tr onclick="abrirDrawer('${c.telefone}')">
-      <td>
-        <div class="cwrap">
-          <div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div>
-          <div>
-            <div class="cname">${c.nome||'Desconhecido'}${c.tem_pendencia ? ' <span style="font-size:10px">⚠️</span>' : ''}</div>
-            <div class="cphone">${fTel(c.telefone)}</div>
-          </div>
-        </div>
-      </td>
-      <td>
-        <div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div>
-        <div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div>
-      </td>
-      <td>
-        <div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div>
-        <div class="mhr">${c.primeira_msg_atendente ? fH(c.primeira_msg_atendente.horario) : '—'}</div>
-      </td>
-      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3)">${c.total_msgs_cliente} <span style="color:var(--ink4);font-size:10px">cli</span> / ${c.total_msgs_atendente} <span style="color:var(--ink4);font-size:10px">ate</span></span></td>
-      <td>${c.respondida ? `<span class="tespera ${espera.cls}">${espera.label}</span>` : `<span class="tespera none">—</span>`}</td>
+      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${c.nome||'Desconhecido'}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${fTel(c.telefone)}</div></div></div></td>
+      <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
+      <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3)">${c.total_msgs_cliente}<span style="color:var(--ink4);font-size:9px"> cli</span> / ${c.total_msgs_atendente}<span style="color:var(--ink4);font-size:9px"> ate</span></span></td>
+      <td>${c.respondida?`<span class="tespera ${espera.cls}">${espera.label}</span>`:`<span class="tespera none">—</span>`}</td>
       <td>${turnosBadge}</td>
-      <td>${c.tem_pendencia
-        ? `<span class="sbadge nresp"><span class="sbadge-dot"></span>Pendente</span>`
-        : c.respondida
-          ? `<span class="sbadge resp"><span class="sbadge-dot"></span>Respondida</span>`
-          : `<span class="sbadge nresp"><span class="sbadge-dot"></span>Aguardando</span>`}
-      </td>
-    </tr>`
-  }).join('')
+      <td>${c.tem_pendencia?`<span class="sbadge nresp"><span class="sbadge-dot"></span>Pendente</span>`:c.respondida?`<span class="sbadge resp"><span class="sbadge-dot"></span>Respondida</span>`:`<span class="sbadge nresp"><span class="sbadge-dot"></span>Aguardando</span>`}</td>
+    </tr>`}).join('')
 }
-
-function teClass(seg) {
-  if (seg === null) return { cls:'none', label:'—' }
-  const label = fTMA(seg)
-  if (seg <= 120) return { cls:'fast', label }
-  if (seg <= 300) return { cls:'mid', label }
-  return { cls:'slow', label }
-}
-
-function initBars() {
-  const c = document.getElementById('bars'); c.innerHTML = ''
-  for (let h=0; h<24; h++) {
-    const w = document.createElement('div'); w.className='bw'
-    w.innerHTML = `<div class="bbar" id="bar-${h}" style="height:2px"></div><div class="blabel">${h%6===0?h+'h':''}</div>`
-    c.appendChild(w)
-  }
-}
-
-function renderBars(porHora, pico) {
-  const max = Math.max(...porHora, 1)
-  porHora.forEach((v,h) => {
-    const b = document.getElementById(`bar-${h}`); if(!b)return
-    b.style.height = Math.max(2, (v/max)*68)+'px'
-    b.className = h === pico ? 'bbar active' : 'bbar'
-  })
-}
-
-function renderInstList(contatos) {
-  const inst = {}
-  contatos.forEach(c => { inst[c.instancia] = (inst[c.instancia]||0)+1 })
-  const el = document.getElementById('instList')
-  if (!Object.keys(inst).length) { el.innerHTML=`<div class="empty"><div class="empty-txt">Nenhuma instância</div></div>`; return }
-  el.innerHTML = Object.entries(inst).map(([n,t]) => `
-    <div class="irow">
-      <div class="iname"><div class="ipip"></div>${n}</div>
-      <div class="icount">${t}</div>
-    </div>`).join('')
-}
+function teClass(seg){if(seg===null)return{cls:'none',label:'—'};const label=fTMA(seg);if(seg<=120)return{cls:'fast',label};if(seg<=300)return{cls:'mid',label};return{cls:'slow',label}}
+function initBars(){const c=document.getElementById('bars');if(!c)return;c.innerHTML='';for(let h=0;h<24;h++){const w=document.createElement('div');w.className='bw';w.innerHTML=`<div class="bbar" id="bar-${h}" style="height:2px"></div><div class="blabel">${h%6===0?h+'h':''}</div>`;c.appendChild(w)}}
+function renderBars(porHora,pico){const max=Math.max(...porHora,1);porHora.forEach((v,h)=>{const b=document.getElementById(`bar-${h}`);if(!b)return;b.style.height=Math.max(2,(v/max)*64)+'px';b.className=h===pico?'bbar active':'bbar'})}
+function renderInstList(contatos){const inst={};contatos.forEach(c=>{inst[c.instancia]=(inst[c.instancia]||0)+1});const el=document.getElementById('instList');if(!Object.keys(inst).length){el.innerHTML=`<div class="empty"><div class="empty-txt">Nenhuma instância</div></div>`;return};el.innerHTML=Object.entries(inst).map(([nm,t])=>`<div class="irow"><div class="iname"><div class="ipip"></div>${nm}</div><div class="icount">${t}</div></div>`).join('')}
 
 function abrirDrawer(tel) {
-  if (!cache) return
-  const d = cache.contatos.find(x=>x.telefone===tel); if(!d)return
-
-  document.getElementById('dname').textContent = d.nome||'Desconhecido'
-  document.getElementById('dphone').textContent = fTel(tel)
-
-  // Ordena por timestamp; empate: cliente vem antes do atendente
-  const msgs = [...(d.mensagens||[])].sort((a,b)=>{
-    const diff = new Date(a.timestamp) - new Date(b.timestamp)
-    if (diff !== 0) return diff
-    // mesmo horário: cliente (não-Atendente) vem primeiro
-    if (!['Atendente','atendente_ia','atendente_humano'].includes(a.nome) && ['Atendente','atendente_ia','atendente_humano'].includes(b.nome)) return -1
-    if (['Atendente','atendente_ia','atendente_humano'].includes(a.nome) && !['Atendente','atendente_ia','atendente_humano'].includes(b.nome)) return 1
-    return 0
-  })
-
-  // Resumo
-  const resumo = `
-    <div class="dresume">
-      <div class="dresume-title">Resumo do atendimento</div>
-      <div class="dresume-row"><span class="dresume-label">Primeiro contato</span><span class="dresume-val">${fH(d.primeira_msg_cliente?.horario)}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Primeira resposta</span><span class="dresume-val">${d.primeira_msg_atendente ? fH(d.primeira_msg_atendente.horario) : '—'}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Tempo de espera</span><span class="dresume-val ${d.respondida ? teClass(d.tempo_espera_segundos).cls : 'none'} tespera">${d.respondida ? fTMA(d.tempo_espera_segundos) : '—'}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Msgs do cliente</span><span class="dresume-val">${d.total_msgs_cliente}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Msgs do atendente</span><span class="dresume-val">${d.total_msgs_atendente}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Total de turnos</span><span class="dresume-val">${d.total_turnos}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Turnos respondidos</span><span class="dresume-val">${d.turnos_respondidos}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Turnos pendentes</span><span class="dresume-val" style="color:${d.turnos_pendentes>0?'var(--rose)':'var(--green)'}">${d.turnos_pendentes}</span></div>
-      <div class="dresume-row"><span class="dresume-label">TMA desta conversa</span><span class="dresume-val">${fTMA(d.tma_segundos)}</span></div>
-      <div class="dresume-row"><span class="dresume-label">Status</span><span class="dresume-val">${d.tem_pendencia ? '⚠️ Pendente' : d.respondida ? '✅ Respondida' : '⏳ Aguardando'}</span></div>
-    </div>`
-
-  // Timeline por turnos
-  let turnoIdx = 0
-  const timeline = (d.turnos||[]).map(t => {
-    turnoIdx++
-    const cor = t.respondido ? 'var(--teal)' : 'var(--rose)'
-    const label = t.respondido ? `Turno ${turnoIdx} · ${fTMA(t.tempo_espera_segundos)}` : `Turno ${turnoIdx} · ⚠ Sem resposta`
-    const msgs = [...t.msgs_cliente, ...(t.resposta ? [t.resposta] : [])]
-    return `<div style="margin-bottom:16px;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:${cor};letter-spacing:0.5px;text-transform:uppercase;padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px;">${label}</div>
-      ${msgs.map(m => {
-        const isAtt = ['Atendente','atendente_ia','atendente_humano'].includes(m.nome)
-        return `<div class="dmsg">
-          <div class="dmsg-header">
-            <span class="dmsg-who ${isAtt?'atendente':'cliente'}">${isAtt ? (m.nome==='atendente_humano' ? 'Humano' : 'IA') : m.nome||'Cliente'}</span>
-            <span class="dmsg-hr">${fH(m.timestamp)}</span>
-          </div>
-          <div class="dmsg-txt">${m.mensagem||'—'}</div>
-        </div>`
-      }).join('')}
-    </div>`
-  }).join('')
-
-  document.getElementById('dbody').innerHTML = resumo + `<div style='padding:4px 0'>` + timeline + `</div>`
-  document.getElementById('drawer').classList.add('open')
-  document.getElementById('overlay').classList.add('show')
+  if(!cache)return; const d=cache.contatos.find(x=>x.telefone===tel); if(!d)return
+  document.getElementById('dname').textContent=d.nome||'Desconhecido'; document.getElementById('dphone').textContent=fTel(tel)
+  const resumo=`<div class="dresume"><div class="dresume-title">Resumo</div>
+    <div class="dresume-row"><span class="dresume-label">Primeiro contato</span><span class="dresume-val">${fH(d.primeira_msg_cliente?.horario)}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Primeira resposta</span><span class="dresume-val">${d.primeira_msg_atendente?fH(d.primeira_msg_atendente.horario):'—'}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Tempo de espera</span><span class="dresume-val ${d.respondida?teClass(d.tempo_espera_segundos).cls:'none'} tespera">${d.respondida?fTMA(d.tempo_espera_segundos):'—'}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Msgs cliente / atendente</span><span class="dresume-val">${d.total_msgs_cliente} / ${d.total_msgs_atendente}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Turnos respondidos</span><span class="dresume-val">${d.turnos_respondidos}/${d.total_turnos}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Turnos pendentes</span><span class="dresume-val" style="color:${d.turnos_pendentes>0?'var(--rose)':'var(--green)'}">${d.turnos_pendentes}</span></div>
+    <div class="dresume-row"><span class="dresume-label">TMA</span><span class="dresume-val">${fTMA(d.tma_segundos)}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Status</span><span class="dresume-val">${d.tem_pendencia?'⚠️ Pendente':d.respondida?'✅ Respondida':'⏳ Aguardando'}</span></div>
+  </div>`
+  let ti=0
+  const timeline=(d.turnos||[]).map(t=>{ti++;const cor=t.respondido?'var(--green)':'var(--rose)';const label=t.respondido?`Turno ${ti} · ${fTMA(t.tempo_espera_segundos)}`:`Turno ${ti} · ⚠ Sem resposta`;const tMsgs=[...t.msgs_cliente,...(t.resposta?[t.resposta]:[])]
+    return `<div style="margin-bottom:16px"><div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:600;color:${cor};letter-spacing:0.8px;text-transform:uppercase;padding:5px 0;border-bottom:1px solid var(--border);margin-bottom:10px">${label}</div>
+    ${tMsgs.map(m=>{const isAtt=['Atendente','atendente_ia','atendente_humano'].includes(m.nome);return `<div class="dmsg"><div class="dmsg-header"><span class="dmsg-who ${isAtt?'atendente':'cliente'}">${isAtt?(m.nome==='atendente_humano'?'Humano':'IA'):m.nome||'Cliente'}</span><span class="dmsg-hr">${fH(m.timestamp)}</span></div><div class="dmsg-txt">${m.mensagem||'—'}</div></div>`}).join('')}</div>`}).join('')
+  document.getElementById('dbody').innerHTML=resumo+timeline
+  document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show')
 }
-
-function fecharDrawer() {
-  document.getElementById('drawer').classList.remove('open')
-  document.getElementById('overlay').classList.remove('show')
-}
-
-function conectarSSE() {
-  try {
-    const es = new EventSource(`${API}/stream`)
-    es.onmessage = () => carregar()
-    es.onerror = () => setTimeout(conectarSSE, 5000)
-  } catch {}
-}
-
-function fH(ts) {
-  if (!ts) return '—'
-  return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})
-}
-function fTel(tel) {
-  const t = String(tel||'').replace(/\D/g,'')
-  if (t.length>=12) return `+${t.slice(0,2)} (${t.slice(2,4)}) ${t.slice(4,9)}-${t.slice(9)}`
-  return tel
-}
-function fTMA(seg) {
-  if (!seg && seg !== 0) return '—'
-  if (seg < 60) return `${seg}s`
-  const m = Math.floor(seg/60), s = seg%60
-  return s > 0 ? `${m}m ${s}s` : `${m}m`
-}
+function fecharDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+function conectarSSE(){try{const es=new EventSource(`${API}/stream`);es.onmessage=()=>carregar();es.onerror=()=>setTimeout(conectarSSE,5000)}catch{}}
+function fH(ts){if(!ts)return'—';return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function fTel(tel){const t=String(tel||'').replace(/\D/g,'');if(t.length>=12)return`+${t.slice(0,2)} (${t.slice(2,4)}) ${t.slice(4,9)}-${t.slice(9)}`;return tel}
+function fTMA(seg){if(!seg&&seg!==0)return'—';if(seg<60)return`${seg}s`;const m=Math.floor(seg/60),s=seg%60;return s>0?`${m}m ${s}s`:`${m}m`}
 </script>
+
 <script>
-// Apply CONFIG to dashboard
-(function(){
+;(function(){
   const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  
-  // Logo/empresa
   const logoArea = document.getElementById('logoArea')
   if (logoArea && cfg.empresa) {
     const hasLogo = cfg.logo_url && cfg.logo_url.trim()
-    const logoHtml = hasLogo
-      ? `<img src="${cfg.logo_url}" class="logo-img" alt="${cfg.empresa}">`
-      : `<span class="logo-emoji">${cfg.logo_emoji || '💬'}</span>`
     logoArea.innerHTML = `
-      <div class="logo-wrap">
-        ${logoHtml}
-        <div>
-          <div class="empresa-nome">${cfg.empresa}</div>
-          ${cfg.slogan ? `<div class="empresa-slogan">${cfg.slogan}</div>` : ''}
-        </div>
+      <div class="sidebar-logo">${hasLogo?`<img src="${cfg.logo_url}" alt="${cfg.empresa}">`:cfg.logo_emoji||'💬'}</div>
+      <div>
+        <div class="sidebar-brand-name">${cfg.empresa}</div>
+        <div class="sidebar-brand-slug">${cfg.slogan||'Painel'}</div>
       </div>`
   }
-
-  // Cores customizadas
   if (cfg.cores) {
     const r = document.documentElement
-    if (cfg.cores.primaria)   { r.style.setProperty('--teal', cfg.cores.primaria); r.style.setProperty('--teal-mid', cfg.cores.primaria) }
-    if (cfg.cores.secundaria) r.style.setProperty('--rose', cfg.cores.secundaria)
-    if (cfg.cores.terciaria)  r.style.setProperty('--amber', cfg.cores.terciaria)
-    if (cfg.cores.acento)     r.style.setProperty('--indigo', cfg.cores.acento)
+    if (cfg.cores.primaria)   { r.style.setProperty('--green',cfg.cores.primaria); r.style.setProperty('--green2',cfg.cores.primaria) }
+    if (cfg.cores.secundaria) r.style.setProperty('--rose',cfg.cores.secundaria)
+    if (cfg.cores.terciaria)  r.style.setProperty('--amber',cfg.cores.terciaria)
   }
 })()
 </script>
