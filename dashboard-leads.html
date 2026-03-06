@@ -388,13 +388,24 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 .sidebar-logo svg{width:22px;height:22px;stroke:#111b21;}
 .hor-icon svg{width:16px;height:16px;stroke:var(--ink3);}
 .tool-icon-wrap svg{width:20px;height:20px;stroke:var(--green);}
+
+/* ── MOBILE SIDEBAR ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:199;backdrop-filter:blur(3px)}
+.sidebar-overlay.show{display:block}
+.menu-toggle{display:none;width:36px;height:36px;border-radius:var(--r);background:transparent;border:1px solid var(--border);color:var(--ink2);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
+@media(max-width:700px){
+  .menu-toggle{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform 0.28s cubic-bezier(0.32,0,0.08,1)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+}
 </style>
 </head>
 <body>
 <div class="app">
 
 <!-- ── SIDEBAR ── -->
-<nav class="sidebar">
+<nav class="sidebar" id="sidebar">
   <div class="sidebar-brand" id="logoArea">
     <div class="sidebar-logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
     <div>
@@ -536,6 +547,8 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
     <button class="dclose" onclick="fecharDrawer()">✕</button>
   </div>
   <div class="dbody" id="dbody"></div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 </div>
 
 <script>
@@ -703,6 +716,17 @@ function fTMA(seg){if(!seg&&seg!==0)return'—';if(seg<60)return`${seg}s`;const 
     if (cfg.cores.terciaria)  r.style.setProperty('--amber',cfg.cores.terciaria)
   }
 })()
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar')
+  const ov = document.getElementById('sidebarOverlay')
+  const open = document.getElementById('menuIconOpen')
+  const close = document.getElementById('menuIconClose')
+  const isOpen = sb.classList.toggle('open')
+  ov.classList.toggle('show', isOpen)
+  if (open)  open.style.display  = isOpen ? 'none'  : 'block'
+  if (close) close.style.display = isOpen ? 'block' : 'none'
+}
 </script>
 </body>
 </html>
