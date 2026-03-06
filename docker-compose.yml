@@ -14,6 +14,21 @@ services:
     networks:
       - easypanel
 
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: always
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - PORT=3001
+    expose:
+      - "3001"
+    networks:
+      - easypanel
+
 networks:
   easypanel:
     external: true
