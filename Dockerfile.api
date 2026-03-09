@@ -8,7 +8,7 @@ COPY dashboard-leads.html public/
 COPY relatorio-ia.html public/
 COPY contatos.html public/
 COPY config.js public/
-COPY logo.png public/
 COPY ferramentas.html public/
+COPY logo.pn[g] public/
 EXPOSE 3001
 CMD ["node", "index.js"]

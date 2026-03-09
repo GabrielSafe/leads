@@ -5,15 +5,14 @@ services:
       dockerfile: Dockerfile.api
     restart: always
     environment:
-      - REDIS_HOST=redis_db
-      - REDIS_PORT=6379
+      - REDIS_HOST=host.docker.internal
+      - REDIS_PORT=6381
       - REDIS_PASSWORD=
       - PORT=3001
     ports:
       - "3001:3001"
     networks:
       - leads-net
-
 networks:
   leads-net:
     external: true

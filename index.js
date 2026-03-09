@@ -163,12 +163,13 @@ app.get('/relatorio', async (req, res) => {
     const tmaGlobal = todosTempos.length ? Math.round(todosTempos.reduce((a,b)=>a+b,0)/todosTempos.length) : 0
 
     // Pico por hora
-    const porHora = new Array(24).fill(0)
-    contatos.forEach(c => {
-      const h = new Date(c.primeira_msg_cliente.horario).getHours()
-      if (!isNaN(h)) porHora[h]++
-    })
-    const horaP = porHora.indexOf(Math.max(...porHora))
+const porHora = new Array(24).fill(0)
+contatos.forEach(c => {
+  const h = new Date(c.primeira_msg_cliente.horario).toLocaleString('en-CA', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false })
+  const hora = parseInt(h)
+  if (!isNaN(hora)) porHora[hora]++
+})
+const horaP = porHora.indexOf(Math.max(...porHora))
 
     res.json({
       data,
@@ -254,6 +255,38 @@ app.get('/mensagens', async (req, res) => {
     }
     res.json({ total: resultado.reduce((s,c) => s + c.total, 0), contatos: resultado })
   } catch(err) { res.status(500).json({ erro: err.message }) }
+})
+
+app.post('/resetar-ia', async (req, res) => {
+  try {
+    const keys = await redisContatos.keys('*')
+    if (!keys.length) return res.json({ ok: true, resetados: 0 })
+    let resetados = 0
+    for (const k of keys) {
+      const tipo = await redisContatos.type(k)
+      if (tipo === 'hash') {
+        const ia = await redisContatos.hget(k, 'ia')
+        if (ia === 'nao') {
+          await redisContatos.hset(k, 'ia', 'sim')
+          resetados++
+        }
+      } else if (tipo === 'string') {
+        try {
+          const contato = JSON.parse(await redisContatos.get(k))
+          if (contato.ia === 'nao') {
+            contato.ia = 'sim'
+            await redisContatos.set(k, JSON.stringify(contato))
+            resetados++
+          }
+        } catch {}
+      }
+    }
+    console.log(`🔄 IA resetada para ${resetados} contato(s)`)
+    res.json({ ok: true, resetados })
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({ erro: err.message })
+  }
 })
 
 app.get('/status', async (req, res) => {

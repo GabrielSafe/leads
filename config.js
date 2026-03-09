@@ -11,7 +11,7 @@ const CONFIG = {
   // IDENTIDADE DA EMPRESA
   // ─────────────────────────────────────────
 
-  empresa: "Magma",          // Nome exibido no header e rodapé
+  empresa: "Nome da Empresa",          // Nome exibido no header e rodapé
   slogan: "Sistema de Atendimento",    // Subtítulo abaixo do nome (pode deixar vazio "")
 
   // ─────────────────────────────────────────
@@ -23,7 +23,7 @@ const CONFIG = {
 
   // Opção 2: URL de imagem (deixe "" para usar emoji)
   // Exemplo: "https://meusite.com/logo.png" ou "/logo.png" (arquivo na raiz)
-  logo_url: "/logo.png",
+  logo_url: "",
 
   // Tamanho da logo em px (quando usar imagem)
   logo_tamanho: 36,
@@ -36,7 +36,7 @@ const CONFIG = {
   favicon_emoji: "💬",
 
   // Opção 2: URL de imagem .ico ou .png (deixe "" para usar emoji)
-  favicon_url: "/logo.png",
+  favicon_url: "",
 
   // ─────────────────────────────────────────
   // CORES

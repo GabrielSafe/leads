@@ -180,6 +180,13 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
 }
+
+.reset-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:var(--r);background:var(--amber-lt);border:1px solid rgba(245,166,35,0.25);color:var(--amber);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.reset-btn:hover{background:var(--amber);color:#111b21;border-color:var(--amber)}
+.reset-btn:disabled{opacity:0.4;cursor:not-allowed}
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:var(--r);font-size:12px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease both;display:flex;align-items:center;gap:8px}
+.toast.success{background:var(--green-lt);border:1px solid rgba(37,211,102,0.3);color:var(--green)}
+.toast.error{background:var(--rose-lt);border:1px solid rgba(241,92,109,0.3);color:var(--rose)}
 </style>
 </head>
 <body>
@@ -243,6 +250,10 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
         <div class="stat-pill">Total <b id="statTotal">—</b></div>
         <div class="stat-pill">IA Ativa <b id="statIASim" style="color:var(--green)">—</b></div>
         <div class="stat-pill">IA Pausada <b id="statIANao" style="color:var(--rose)">—</b></div>
+        <button class="reset-btn" id="resetBtn" onclick="resetarIA()" title="Reativar IA para todos os contatos pausados">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Reativar IA
+        </button>
         <button class="export-btn" onclick="exportarExcel()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Exportar CSV
@@ -378,6 +389,31 @@ function toggleSidebar() {
   ov.classList.toggle('show', isOpen)
   if (open)  open.style.display  = isOpen ? 'none'  : 'block'
   if (close) close.style.display = isOpen ? 'block' : 'none'
+}
+
+async function resetarIA() {
+  const pausadas = todosContatos.filter(c => c.ia === 'nao').length
+  if (!pausadas) { showToast('Nenhum contato com IA pausada', 'success'); return }
+  if (!confirm(`Reativar IA para ${pausadas} contato${pausadas !== 1 ? 's' : ''} pausado${pausadas !== 1 ? 's' : ''}?`)) return
+  const btn = document.getElementById('resetBtn')
+  btn.disabled = true
+  try {
+    const r = await fetch(`${API}/resetar-ia`, { method: 'POST' })
+    const d = await r.json()
+    if (d.ok) {
+      showToast(`✓ IA reativada para ${d.resetados} contato${d.resetados !== 1 ? 's' : ''}`, 'success')
+      setTimeout(carregar, 800)
+    } else { showToast('Erro ao resetar', 'error') }
+  } catch { showToast('Erro de conexão', 'error') }
+  btn.disabled = false
+}
+
+function showToast(msg, type='success') {
+  const t = document.createElement('div')
+  t.className = `toast ${type}`
+  t.textContent = msg
+  document.body.appendChild(t)
+  setTimeout(() => t.remove(), 3000)
 }
 </script>
 </body>
