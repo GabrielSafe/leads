@@ -399,6 +399,59 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
 }
+
+/* ── MOBILE FULL ── */
+@media(max-width:700px){
+  /* Topbar */
+  .topbar{ padding:0 12px; gap:6px }
+  .clock{ display:none }
+  .page-title{ font-size:14px }
+
+  /* Content */
+  .content{ padding:14px 12px 32px }
+
+  /* Toolbar */
+  .toolbar{ flex-direction:column; align-items:flex-start; gap:8px; margin-bottom:14px }
+  .toolbar-left,.toolbar-right{ width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:2px }
+  #instBar{ display:flex; flex-wrap:nowrap; gap:6px }
+  .date-nav{ flex-wrap:nowrap; width:100%; justify-content:flex-start }
+  .dlabel{ min-width:80px; font-size:11px }
+
+  /* Stats - 2 colunas compactas */
+  .stats{ grid-template-columns:repeat(2,1fr); gap:8px; margin-bottom:14px }
+  .sc{ padding:12px 10px }
+  .sc-val{ font-size:22px }
+  .sc-label{ font-size:8px }
+  .sc-desc{ font-size:9px }
+
+  /* Grid */
+  .grid{ grid-template-columns:1fr; gap:12px }
+
+  /* Tabela - esconder colunas secundárias */
+  .twrap table thead tr th:nth-child(2),
+  .twrap table thead tr th:nth-child(3),
+  .twrap table thead tr th:nth-child(4),
+  .twrap table thead tr th:nth-child(5),
+  .twrap table thead tr th:nth-child(6){ display:none }
+  .twrap table tbody tr td:nth-child(2),
+  .twrap table tbody tr td:nth-child(3),
+  .twrap table tbody tr td:nth-child(4),
+  .twrap table tbody tr td:nth-child(5),
+  .twrap table tbody tr td:nth-child(6){ display:none }
+  .twrap table thead tr th:nth-child(1){ padding:9px 12px }
+  .twrap table thead tr th:nth-child(7){ padding:9px 12px }
+  .twrap table tbody tr td:nth-child(1){ padding:10px 12px }
+  .twrap table tbody tr td:nth-child(7){ padding:10px 12px }
+
+  /* Drawer full width no mobile */
+  .drawer{ width:100vw; border-left:none; border-top:1px solid var(--border); border-radius:16px 16px 0 0; top:auto; height:90vh }
+  .drawer.open{ transform:translateY(0); box-shadow:0 -8px 40px rgba(0,0,0,0.5) }
+  .drawer{ transform:translateY(100%); top:auto; bottom:0; right:0; left:0 }
+
+  /* Side cards ficam mais compactos */
+  .side-body{ padding:10px 14px }
+  .side-head{ padding:11px 14px }
+}
 </style>
 </head>
 <body>
@@ -427,6 +480,10 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span>Relatório IA</span>
     </a>
+    <a href="chat.html" class="nav-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Chat</span>
+    </a>
     <a href="ferramentas.html" class="nav-item">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
       <span>Ferramentas</span>
@@ -444,6 +501,10 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
   <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-left">
+      <button class="menu-toggle" onclick="toggleSidebar()" title="Menu" aria-label="Abrir menu">
+        <svg id="menuIconOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="menuIconClose" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
       <div class="page-title">Dashboard</div>
     </div>
     <div class="topbar-right">
@@ -547,9 +608,9 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
     <button class="dclose" onclick="fecharDrawer()">✕</button>
   </div>
   <div class="dbody" id="dbody"></div>
+</div>
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-</div>
 
 <script>
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''

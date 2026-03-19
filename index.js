@@ -289,6 +289,29 @@ app.post('/resetar-ia', async (req, res) => {
   }
 })
 
+app.post('/contato/:telefone/ia', async (req, res) => {
+  try {
+    const { telefone } = req.params
+    const { ia } = req.body
+    if (!['sim','nao'].includes(ia)) return res.status(400).json({ erro: 'ia deve ser sim ou nao' })
+    const tipo = await redisContatos.type(telefone)
+    if (tipo === 'hash') {
+      await redisContatos.hset(telefone, 'ia', ia)
+    } else if (tipo === 'string') {
+      const contato = JSON.parse(await redisContatos.get(telefone))
+      contato.ia = ia
+      await redisContatos.set(telefone, JSON.stringify(contato))
+    } else {
+      return res.status(404).json({ erro: 'Contato não encontrado' })
+    }
+    console.log(`🤖 IA do ${telefone} alterada para: ${ia}`)
+    res.json({ ok: true, telefone, ia })
+  } catch(err) {
+    console.error(err)
+    res.status(500).json({ erro: err.message })
+  }
+})
+
 app.get('/status', async (req, res) => {
   try {
     await redisContatos.ping(); await redisMensagens.ping(); await redisRelatorios.ping()
