@@ -44,8 +44,17 @@ body.light {
   --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.06);
   --shadow-lg:0 8px 40px rgba(0,0,0,0.12);
 }
+body.light {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 0% 0%,    rgba(0,168,132,0.05)  0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 100% 100%, rgba(2,136,209,0.04)  0%, transparent 65%);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background-color:var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 0% 0%,    rgba(37,211,102,0.055) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 100% 100%, rgba(83,189,235,0.04)  0%, transparent 65%);
+  background-attachment:fixed;color:var(--ink);min-height:100vh;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
 .app{display:flex;min-height:100vh}
 
@@ -238,6 +247,30 @@ body.light .topbar {
   }
   .reveal { opacity:1; transform:none }
 }
+
+/* ── THEME TRANSITION ── */
+.theme-transitioning, .theme-transitioning * {
+  transition:background-color 0.32s ease, border-color 0.32s ease, color 0.2s ease, box-shadow 0.32s ease !important;
+}
+
+/* ── SCROLL TO TOP ── */
+#scrollTop {
+  position:fixed; bottom:80px; right:24px; z-index:400;
+  width:38px; height:38px; border-radius:50%;
+  background:var(--green); border:none; color:#111b21;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:0 4px 20px rgba(37,211,102,0.35);
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.3s cubic-bezier(0.16,1,0.3,1), transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s;
+}
+#scrollTop.show { opacity:1; transform:translateY(0) }
+#scrollTop:hover { box-shadow:0 8px 28px rgba(37,211,102,0.5); transform:translateY(-2px) }
+#scrollTop svg { width:16px; height:16px; stroke:#111b21; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round }
+
+/* ── PAGE TRANSITIONS ── */
+.main { animation:pageIn 0.45s cubic-bezier(0.16,1,0.3,1) both }
+@keyframes pageIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+.main.page-out { opacity:0 !important; transform:translateY(-8px) !important; transition:opacity 0.22s ease, transform 0.22s ease !important }
 </style>
 </head>
 <body>
@@ -343,7 +376,14 @@ body.light .topbar {
 <script>
 let csvData = [], csvFile = null
 
-function toggleTheme() { const l=document.body.classList.toggle('light'); document.getElementById('iconMoon').style.display=l?'none':'block'; document.getElementById('iconSun').style.display=l?'block':'none'; localStorage.setItem('theme',l?'light':'dark') }
+function toggleTheme() {
+  document.body.classList.add('theme-transitioning')
+  const isLight = document.body.classList.toggle('light')
+  document.getElementById('iconMoon').style.display = isLight ? 'none'  : 'block'
+  document.getElementById('iconSun').style.display  = isLight ? 'block' : 'none'
+  localStorage.setItem('theme', isLight ? 'light' : 'dark')
+  setTimeout(() => document.body.classList.remove('theme-transitioning'), 380)
+}
 
 const uploadArea = document.getElementById('uploadArea')
 uploadArea.addEventListener('dragover', e=>{ e.preventDefault(); uploadArea.classList.add('dragover') })
@@ -445,6 +485,35 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal()
   initRipple()
 })
+
+function initPageTransitions() {
+  document.querySelectorAll('.nav-item[href]').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href')
+      if (!href || href === '#') return
+      const curr = window.location.pathname.split('/').pop() || 'index.html'
+      if (href === curr) return
+      e.preventDefault()
+      document.querySelector('.main')?.classList.add('page-out')
+      setTimeout(() => { window.location.href = href }, 230)
+    })
+  })
+}
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof initPageTransitions === 'function') initPageTransitions()
+  initScrollTop()
+})
+
+function initScrollTop() {
+  const btn = document.getElementById('scrollTop')
+  const content = document.querySelector('.content')
+  if (!btn || !content) return
+  content.addEventListener('scroll', () => btn.classList.toggle('show', content.scrollTop > 280))
+  btn.addEventListener('click', () => content.scrollTo({ top:0, behavior:'smooth' }))
+}
 </script>
+<button id="scrollTop" aria-label="Voltar ao topo">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 </body>
 </html>

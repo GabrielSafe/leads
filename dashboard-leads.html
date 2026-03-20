@@ -81,7 +81,20 @@ body.light {
 
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0 }
 html { height:100% }
-body { font-family:'Plus Jakarta Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column }
+body {
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 0% 0%,   rgba(37,211,102,0.055) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 100% 100%, rgba(83,189,235,0.04)  0%, transparent 65%);
+  background-attachment:fixed;
+  color:var(--ink); min-height:100vh; font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;
+}
+body.light {
+  background-image:
+    radial-gradient(ellipse 70% 50% at 0% 0%,   rgba(0,168,132,0.05)  0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 100% 100%, rgba(2,136,209,0.04)  0%, transparent 65%);
+}
 ::-webkit-scrollbar { width:4px; height:4px }
 ::-webkit-scrollbar-track { background:transparent }
 ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:99px }
@@ -146,7 +159,8 @@ body { font-family:'Plus Jakarta Sans',system-ui,sans-serif; background:var(--bg
   position:sticky; top:0; z-index:100;
 }
 .topbar-left { display:flex; align-items:center; gap:8px }
-.page-title  { font-size:15px; font-weight:700; color:var(--ink); letter-spacing:-0.2px }
+.page-title  { font-size:15px; font-weight:700; color:var(--ink); letter-spacing:-0.2px; line-height:1.2 }
+.page-sub    { font-size:10px; color:var(--ink3); font-family:'JetBrains Mono',monospace; margin-top:2px; letter-spacing:0.1px }
 .topbar-right { display:flex; align-items:center; gap:10px }
 
 .status-pill {
@@ -567,6 +581,94 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 #splash-bar  { height:100%; width:0%; background:linear-gradient(90deg,var(--green2),var(--green)); border-radius:99px; transition:width 0.45s ease }
 #splash-status { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink4); letter-spacing:0.3px }
 
+/* ── THEME TRANSITION ── */
+.theme-transitioning, .theme-transitioning * {
+  transition:background-color 0.32s ease, border-color 0.32s ease, color 0.2s ease, box-shadow 0.32s ease !important;
+}
+
+/* ── SCROLL TO TOP ── */
+#scrollTop {
+  position:fixed; bottom:80px; right:24px; z-index:400;
+  width:38px; height:38px; border-radius:50%;
+  background:var(--green); border:none; color:#111b21;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:0 4px 20px rgba(37,211,102,0.35);
+  opacity:0; transform:translateY(16px);
+  transition:opacity 0.3s cubic-bezier(0.16,1,0.3,1), transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s;
+}
+#scrollTop.show { opacity:1; transform:translateY(0) }
+#scrollTop:hover { box-shadow:0 8px 28px rgba(37,211,102,0.5); transform:translateY(-2px) }
+#scrollTop svg { width:16px; height:16px; stroke:#111b21; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round }
+
+/* ── NAV BADGE ── */
+.nav-badge {
+  min-width:18px; height:18px; border-radius:99px;
+  background:var(--rose); color:#fff;
+  font-size:10px; font-weight:700; font-family:'JetBrains Mono',monospace;
+  display:flex; align-items:center; justify-content:center;
+  padding:0 5px; margin-left:auto; flex-shrink:0;
+  animation:badgePop 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes badgePop { from{transform:scale(0)} to{transform:scale(1)} }
+
+/* ── HELP MODAL ── */
+#helpModal {
+  position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:6000;
+  display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(5px); animation:fadeIn 0.2s ease;
+}
+#helpModalInner {
+  background:var(--card); border:1px solid var(--border2);
+  border-radius:var(--r-lg); width:310px; overflow:hidden;
+  box-shadow:var(--shadow-lg); animation:cardIn 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+#helpModalHead {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:15px 20px; border-bottom:1px solid var(--border);
+  font-size:13px; font-weight:700; color:var(--ink); background:var(--card2);
+}
+#helpModalHead button {
+  width:26px; height:26px; border-radius:7px; background:var(--card3);
+  border:1px solid var(--border); color:var(--ink3); cursor:pointer; font-size:13px;
+  display:flex; align-items:center; justify-content:center; transition:all 0.15s;
+}
+#helpModalHead button:hover { background:var(--rose-lt); color:var(--rose) }
+#helpModalBody { padding:10px 20px 16px }
+.hk-row { display:flex; align-items:center; gap:14px; padding:8px 0; border-bottom:1px solid var(--border) }
+.hk-row:last-child { border-bottom:none }
+.hk-key {
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600;
+  padding:3px 9px; border-radius:6px; min-width:40px; text-align:center;
+  background:var(--card3); border:1px solid var(--border2); color:var(--ink2);
+  box-shadow:0 2px 0 var(--border2); flex-shrink:0;
+}
+.hk-desc { font-size:12px; color:var(--ink2) }
+
+/* ── PAGE TRANSITIONS ── */
+.main { animation:pageIn 0.45s cubic-bezier(0.16,1,0.3,1) both }
+@keyframes pageIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+.main.page-out { opacity:0 !important; transform:translateY(-8px) !important; transition:opacity 0.22s ease, transform 0.22s ease !important }
+
+/* ── TOAST ── */
+#toastContainer { position:fixed; bottom:24px; right:24px; z-index:5000; display:flex; flex-direction:column; gap:8px; align-items:flex-end; pointer-events:none }
+.toast {
+  display:flex; align-items:center; gap:8px; padding:10px 16px;
+  border-radius:10px; font-size:12px; font-weight:500;
+  background:var(--card3); border:1px solid var(--border2);
+  color:var(--ink); box-shadow:var(--shadow-lg);
+  transform:translateX(16px); opacity:0;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+  max-width:260px;
+}
+.toast.show  { transform:none; opacity:1 }
+.toast.ok    { border-color:rgba(37,211,102,0.35) }
+.toast.err   { border-color:rgba(241,92,109,0.35) }
+.toast.info  { border-color:rgba(83,189,235,0.3) }
+.toast-dot   { width:6px; height:6px; border-radius:50%; flex-shrink:0 }
+.toast.ok  .toast-dot { background:var(--green) }
+.toast.err .toast-dot { background:var(--rose) }
+.toast.info .toast-dot { background:var(--blue) }
+
 /* ── SKELETON CARDS ── */
 .sc-skel     { height:32px; width:60%; border-radius:6px; margin-bottom:6px; background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite ease-in-out }
 .sc-skel-sm  { height:10px; width:78%; border-radius:4px; opacity:0.55; background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%); background-size:200% 100%; animation:shimmer 1.4s 0.1s infinite ease-in-out }
@@ -680,6 +782,7 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
     <a href="chat.html" class="nav-item">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       <span>Chat</span>
+      <span class="nav-badge" id="chatBadge" style="display:none">0</span>
     </a>
     <a href="ferramentas.html" class="nav-item">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
@@ -702,7 +805,10 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
         <svg id="menuIconOpen" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         <svg id="menuIconClose" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <div class="page-title">Dashboard</div>
+      <div>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+        <div class="page-sub" id="pageSub"></div>
+      </div>
     </div>
     <div class="topbar-right">
       <div class="status-pill waiting" id="statusPill">
@@ -808,6 +914,10 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 </div>
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div id="toastContainer"></div>
+<button id="scrollTop" aria-label="Voltar ao topo">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
 
 <script>
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
@@ -860,20 +970,26 @@ function inicializar() {
     const el = document.getElementById('splash-name'); if (el) el.textContent = cfg.empresa
   }
   setSplashProgress(15, 'Iniciando...')
+  updateGreeting()
   dataAtual = dHoje(); setDateLabel(dataAtual); initBars(); carregar(); conectarSSE()
   setInterval(() => { const el = document.getElementById('clock'); if(el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
   setInterval(carregar, 15000)
   initScrollReveal()
   initRipple()
+  initPageTransitions()
+  initScrollTop()
+  initKeyboardShortcuts()
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializar)
 else inicializar()
 
 function toggleTheme() {
+  document.body.classList.add('theme-transitioning')
   const isLight = document.body.classList.toggle('light')
   document.getElementById('iconMoon').style.display = isLight ? 'none'  : 'block'
   document.getElementById('iconSun').style.display  = isLight ? 'block' : 'none'
   localStorage.setItem('theme', isLight ? 'light' : 'dark')
+  setTimeout(() => document.body.classList.remove('theme-transitioning'), 380)
 }
 function setDateLabel(d) { const [y,m,dia]=d.split('-'); document.getElementById('dlabel').textContent=`${dia}/${m}/${y}`; document.getElementById('dpick').value=d }
 function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(dt.getDate()+delta); dataAtual=dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregar() }
@@ -881,7 +997,101 @@ function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregar() }
 function irHoje()  { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
 
 /* ── SPLASH ── */
-let _splashHidden = false
+let _splashHidden = false, _firstLoad = true
+
+/* ── TOAST ── */
+function showToast(msg, type='ok') {
+  const c = document.getElementById('toastContainer'); if(!c) return
+  const t = document.createElement('div')
+  t.className = `toast ${type}`
+  t.innerHTML = `<div class="toast-dot"></div><span>${msg}</span>`
+  c.appendChild(t)
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')))
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 350) }, 2800)
+}
+
+/* ── SCROLL TO TOP ── */
+function initScrollTop() {
+  const btn = document.getElementById('scrollTop')
+  const content = document.querySelector('.content')
+  if (!btn || !content) return
+  content.addEventListener('scroll', () => btn.classList.toggle('show', content.scrollTop > 280))
+  btn.addEventListener('click', () => content.scrollTo({ top:0, behavior:'smooth' }))
+}
+
+/* ── CHAT BADGE ── */
+function updateChatBadge(pend) {
+  const badge = document.getElementById('chatBadge')
+  if (!badge) return
+  if (pend > 0) {
+    badge.textContent = pend > 99 ? '99+' : pend
+    badge.style.display = 'flex'
+    badge.style.animation = 'none'
+    requestAnimationFrame(() => { badge.style.animation = '' })
+  } else {
+    badge.style.display = 'none'
+  }
+}
+
+/* ── HELP MODAL ── */
+function toggleHelpModal() {
+  const existing = document.getElementById('helpModal')
+  if (existing) { existing.remove(); return }
+  const modal = document.createElement('div')
+  modal.id = 'helpModal'
+  modal.innerHTML = `<div id="helpModalInner">
+    <div id="helpModalHead">
+      <span>Atalhos de teclado</span>
+      <button onclick="document.getElementById('helpModal').remove()">✕</button>
+    </div>
+    <div id="helpModalBody">
+      ${[['←','Dia anterior'],['→','Próximo dia'],['T','Ir para hoje'],['R','Atualizar dados'],['Esc','Fechar drawer'],['?','Este menu']
+      ].map(([k,v])=>`<div class="hk-row"><kbd class="hk-key">${k}</kbd><span class="hk-desc">${v}</span></div>`).join('')}
+    </div>
+  </div>`
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove() })
+  document.body.appendChild(modal)
+}
+
+/* ── KEYBOARD SHORTCUTS ── */
+function initKeyboardShortcuts() {
+  document.addEventListener('keydown', e => {
+    if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName) || e.target.isContentEditable) return
+    const drawerOpen = document.getElementById('drawer')?.classList.contains('open')
+    if (e.key === 'ArrowLeft'  && !drawerOpen) { e.preventDefault(); mudarDia(-1) }
+    if (e.key === 'ArrowRight' && !drawerOpen) { e.preventDefault(); mudarDia(1) }
+    if ((e.key === 't' || e.key === 'T') && !drawerOpen) { e.preventDefault(); irHoje() }
+    if ((e.key === 'r' || e.key === 'R') && !drawerOpen) { e.preventDefault(); carregar(); showToast('Atualizando...','info') }
+    if (e.key === 'Escape' && drawerOpen) fecharDrawer()
+    if (e.key === '?') toggleHelpModal()
+  })
+}
+
+/* ── PAGE TRANSITIONS ── */
+function initPageTransitions() {
+  document.querySelectorAll('.nav-item[href]').forEach(link => {
+    link.addEventListener('click', e => {
+      const href = link.getAttribute('href')
+      if (!href || href === '#') return
+      const curr = window.location.pathname.split('/').pop() || 'index.html'
+      if (href === curr) return
+      e.preventDefault()
+      document.querySelector('.main')?.classList.add('page-out')
+      setTimeout(() => { window.location.href = href }, 230)
+    })
+  })
+}
+
+/* ── SAUDAÇÃO ── */
+function updateGreeting() {
+  const h = new Date().getHours()
+  const s = h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite'
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  const el = document.getElementById('pageTitle')
+  if (el) el.textContent = cfg.empresa ? `${s}, ${cfg.empresa}` : 'Dashboard'
+  const sub = document.getElementById('pageSub')
+  if (sub) sub.textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'})
+}
 function setSplashProgress(pct, status) {
   const bar = document.getElementById('splash-bar')
   const txt = document.getElementById('splash-status')
@@ -928,9 +1138,13 @@ async function carregar() {
       n('sIASim',iaSim); n('sIANao',iaNao)
     }
     hideSplash()
+    if (!_firstLoad) showToast('Dados atualizados')
+    _firstLoad = false
   } catch {
     setStatus(false)
     setSplashProgress(100, 'Erro ao conectar')
+    if (!_firstLoad) showToast('Falha ao atualizar', 'err')
+    _firstLoad = false
     setTimeout(hideSplash, 1500)
   }
 }
@@ -966,8 +1180,9 @@ function renderTudo(d) {
   renderTabela(d.contatos||[]); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
   /* skeleton → dados reais */
   document.getElementById('statsGrid')?.classList.add('loaded')
-  /* badge na aba */
+  /* badge na aba + sidebar */
   updateTabBadge(pend)
+  updateChatBadge(pend)
 }
 /* ── ANIMATED COUNTER ── */
 function animateCount(el, endVal, duration) {
@@ -1065,7 +1280,7 @@ function abrirDrawer(tel) {
   document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show')
 }
 function fecharDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
-function conectarSSE(){try{const es=new EventSource(`${API}/stream`);es.onmessage=()=>carregar();es.onerror=()=>setTimeout(conectarSSE,5000)}catch{}}
+function conectarSSE(){try{const es=new EventSource(`${API}/stream`);es.onmessage=()=>{carregar();showToast('Nova mensagem recebida','info')};es.onerror=()=>setTimeout(conectarSSE,5000)}catch{}}
 function fH(ts){if(!ts)return'—';return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function fTel(tel){const t=String(tel||'').replace(/\D/g,'');if(t.length>=12)return`+${t.slice(0,2)} (${t.slice(2,4)}) ${t.slice(4,9)}-${t.slice(9)}`;return tel}
 function fTMA(seg){if(!seg&&seg!==0)return'—';if(seg<60)return`${seg}s`;const m=Math.floor(seg/60),s=seg%60;return s>0?`${m}m ${s}s`:`${m}m`}
