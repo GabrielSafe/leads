@@ -581,6 +581,18 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 #splash-bar  { height:100%; width:0%; background:linear-gradient(90deg,var(--green2),var(--green)); border-radius:99px; transition:width 0.45s ease }
 #splash-status { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink4); letter-spacing:0.3px }
 
+/* ── DELTA VS ONTEM ── */
+.sc-delta {
+  font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600;
+  margin-top:7px; display:flex; align-items:center; gap:3px;
+  min-height:13px; opacity:0; transition:opacity 0.4s ease;
+}
+.sc-delta.ready { opacity:1 }
+.sc-delta.up   { color:var(--green) }
+.sc-delta.down { color:var(--rose) }
+.sc-delta.eq   { color:var(--ink4) }
+.sc-delta.na   { color:var(--ink4) }
+
 /* ── THEME TRANSITION ── */
 .theme-transitioning, .theme-transitioning * {
   transition:background-color 0.32s ease, border-color 0.32s ease, color 0.2s ease, box-shadow 0.32s ease !important;
@@ -845,11 +857,11 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 
     <!-- STATS -->
     <div class="stats" id="statsGrid">
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="bgn" id="bgTotal">0</div></div>
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="bgn" id="bgResp">0</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="bgn" id="bgNResp">0</div></div>
-      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="bgn" id="bgMsgsTotal">0</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="bgn" id="bgPend">0</div></div>
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="sc-delta" id="dTotal"></div><div class="bgn" id="bgTotal">0</div></div>
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="sc-delta" id="dResp"></div><div class="bgn" id="bgResp">0</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="sc-delta" id="dNResp"></div><div class="bgn" id="bgNResp">0</div></div>
+      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="sc-delta" id="dMsgs"></div><div class="bgn" id="bgMsgsTotal">0</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="sc-delta" id="dPend"></div><div class="bgn" id="bgPend">0</div></div>
       <div class="sc a"><div class="sc-label a"><span class="sc-dot"></span>TMA</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTMA">—</div><div class="sc-desc">tempo médio por turno</div><div class="bgn" id="bgTMA">—</div></div>
       <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Pico</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPico">—</div><div class="sc-desc">hora com mais contatos</div><div class="bgn" id="bgPico">—</div></div>
       <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>IA Ativa</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIASim">—</div><div class="sc-desc">contatos com IA ativa</div><div class="bgn" id="bgIASim">—</div></div>
@@ -924,7 +936,7 @@ const API = window.location.port === '3001' || window.location.hostname === 'loc
 const CORES = ['g','a','b','r']
 const colorMap = {}, colorIdx = [0]
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
-let dataAtual = dHoje(), cache = null, instAtual = 'todas'
+let dataAtual = dHoje(), cache = null, instAtual = 'todas', ontemCache = null
 
 /* ── SCROLL REVEAL ── */
 function initScrollReveal() {
@@ -1126,10 +1138,13 @@ function updateTabBadge(pend) {
 async function carregar() {
   try {
     setSplashProgress(40, 'Carregando dados...')
-    const [r1,r2] = await Promise.all([fetch(`${API}/relatorio?data=${dataAtual}`), fetch(`${API}/contatos`)])
+    const yday = new Date(dataAtual+'T12:00:00'); yday.setDate(yday.getDate()-1)
+    const ydayStr = yday.toISOString().split('T')[0]
+    const [r1,r2,r3] = await Promise.all([fetch(`${API}/relatorio?data=${dataAtual}`), fetch(`${API}/contatos`), fetch(`${API}/relatorio?data=${ydayStr}`)])
     if (!r1.ok) throw new Error()
     setSplashProgress(80, 'Processando...')
     cache = await r1.json(); setStatus(true)
+    ontemCache = r3.ok ? await r3.json() : null
     renderInstBar(cache.contatos||[]); renderTudo(filtrar(cache))
     if (r2.ok) {
       const cData = await r2.json(), todos = cData.contatos||[]
@@ -1167,6 +1182,32 @@ function setStatus(ok) {
   if(ok){pill.className='status-pill live';dot.className='dot live';txt.textContent='Ao vivo'}
   else{pill.className='status-pill dead';dot.className='dot dead';txt.textContent='Offline'}
 }
+function filtrarOntem(d) {
+  if (instAtual==='todas') return d
+  const c=(d.contatos||[]).filter(x=>x.instancia===instAtual)
+  const resp=c.filter(x=>x.respondida)
+  return {...d, total_conversas:c.length, respondidas:resp.length, nao_respondidas:c.length-resp.length, com_pendencia:c.filter(x=>x.tem_pendencia).length, contatos:c}
+}
+function renderDelta(id, hoje, ontem, lowerIsBetter=false) {
+  const el=document.getElementById(id); if(!el) return
+  if(ontem==null||hoje==null){el.className='sc-delta na ready';el.textContent='sem dados ontem';return}
+  const diff=hoje-ontem
+  if(diff===0){el.className='sc-delta eq ready';el.textContent='= igual a ontem';return}
+  const better=lowerIsBetter?diff<0:diff>0
+  const pct=ontem>0?` (${Math.abs(Math.round((diff/ontem)*100))}%)`:''
+  el.className=`sc-delta ${better?'up':'down'} ready`
+  el.textContent=`${diff>0?'↑':'↓'} ${Math.abs(diff)}${pct} vs ontem`
+}
+function renderDeltas(d) {
+  const o=ontemCache?filtrarOntem(ontemCache):null
+  const todayMsgs=(d.contatos||[]).reduce((a,c)=>a+(c.total_msgs_cliente||0),0)
+  const ontemMsgs=o?(o.contatos||[]).reduce((a,c)=>a+(c.total_msgs_cliente||0),0):null
+  renderDelta('dTotal', d.total_conversas||0, o?o.total_conversas:null)
+  renderDelta('dResp',  d.respondidas||0,     o?o.respondidas:null)
+  renderDelta('dNResp', d.nao_respondidas||0, o?o.nao_respondidas:null, true)
+  renderDelta('dMsgs',  todayMsgs,            ontemMsgs)
+  renderDelta('dPend',  d.com_pendencia||0,   o?o.com_pendencia:null, true)
+}
 function renderTudo(d) {
   const conv=d.total_conversas||0,resp=d.respondidas||0,nresp=d.nao_respondidas||0,pend=d.com_pendencia||0
   const totalMsgs=(d.contatos||[]).reduce((acc,c)=>acc+(c.total_msgs_cliente||0),0)
@@ -1180,6 +1221,8 @@ function renderTudo(d) {
   renderTabela(d.contatos||[]); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
   /* skeleton → dados reais */
   document.getElementById('statsGrid')?.classList.add('loaded')
+  /* deltas vs ontem */
+  renderDeltas(d)
   /* badge na aba + sidebar */
   updateTabBadge(pend)
   updateChatBadge(pend)
