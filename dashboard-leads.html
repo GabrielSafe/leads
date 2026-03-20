@@ -227,10 +227,10 @@ input[type=date].dpick {
 .today-btn:hover { background:var(--green); color:#111b21; border-color:var(--green) }
 
 /* ── STATS ── */
-.stats { display:grid; grid-template-columns:repeat(9,1fr); gap:10px; margin-bottom:20px }
+.stats { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px }
 .sc {
   background:var(--card); border:1px solid var(--border);
-  border-radius:var(--r-lg); padding:16px 14px;
+  border-radius:var(--r-lg); padding:20px 18px;
   position:relative; overflow:hidden;
   transition:transform 0.18s, box-shadow 0.18s, border-color 0.18s;
   box-shadow:var(--shadow);
@@ -256,7 +256,7 @@ input[type=date].dpick {
 .sc-label.b  { color:var(--blue) }
 .sc-label.v  { color:var(--violet) }
 .sc-dot { width:5px; height:5px; border-radius:50%; background:currentColor; flex-shrink:0 }
-.sc-val { font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; color:var(--ink); letter-spacing:-1px; line-height:1; margin-bottom:5px }
+.sc-val { font-family:'JetBrains Mono',monospace; font-size:32px; font-weight:700; color:var(--ink); letter-spacing:-1.5px; line-height:1; margin-bottom:6px }
 .sc-desc { font-size:10px; color:var(--ink3); line-height:1.35 }
 .bgn { display:none }
 @keyframes bump { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1)} }
@@ -315,10 +315,30 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 .side-body  { padding:14px 16px }
 
 /* CHART */
-.chart-wrap { height:68px; display:flex; align-items:flex-end; gap:2px; padding-bottom:4px }
-.bw  { display:flex; flex-direction:column; align-items:center; flex:1; gap:3px }
-.bbar { width:100%; border-radius:3px 3px 0 0; background:var(--border2); min-height:2px; transition:height 0.4s cubic-bezier(0.16,1,0.3,1) }
-.bbar.active { background:var(--green); box-shadow:0 0 8px rgba(37,211,102,0.3) }
+.chart-wrap { height:130px; display:flex; align-items:flex-end; gap:2px; padding-bottom:4px; position:relative }
+.bw  { display:flex; flex-direction:column; align-items:center; flex:1; gap:3px; position:relative }
+.bbar {
+  width:100%; border-radius:3px 3px 0 0; min-height:2px;
+  background:var(--card3);
+  transition:height 0.5s cubic-bezier(0.16,1,0.3,1), background 0.2s;
+  position:relative; cursor:default;
+}
+.bbar.has-val {
+  background:linear-gradient(180deg, var(--blue-lt) 0%, var(--card3) 100%);
+}
+.bbar.active {
+  background:linear-gradient(180deg, var(--green) 0%, var(--green2) 100%);
+  box-shadow:0 0 14px rgba(37,211,102,0.35);
+}
+.bbar:hover { filter:brightness(1.3) }
+.bbar[data-v]:not([data-v="0"]):hover::after {
+  content: attr(data-label);
+  position:absolute; bottom:calc(100% + 5px); left:50%; transform:translateX(-50%);
+  background:var(--card3); border:1px solid var(--border2);
+  color:var(--ink); font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600;
+  padding:3px 7px; border-radius:5px; white-space:nowrap; pointer-events:none;
+  z-index:10; box-shadow:var(--shadow);
+}
 .blabel { font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--ink4); line-height:1 }
 
 /* LATEST */
@@ -352,14 +372,50 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 .dbody { flex:1; overflow-y:auto; padding:18px 22px; display:flex; flex-direction:column; gap:14px }
 .dbody::-webkit-scrollbar { width:3px }
 .dbody::-webkit-scrollbar-thumb { background:var(--border2) }
-.dmsg { padding:10px 0; border-bottom:1px solid var(--border) }
-.dmsg:last-child { border-bottom:none }
-.dmsg-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px }
-.dmsg-who { font-size:10px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase }
-.dmsg-who.cliente   { color:var(--green) }
+/* ── DRAWER TIMELINE ── */
+.dturn {
+  position:relative; padding-left:18px; margin-bottom:24px;
+}
+.dturn::before {
+  content:''; position:absolute; left:4px; top:18px; bottom:0;
+  width:1px; background:linear-gradient(to bottom, var(--border2) 60%, transparent);
+}
+.dturn-head {
+  display:flex; align-items:center; gap:10px; margin-bottom:12px;
+}
+.dturn-dot {
+  position:absolute; left:0; top:4px;
+  width:9px; height:9px; border-radius:50%; flex-shrink:0;
+  border:2px solid var(--bg);
+}
+.dturn-dot.ok  { background:var(--green) }
+.dturn-dot.err { background:var(--rose) }
+.dturn-badge {
+  font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700;
+  letter-spacing:0.6px; text-transform:uppercase; padding:3px 9px;
+  border-radius:99px;
+}
+.dturn-badge.ok  { background:var(--green-lt); color:var(--green); border:1px solid rgba(37,211,102,0.25) }
+.dturn-badge.err { background:var(--rose-lt);  color:var(--rose);  border:1px solid rgba(241,92,109,0.25) }
+.dturn-badge span { opacity:0.6; font-weight:400; margin-left:4px }
+.dmsg-wrap { display:flex; flex-direction:column; gap:6px }
+.dmsg {
+  display:flex; flex-direction:column; gap:3px;
+  max-width:88%;
+}
+.dmsg.cliente  { align-self:flex-start }
+.dmsg.atendente{ align-self:flex-end; align-items:flex-end }
+.dmsg-who { font-size:9px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; padding:0 4px }
+.dmsg-who.cliente   { color:var(--ink3) }
 .dmsg-who.atendente { color:var(--amber) }
-.dmsg-hr { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink4) }
-.dmsg-txt { font-size:12px; color:var(--ink2); line-height:1.6; background:var(--bg2); border-radius:8px; padding:8px 10px; border:1px solid var(--border) }
+.dmsg-hr { font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--ink4) }
+.dmsg-header { display:flex; align-items:center; gap:6px }
+.dmsg-txt {
+  font-size:12px; color:var(--ink2); line-height:1.6;
+  border-radius:12px; padding:8px 12px;
+}
+.dmsg.cliente  .dmsg-txt { background:var(--card2); border:1px solid var(--border); border-bottom-left-radius:3px }
+.dmsg.atendente .dmsg-txt { background:rgba(37,211,102,0.08); border:1px solid rgba(37,211,102,0.18); border-bottom-right-radius:3px; color:var(--ink) }
 .dresume { background:var(--bg2); border:1px solid var(--border); border-radius:var(--r); padding:14px }
 .dresume-title { font-size:9px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--ink4); margin-bottom:10px }
 .dresume-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border) }
@@ -377,7 +433,7 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
 /* RESPONSIVE */
-@media(max-width:1300px) { .stats{grid-template-columns:repeat(5,1fr)} }
+@media(max-width:1300px) { .stats{grid-template-columns:repeat(4,1fr)} }
 @media(max-width:960px)  { .stats{grid-template-columns:repeat(3,1fr)}; .grid{grid-template-columns:1fr} }
 @media(max-width:700px)  { .sidebar{transform:translateX(-100%)}; .main{margin-left:0}; .stats{grid-template-columns:repeat(2,1fr)} }
 
@@ -388,6 +444,97 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 .sidebar-logo svg{width:22px;height:22px;stroke:#111b21;}
 .hor-icon svg{width:16px;height:16px;stroke:var(--ink3);}
 .tool-icon-wrap svg{width:20px;height:20px;stroke:var(--green);}
+
+/* ── CURSOR POINTER ── */
+.nav-item,.itab,.dnavbtn,.today-btn,.icon-btn,tbody tr,.ult-item,.irow,.sc{ cursor:pointer }
+
+/* ── GLASSMORPHISM TOPBAR ── */
+.topbar {
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  background:rgba(24,34,41,0.82) !important;
+}
+body.light .topbar {
+  background:rgba(233,237,239,0.82) !important;
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity:1; transform:none }
+
+/* ── STAT CARD INNER SHINE ── */
+.sc {
+  background:linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+}
+.sc.g:hover { border-color:rgba(37,211,102,0.4); box-shadow:0 8px 32px rgba(37,211,102,0.12), var(--shadow-lg) }
+.sc.r:hover { border-color:rgba(241,92,109,0.4); box-shadow:0 8px 32px rgba(241,92,109,0.12), var(--shadow-lg) }
+.sc.a:hover { border-color:rgba(245,166,35,0.4); box-shadow:0 8px 32px rgba(245,166,35,0.12), var(--shadow-lg) }
+.sc.b:hover { border-color:rgba(83,189,235,0.4); box-shadow:0 8px 32px rgba(83,189,235,0.12), var(--shadow-lg) }
+.sc.v:hover { border-color:rgba(191,89,207,0.4); box-shadow:0 8px 32px rgba(191,89,207,0.12), var(--shadow-lg) }
+
+/* ── SHIMMER SKELETON ── */
+@keyframes shimmer {
+  0%   { background-position:-200% 0 }
+  100% { background-position:200% 0 }
+}
+.skeleton-line {
+  height:12px; border-radius:4px;
+  background:linear-gradient(90deg, var(--card2) 25%, var(--card3) 50%, var(--card2) 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite ease-in-out;
+}
+
+/* ── RIPPLE ── */
+.ripple-host { position:relative; overflow:hidden }
+@keyframes ripple-anim { to { transform:scale(4); opacity:0 } }
+.ripple-wave {
+  position:absolute; border-radius:50%; pointer-events:none;
+  transform:scale(0); animation:ripple-anim 0.55s linear forwards;
+  background:rgba(255,255,255,0.12);
+}
+
+/* ── TABLE ROW STAGGER ── */
+@keyframes rowIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
+
+/* ── PANEL & CARD ENTRANCE ── */
+.panel, .side-card { transition:box-shadow 0.2s, border-color 0.2s }
+.panel:hover { box-shadow:0 12px 48px rgba(0,0,0,0.45); border-color:var(--border2) }
+.side-card:hover { box-shadow:0 8px 32px rgba(0,0,0,0.35); border-color:var(--border2) }
+
+/* ── SIDEBAR NAV MICRO ── */
+.nav-item { position:relative; overflow:hidden }
+.nav-item::after {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:3px; height:0; background:var(--green); border-radius:0 3px 3px 0;
+  transition:height 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-item.active::after,.nav-item:hover::after { height:60% }
+
+/* ── STATUS DOT PULSE GLOW ── */
+.dot.live {
+  box-shadow:0 0 0 0 rgba(37,211,102,0.5);
+  animation:livePulse 2s infinite;
+}
+@keyframes livePulse {
+  0%  { box-shadow:0 0 0 0 rgba(37,211,102,0.5) }
+  70% { box-shadow:0 0 0 7px rgba(37,211,102,0) }
+  100%{ box-shadow:0 0 0 0 rgba(37,211,102,0) }
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+  .reveal { opacity:1; transform:none }
+}
 
 /* ── MOBILE SIDEBAR ── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:199;backdrop-filter:blur(3px)}
@@ -555,7 +702,7 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 
     <!-- GRID -->
     <div class="grid">
-      <div class="panel">
+      <div class="panel reveal">
         <div class="panel-head">
           <div class="panel-head-left">
             <div class="panel-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
@@ -569,27 +716,27 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
         <div class="twrap">
           <table>
             <thead><tr><th>Cliente</th><th>1ª mensagem</th><th>1ª resposta</th><th>Msgs</th><th>Espera</th><th>Turnos</th><th>Status</th></tr></thead>
-            <tbody id="tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon">⏳</div><div class="empty-txt">Carregando...</div></div></td></tr></tbody>
+            <tbody id="tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="empty-txt">Carregando...</div></div></td></tr></tbody>
           </table>
         </div>
       </div>
 
       <div class="rsidebar">
-        <div class="side-card">
+        <div class="side-card reveal" style="transition-delay:0.08s">
           <div class="side-head">
             <div class="side-title">Por hora</div>
             <div class="side-chip" id="chipPico">—</div>
           </div>
           <div class="side-body"><div class="chart-wrap" id="bars"></div></div>
         </div>
-        <div class="side-card">
+        <div class="side-card reveal" style="transition-delay:0.14s">
           <div class="side-head">
             <div class="side-title">Últimas conversas</div>
             <div class="side-chip" id="chipUlt">0</div>
           </div>
           <div class="side-body" id="ultList"><div class="empty"><div class="empty-txt">Nenhuma conversa</div></div></div>
         </div>
-        <div class="side-card">
+        <div class="side-card reveal" style="transition-delay:0.20s">
           <div class="side-head"><div class="side-title">Por instância</div></div>
           <div class="side-body" id="instList"><div class="empty"><div class="empty-txt">Nenhuma instância</div></div></div>
         </div>
@@ -619,6 +766,37 @@ const colorMap = {}, colorIdx = [0]
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 let dataAtual = dHoje(), cache = null, instAtual = 'todas'
 
+/* ── SCROLL REVEAL ── */
+function initScrollReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 70)
+        obs.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.08 })
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
+}
+
+/* ── RIPPLE ── */
+function addRipple(e) {
+  const btn = e.currentTarget
+  const wave = document.createElement('span')
+  wave.className = 'ripple-wave'
+  const rect = btn.getBoundingClientRect()
+  const size = Math.max(rect.width, rect.height)
+  wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`
+  btn.classList.add('ripple-host')
+  btn.appendChild(wave)
+  wave.addEventListener('animationend', () => wave.remove())
+}
+function initRipple() {
+  document.querySelectorAll('.today-btn,.dnavbtn,.icon-btn,.itab').forEach(btn => {
+    btn.addEventListener('click', addRipple)
+  })
+}
+
 function inicializar() {
   const t = localStorage.getItem('theme')
   if (t === 'light') {
@@ -629,6 +807,8 @@ function inicializar() {
   dataAtual = dHoje(); setDateLabel(dataAtual); initBars(); carregar(); conectarSSE()
   setInterval(() => { const el = document.getElementById('clock'); if(el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
   setInterval(carregar, 15000)
+  initScrollReveal()
+  initRipple()
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializar)
 else inicializar()
@@ -670,6 +850,7 @@ function renderInstBar(contatos) {
   const bar=document.getElementById('instBar'), total=contatos.length
   bar.innerHTML=`<button class="itab ${instAtual==='todas'?'active':''}" onclick="trocarInstancia('todas')"><div class="itab-dot"></div>Todas<span class="itab-n">${total}</span></button>`+
     Object.entries(inst).map(([nm,c])=>`<button class="itab ${instAtual===nm?'active':''}" onclick="trocarInstancia('${nm}')"><div class="itab-dot"></div>${nm}<span class="itab-n">${c}</span></button>`).join('')
+  bar.querySelectorAll('.itab').forEach(btn => btn.addEventListener('click', addRipple))
 }
 function setStatus(ok) {
   const pill=document.getElementById('statusPill'),dot=document.getElementById('sdot'),txt=document.getElementById('stxt')
@@ -688,7 +869,31 @@ function renderTudo(d) {
   renderBars(d.por_hora||Array(24).fill(0),d.hora_pico)
   renderTabela(d.contatos||[]); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
 }
-function n(id,v){const el=document.getElementById(id);if(!el)return;el.textContent=v;el.classList.add('bump');setTimeout(()=>el.classList.remove('bump'),280)}
+/* ── ANIMATED COUNTER ── */
+function animateCount(el, endVal, duration) {
+  const startVal = parseFloat(el.textContent) || 0
+  if (startVal === endVal) return
+  const startTime = performance.now()
+  function tick(now) {
+    const t = Math.min((now - startTime) / duration, 1)
+    const eased = 1 - Math.pow(1 - t, 3)
+    el.textContent = Math.round(startVal + (endVal - startVal) * eased)
+    if (t < 1) requestAnimationFrame(tick)
+    else el.textContent = endVal
+  }
+  requestAnimationFrame(tick)
+}
+function n(id,v){
+  const el=document.getElementById(id);if(!el)return
+  const numV=parseInt(v)
+  const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!reducedMotion && !isNaN(numV) && String(v)===String(numV)) {
+    animateCount(el, numV, 700)
+  } else {
+    el.textContent=v
+  }
+  el.classList.add('bump');setTimeout(()=>el.classList.remove('bump'),280)
+}
 function corC(tel){if(!colorMap[tel]){colorMap[tel]=CORES[colorIdx[0]%CORES.length];colorIdx[0]++};return colorMap[tel]}
 
 function renderUltList(contatos) {
@@ -709,13 +914,14 @@ function renderUltList(contatos) {
 }
 function renderTabela(contatos) {
   const tb=document.getElementById('tbody')
-  if(!contatos.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div><div class="empty-txt">Nenhuma conversa neste dia</div></div></td></tr>`;return}
-  tb.innerHTML=contatos.map(c=>{
+  if(!contatos.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">Nenhuma conversa neste dia</div></div></td></tr>`;return}
+  tb.innerHTML=contatos.map((c,idx)=>{
     const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
+    const rowDelay=`animation-delay:${idx*38}ms`
     const turnosBadge=c.turnos_pendentes>0
       ?`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ⚠${c.turnos_pendentes}</span>`
       :`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
-    return `<tr onclick="abrirDrawer('${c.telefone}')">
+    return `<tr onclick="abrirDrawer('${c.telefone}')" style="${rowDelay}">
       <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${c.nome||'Desconhecido'}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${fTel(c.telefone)}</div></div></div></td>
       <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
       <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
@@ -727,7 +933,7 @@ function renderTabela(contatos) {
 }
 function teClass(seg){if(seg===null)return{cls:'none',label:'—'};const label=fTMA(seg);if(seg<=120)return{cls:'fast',label};if(seg<=300)return{cls:'mid',label};return{cls:'slow',label}}
 function initBars(){const c=document.getElementById('bars');if(!c)return;c.innerHTML='';for(let h=0;h<24;h++){const w=document.createElement('div');w.className='bw';w.innerHTML=`<div class="bbar" id="bar-${h}" style="height:2px"></div><div class="blabel">${h%6===0?h+'h':''}</div>`;c.appendChild(w)}}
-function renderBars(porHora,pico){const max=Math.max(...porHora,1);porHora.forEach((v,h)=>{const b=document.getElementById(`bar-${h}`);if(!b)return;b.style.height=Math.max(2,(v/max)*64)+'px';b.className=h===pico?'bbar active':'bbar'})}
+function renderBars(porHora,pico){const max=Math.max(...porHora,1);porHora.forEach((v,h)=>{const b=document.getElementById(`bar-${h}`);if(!b)return;b.style.height=Math.max(2,(v/max)*120)+'px';b.setAttribute('data-v',v);b.setAttribute('data-label',`${String(h).padStart(2,'0')}h · ${v} contato${v!==1?'s':''}`);b.className=h===pico?'bbar active':v>0?'bbar has-val':'bbar'})}
 function renderInstList(contatos){const inst={};contatos.forEach(c=>{inst[c.instancia]=(inst[c.instancia]||0)+1});const el=document.getElementById('instList');if(!Object.keys(inst).length){el.innerHTML=`<div class="empty"><div class="empty-txt">Nenhuma instância</div></div>`;return};el.innerHTML=Object.entries(inst).map(([nm,t])=>`<div class="irow"><div class="iname"><div class="ipip"></div>${nm}</div><div class="icount">${t}</div></div>`).join('')}
 
 function abrirDrawer(tel) {
@@ -741,12 +947,20 @@ function abrirDrawer(tel) {
     <div class="dresume-row"><span class="dresume-label">Turnos respondidos</span><span class="dresume-val">${d.turnos_respondidos}/${d.total_turnos}</span></div>
     <div class="dresume-row"><span class="dresume-label">Turnos pendentes</span><span class="dresume-val" style="color:${d.turnos_pendentes>0?'var(--rose)':'var(--green)'}">${d.turnos_pendentes}</span></div>
     <div class="dresume-row"><span class="dresume-label">TMA</span><span class="dresume-val">${fTMA(d.tma_segundos)}</span></div>
-    <div class="dresume-row"><span class="dresume-label">Status</span><span class="dresume-val">${d.tem_pendencia?'⚠️ Pendente':d.respondida?'✅ Respondida':'⏳ Aguardando'}</span></div>
+    <div class="dresume-row"><span class="dresume-label">Status</span><span class="dresume-val" style="color:${d.tem_pendencia?'var(--rose)':d.respondida?'var(--green)':'var(--amber)'}">${d.tem_pendencia?'Pendente':d.respondida?'Respondida':'Aguardando'}</span></div>
   </div>`
   let ti=0
-  const timeline=(d.turnos||[]).map(t=>{ti++;const cor=t.respondido?'var(--green)':'var(--rose)';const label=t.respondido?`Turno ${ti} · ${fTMA(t.tempo_espera_segundos)}`:`Turno ${ti} · ⚠ Sem resposta`;const tMsgs=[...t.msgs_cliente,...(t.resposta?[t.resposta]:[])]
-    return `<div style="margin-bottom:16px"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;color:${cor};letter-spacing:0.8px;text-transform:uppercase;padding:5px 0;border-bottom:1px solid var(--border);margin-bottom:10px">${label}</div>
-    ${tMsgs.map(m=>{const isAtt=['Atendente','atendente_ia','atendente_humano'].includes(m.nome);return `<div class="dmsg"><div class="dmsg-header"><span class="dmsg-who ${isAtt?'atendente':'cliente'}">${isAtt?(m.nome==='atendente_humano'?'Humano':'IA'):m.nome||'Cliente'}</span><span class="dmsg-hr">${fH(m.timestamp)}</span></div><div class="dmsg-txt">${m.mensagem||'—'}</div></div>`}).join('')}</div>`}).join('')
+  const timeline=(d.turnos||[]).map(t=>{ti++;const ok=t.respondido;const tMsgs=[...t.msgs_cliente,...(t.resposta?[t.resposta]:[])]
+    const tempoLabel=ok&&t.tempo_espera_segundos!=null?`<span>${fTMA(t.tempo_espera_segundos)}</span>`:ok?'':'<span>sem resposta</span>'
+    return `<div class="dturn">
+      <div class="dturn-dot ${ok?'ok':'err'}"></div>
+      <div class="dturn-head">
+        <span class="dturn-badge ${ok?'ok':'err'}">Turno ${ti}${tempoLabel}</span>
+      </div>
+      <div class="dmsg-wrap">
+        ${tMsgs.map(m=>{const isAtt=['Atendente','atendente_ia','atendente_humano'].includes(m.nome);const side=isAtt?'atendente':'cliente';const who=isAtt?(m.nome==='atendente_humano'?'Humano':'IA'):m.nome||'Cliente';return `<div class="dmsg ${side}"><div class="dmsg-header"><span class="dmsg-who ${side}">${who}</span><span class="dmsg-hr">${fH(m.timestamp)}</span></div><div class="dmsg-txt">${m.mensagem||'—'}</div></div>`}).join('')}
+      </div>
+    </div>`}).join('')
   document.getElementById('dbody').innerHTML=resumo+timeline
   document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show')
 }

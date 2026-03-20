@@ -187,6 +187,75 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
 .toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:var(--r);font-size:12px;font-weight:600;z-index:999;animation:fadeUp 0.3s ease both;display:flex;align-items:center;gap:8px}
 .toast.success{background:var(--green-lt);border:1px solid rgba(37,211,102,0.3);color:var(--green)}
 .toast.error{background:var(--rose-lt);border:1px solid rgba(241,92,109,0.3);color:var(--rose)}
+
+/* ── CURSOR POINTER ── */
+.nav-item,.itab,.dnavbtn,.today-btn,.icon-btn,tbody tr,.btn,.pg-btn{ cursor:pointer }
+
+/* ── GLASSMORPHISM TOPBAR ── */
+.topbar {
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  background:rgba(24,34,41,0.82) !important;
+}
+body.light .topbar {
+  background:rgba(233,237,239,0.82) !important;
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity:1; transform:none }
+
+/* ── RIPPLE ── */
+.ripple-host { position:relative; overflow:hidden }
+@keyframes ripple-anim { to { transform:scale(4); opacity:0 } }
+.ripple-wave {
+  position:absolute; border-radius:50%; pointer-events:none;
+  transform:scale(0); animation:ripple-anim 0.55s linear forwards;
+  background:rgba(255,255,255,0.12);
+}
+
+/* ── SIDEBAR NAV MICRO ── */
+.nav-item { position:relative; overflow:hidden }
+.nav-item::after {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:3px; height:0; background:var(--green); border-radius:0 3px 3px 0;
+  transition:height 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-item.active::after,.nav-item:hover::after { height:60% }
+
+/* ── STATUS DOT PULSE GLOW ── */
+.dot.live {
+  box-shadow:0 0 0 0 rgba(37,211,102,0.5);
+  animation:livePulse 2s infinite;
+}
+@keyframes livePulse {
+  0%  { box-shadow:0 0 0 0 rgba(37,211,102,0.5) }
+  70% { box-shadow:0 0 0 7px rgba(37,211,102,0) }
+  100%{ box-shadow:0 0 0 0 rgba(37,211,102,0) }
+}
+
+/* ── PANEL / CARD HOVER ── */
+.panel, .side-card { transition:box-shadow 0.2s, border-color 0.2s }
+.panel:hover { box-shadow:0 12px 48px rgba(0,0,0,0.45); border-color:var(--border2) }
+.side-card:hover { box-shadow:0 8px 32px rgba(0,0,0,0.35); border-color:var(--border2) }
+
+/* ── TABLE ROW STAGGER ── */
+@keyframes rowIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:none} }
+tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+  .reveal { opacity:1; transform:none }
+}
 </style>
 </head>
 <body>
@@ -265,7 +334,7 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel reveal">
       <div class="panel-head">
         <div class="panel-head-left">
           <div class="panel-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
@@ -339,7 +408,7 @@ function renderTabela() {
   }
   document.getElementById('tableWrap').innerHTML = `<div class="twrap"><table>
     <thead><tr><th>Contato</th><th>Primeiro contato</th><th>Primeira mensagem</th><th>Msgs</th><th>Instância</th><th>IA</th></tr></thead>
-    <tbody>${pagina.map(c=>`<tr>
+    <tbody>${pagina.map((c,idx)=>`<tr style="animation-delay:${idx*38}ms">
       <td><div class="contact-cell"><div class="avatar" style="background:${corC(c.telefone)}">${inicial(c.nome)}</div><div><div class="contact-name">${c.nome||'Desconhecido'}</div><div class="contact-phone">${c.telefone||''}</div></div></div></td>
       <td><div class="date-cell">${fData(c.primeiro_contato)}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px">${fHora(c.primeiro_contato)}</div></td>
       <td><div class="first-msg" title="${c.primeira_mensagem||''}">${c.primeira_mensagem||'—'}</div></td>
@@ -419,6 +488,41 @@ function showToast(msg, type='success') {
   document.body.appendChild(t)
   setTimeout(() => t.remove(), 3000)
 }
+</script>
+<script>
+/* ── SCROLL REVEAL ── */
+function initScrollReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 70)
+        obs.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.08 })
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
+}
+/* ── RIPPLE ── */
+function addRipple(e) {
+  const btn = e.currentTarget
+  const wave = document.createElement('span')
+  wave.className = 'ripple-wave'
+  const rect = btn.getBoundingClientRect()
+  const size = Math.max(rect.width, rect.height)
+  wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`
+  btn.classList.add('ripple-host')
+  btn.appendChild(wave)
+  wave.addEventListener('animationend', () => wave.remove())
+}
+function initRipple() {
+  document.querySelectorAll('.today-btn,.dnavbtn,.icon-btn,.itab,.btn,.pg-btn').forEach(btn => {
+    btn.addEventListener('click', addRipple)
+  })
+}
+document.addEventListener('DOMContentLoaded', () => {
+  initScrollReveal()
+  initRipple()
+})
 </script>
 </body>
 </html>

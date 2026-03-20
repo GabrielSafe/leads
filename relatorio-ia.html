@@ -224,6 +224,64 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
 }
+
+/* ── CURSOR POINTER ── */
+.nav-item,.dnavbtn,.today-btn,.icon-btn,.itab{ cursor:pointer }
+
+/* ── GLASSMORPHISM TOPBAR ── */
+.topbar {
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  background:rgba(24,34,41,0.82) !important;
+}
+body.light .topbar {
+  background:rgba(233,237,239,0.82) !important;
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity:1; transform:none }
+
+/* ── RIPPLE ── */
+.ripple-host { position:relative; overflow:hidden }
+@keyframes ripple-anim { to { transform:scale(4); opacity:0 } }
+.ripple-wave {
+  position:absolute; border-radius:50%; pointer-events:none;
+  transform:scale(0); animation:ripple-anim 0.55s linear forwards;
+  background:rgba(255,255,255,0.12);
+}
+
+/* ── SIDEBAR NAV MICRO ── */
+.nav-item { position:relative; overflow:hidden }
+.nav-item::after {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:3px; height:0; background:var(--green); border-radius:0 3px 3px 0;
+  transition:height 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.nav-item.active::after,.nav-item:hover::after { height:60% }
+
+/* ── SECTION / CARD HOVER ── */
+.panel, .exec-card, .rpt-section {
+  transition:box-shadow 0.2s, border-color 0.2s;
+}
+.panel:hover, .exec-card:hover {
+  box-shadow:0 12px 48px rgba(0,0,0,0.45);
+  border-color:var(--border2);
+}
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+  }
+  .reveal { opacity:1; transform:none }
+}
 </style>
 </head>
 <body>
@@ -321,14 +379,14 @@ function renderRelatorio(d) {
   const r=d.resumo||{}, h=d.horarios||{}, recl=d.reclamacoes||[], mel=d.pontos_melhoria||[]
   const gravCls=g=>({'ALTA':'alta','MEDIA':'media','BAIXA':'baixa'})[g?.toUpperCase()]||'baixa'
 
-  const secResumo=`<div class="section">
+  const secResumo=`<div class="section reveal" style="transition-delay:0ms">
     <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">01</div><div class="section-title">Resumo Executivo</div></div></div>
     <div class="section-body">
       <div class="exec-grid">
-        <div class="exec-card"><div class="exec-card-top">Total</div><div class="exec-card-val">${r.total_conversas||0}</div><div class="exec-card-lbl">conversas no dia</div></div>
-        <div class="exec-card fin"><div class="exec-card-top">Finalizadas</div><div class="exec-card-val">${r.finalizadas||0}</div><div class="exec-card-pct">${r.percentual_finalizadas||0}%</div><div class="exec-card-lbl">concluídas</div></div>
-        <div class="exec-card and"><div class="exec-card-top">Em andamento</div><div class="exec-card-val">${r.em_andamento||0}</div><div class="exec-card-pct">${r.percentual_em_andamento||0}%</div><div class="exec-card-lbl">em progresso</div></div>
-        <div class="exec-card sem"><div class="exec-card-top">Sem resposta</div><div class="exec-card-val">${r.sem_resposta||0}</div><div class="exec-card-pct">${r.percentual_sem_resposta||0}%</div><div class="exec-card-lbl">não atendidas</div></div>
+        <div class="exec-card reveal" style="transition-delay:0ms"><div class="exec-card-top">Total</div><div class="exec-card-val">${r.total_conversas||0}</div><div class="exec-card-lbl">conversas no dia</div></div>
+        <div class="exec-card fin reveal" style="transition-delay:80ms"><div class="exec-card-top">Finalizadas</div><div class="exec-card-val">${r.finalizadas||0}</div><div class="exec-card-pct">${r.percentual_finalizadas||0}%</div><div class="exec-card-lbl">concluídas</div></div>
+        <div class="exec-card and reveal" style="transition-delay:140ms"><div class="exec-card-top">Em andamento</div><div class="exec-card-val">${r.em_andamento||0}</div><div class="exec-card-pct">${r.percentual_em_andamento||0}%</div><div class="exec-card-lbl">em progresso</div></div>
+        <div class="exec-card sem reveal" style="transition-delay:200ms"><div class="exec-card-top">Sem resposta</div><div class="exec-card-val">${r.sem_resposta||0}</div><div class="exec-card-pct">${r.percentual_sem_resposta||0}%</div><div class="exec-card-lbl">não atendidas</div></div>
       </div>
       <div class="exec-progress">
         <div class="ep-seg fin" style="width:${r.percentual_finalizadas||0}%"></div>
@@ -338,7 +396,7 @@ function renderRelatorio(d) {
       <div class="tma-card"><div class="tma-icon">⏱</div><div><div class="tma-val">${r.tma_minutos||0} min</div><div class="tma-lbl">Tempo médio por atendimento</div></div></div>
     </div></div>`
 
-  const secHorarios=`<div class="section">
+  const secHorarios=`<div class="section reveal" style="transition-delay:80ms">
     <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">02</div><div class="section-title">Horários de Operação</div></div></div>
     <div class="section-body"><div class="hor-grid">
       <div class="hor-card"><div class="hor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></div><div><div class="hor-lbl">Primeira mensagem recebida</div><div class="hor-time">${h.primeira_msg_cliente_hora||'—'}</div><div class="hor-nome">${h.primeira_msg_cliente_nome||''}</div></div></div>
@@ -347,25 +405,26 @@ function renderRelatorio(d) {
       <div class="hor-card"><div class="hor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div><div class="hor-lbl">Última resposta da equipe</div><div class="hor-time">${h.ultima_resposta_hora||'—'}</div></div></div>
     </div></div></div>`
 
-  const secRecl=`<div class="section">
+  const secRecl=`<div class="section reveal" style="transition-delay:140ms">
     <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">03</div><div class="section-title">Reclamações e Críticas</div></div></div>
     <div class="section-body">${recl.length===0
       ?`<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Nenhuma reclamação registrada no período</div></div>`
       :`<div class="recl-grid">${recl.map(rc=>`<div class="recl-card"><div class="recl-card-head"><span class="recl-badge ${gravCls(rc.gravidade)}">${rc.gravidade}</span><span class="recl-num">#${rc.numero}</span></div><div class="recl-card-body"><div class="recl-nome">${rc.cliente||'—'}</div><div class="recl-tel">${rc.telefone||''}</div><div class="recl-resumo">${rc.resumo||''}</div></div></div>`).join('')}</div>`}
     </div></div>`
 
-  const secMel=`<div class="section">
+  const secMel=`<div class="section reveal" style="transition-delay:200ms">
     <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">04</div><div class="section-title">Pontos de Melhoria</div></div></div>
     <div class="section-body">${mel.length===0
       ?`<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Atendimento dentro dos padrões de qualidade</div></div>`
       :`<div class="melhoria-list">${mel.map((m,i)=>`<div class="melhoria-card"><div class="melhoria-head"><div class="melhoria-idx">${i+1}</div><div class="melhoria-titulo">${m.titulo||''}</div></div><div class="melhoria-desc">${m.descricao||''}</div><div class="melhoria-exemplos">${(m.exemplos||[]).map(e=>`<div class="exemplo-card"><div class="exemplo-head"><div><div class="exemplo-cliente">${e.cliente||'—'}</div><div class="exemplo-tel">${e.telefone||''}</div></div><div class="exemplo-hora">${e.horario||''}</div></div><div class="exemplo-msg">"${e.mensagem||''}"</div>${e.contexto?`<div class="exemplo-ctx">${e.contexto}</div>`:''}</div>`).join('')}</div></div>`).join('')}</div>`}
     </div></div>`
 
-  const secObs = d.observacoes ? `<div class="section"><div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">05</div><div class="section-title">Observações Gerais</div></div></div><div class="section-body"><div class="obs-card"><div class="obs-txt">${d.observacoes}</div></div></div></div>` : ''
+  const secObs = d.observacoes ? `<div class="section reveal" style="transition-delay:260ms"><div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">05</div><div class="section-title">Observações Gerais</div></div></div><div class="section-body"><div class="obs-card"><div class="obs-txt">${d.observacoes}</div></div></div></div>` : ''
 
   const footer=`<div class="report-footer"><div class="footer-brand">Relatório gerado por <span>${d.empresa||''}</span></div><div class="footer-date">${dataAtual}</div></div>`
 
   document.getElementById('conteudo').innerHTML = secResumo+secHorarios+secRecl+secMel+secObs+footer
+  if (typeof initScrollReveal === 'function') initScrollReveal()
 }
 
 ;(function(){
@@ -393,6 +452,41 @@ function toggleSidebar() {
   if (open)  open.style.display  = isOpen ? 'none'  : 'block'
   if (close) close.style.display = isOpen ? 'block' : 'none'
 }
+</script>
+<script>
+/* ── SCROLL REVEAL ── */
+function initScrollReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 70)
+        obs.unobserve(entry.target)
+      }
+    })
+  }, { threshold: 0.08 })
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
+}
+/* ── RIPPLE ── */
+function addRipple(e) {
+  const btn = e.currentTarget
+  const wave = document.createElement('span')
+  wave.className = 'ripple-wave'
+  const rect = btn.getBoundingClientRect()
+  const size = Math.max(rect.width, rect.height)
+  wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`
+  btn.classList.add('ripple-host')
+  btn.appendChild(wave)
+  wave.addEventListener('animationend', () => wave.remove())
+}
+function initRipple() {
+  document.querySelectorAll('.today-btn,.dnavbtn,.icon-btn,.itab').forEach(btn => {
+    btn.addEventListener('click', addRipple)
+  })
+}
+document.addEventListener('DOMContentLoaded', () => {
+  initScrollReveal()
+  initRipple()
+})
 </script>
 </body>
 </html>
