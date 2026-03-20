@@ -536,6 +536,43 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
   .reveal { opacity:1; transform:none }
 }
 
+/* ── SPLASH SCREEN ── */
+#splash {
+  position:fixed; inset:0; z-index:9999;
+  background:var(--bg); display:flex; align-items:center; justify-content:center;
+  transition:opacity 0.55s cubic-bezier(0.16,1,0.3,1), transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+#splash.hide { opacity:0; transform:scale(1.03); pointer-events:none }
+#splash-inner {
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  animation:splashIn 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes splashIn {
+  from { opacity:0; transform:translateY(28px) scale(0.94) }
+  to   { opacity:1; transform:none }
+}
+#splash-logo {
+  width:76px; height:76px; border-radius:22px;
+  background:var(--green); display:flex; align-items:center; justify-content:center;
+  animation:splashGlow 2s ease infinite alternate;
+}
+#splash-logo svg { width:38px; height:38px; stroke:#111b21; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round }
+@keyframes splashGlow {
+  from { box-shadow:0 0 20px rgba(37,211,102,0.25), 0 8px 32px rgba(0,0,0,0.4) }
+  to   { box-shadow:0 0 56px rgba(37,211,102,0.55), 0 8px 32px rgba(0,0,0,0.4) }
+}
+#splash-name { font-size:22px; font-weight:700; color:var(--ink); letter-spacing:-0.5px; margin-top:4px }
+#splash-sub  { font-size:12px; color:var(--ink3) }
+#splash-progress { width:200px; height:3px; background:var(--border2); border-radius:99px; overflow:hidden; margin-top:4px }
+#splash-bar  { height:100%; width:0%; background:linear-gradient(90deg,var(--green2),var(--green)); border-radius:99px; transition:width 0.45s ease }
+#splash-status { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink4); letter-spacing:0.3px }
+
+/* ── SKELETON CARDS ── */
+.sc-skel     { height:32px; width:60%; border-radius:6px; margin-bottom:6px; background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%); background-size:200% 100%; animation:shimmer 1.4s infinite ease-in-out }
+.sc-skel-sm  { height:10px; width:78%; border-radius:4px; opacity:0.55; background:linear-gradient(90deg,var(--card2) 25%,var(--card3) 50%,var(--card2) 75%); background-size:200% 100%; animation:shimmer 1.4s 0.1s infinite ease-in-out }
+.stats.loaded .sc-skel,.stats.loaded .sc-skel-sm { display:none }
+.stats:not(.loaded) .sc-val,.stats:not(.loaded) .sc-desc { display:none }
+
 /* ── MOBILE SIDEBAR ── */
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:199;backdrop-filter:blur(3px)}
 .sidebar-overlay.show{display:block}
@@ -603,6 +640,19 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 </head>
 <body>
 <div class="app">
+
+<!-- ── SPLASH ── -->
+<div id="splash">
+  <div id="splash-inner">
+    <div id="splash-logo">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div id="splash-name">Atendimento</div>
+    <div id="splash-sub">Painel de gestão</div>
+    <div id="splash-progress"><div id="splash-bar"></div></div>
+    <div id="splash-status">Conectando...</div>
+  </div>
+</div>
 
 <!-- ── SIDEBAR ── -->
 <nav class="sidebar" id="sidebar">
@@ -688,16 +738,16 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
     </div>
 
     <!-- STATS -->
-    <div class="stats">
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="bgn" id="bgTotal">0</div></div>
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="bgn" id="bgResp">0</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="bgn" id="bgNResp">0</div></div>
-      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="bgn" id="bgMsgsTotal">0</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="bgn" id="bgPend">0</div></div>
-      <div class="sc a"><div class="sc-label a"><span class="sc-dot"></span>TMA</div><div class="sc-val" id="sTMA">—</div><div class="sc-desc">tempo médio por turno</div><div class="bgn" id="bgTMA">—</div></div>
-      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Pico</div><div class="sc-val" id="sPico">—</div><div class="sc-desc">hora com mais contatos</div><div class="bgn" id="bgPico">—</div></div>
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>IA Ativa</div><div class="sc-val" id="sIASim">—</div><div class="sc-desc">contatos com IA ativa</div><div class="bgn" id="bgIASim">—</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>IA Pausada</div><div class="sc-val" id="sIANao">—</div><div class="sc-desc">aguardando humano</div><div class="bgn" id="bgIANao">—</div></div>
+    <div class="stats" id="statsGrid">
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="bgn" id="bgTotal">0</div></div>
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="bgn" id="bgResp">0</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="bgn" id="bgNResp">0</div></div>
+      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="bgn" id="bgMsgsTotal">0</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="bgn" id="bgPend">0</div></div>
+      <div class="sc a"><div class="sc-label a"><span class="sc-dot"></span>TMA</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTMA">—</div><div class="sc-desc">tempo médio por turno</div><div class="bgn" id="bgTMA">—</div></div>
+      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Pico</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPico">—</div><div class="sc-desc">hora com mais contatos</div><div class="bgn" id="bgPico">—</div></div>
+      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>IA Ativa</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIASim">—</div><div class="sc-desc">contatos com IA ativa</div><div class="bgn" id="bgIASim">—</div></div>
+      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>IA Pausada</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIANao">—</div><div class="sc-desc">aguardando humano</div><div class="bgn" id="bgIANao">—</div></div>
     </div>
 
     <!-- GRID -->
@@ -804,6 +854,12 @@ function inicializar() {
     document.getElementById('iconMoon').style.display = 'none'
     document.getElementById('iconSun').style.display  = 'block'
   }
+  /* preenche nome da empresa no splash se CONFIG disponível */
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  if (cfg.empresa) {
+    const el = document.getElementById('splash-name'); if (el) el.textContent = cfg.empresa
+  }
+  setSplashProgress(15, 'Iniciando...')
   dataAtual = dHoje(); setDateLabel(dataAtual); initBars(); carregar(); conectarSSE()
   setInterval(() => { const el = document.getElementById('clock'); if(el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
   setInterval(carregar, 15000)
@@ -824,10 +880,45 @@ function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(
 function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregar() }
 function irHoje()  { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
 
+/* ── SPLASH ── */
+let _splashHidden = false
+function setSplashProgress(pct, status) {
+  const bar = document.getElementById('splash-bar')
+  const txt = document.getElementById('splash-status')
+  if (bar) bar.style.width = pct + '%'
+  if (txt && status) txt.textContent = status
+}
+function hideSplash() {
+  if (_splashHidden) return
+  _splashHidden = true
+  setSplashProgress(100, 'Pronto')
+  setTimeout(() => {
+    const s = document.getElementById('splash')
+    if (s) { s.classList.add('hide'); setTimeout(() => s.remove(), 600) }
+  }, 350)
+}
+/* ── FAVICON / TAB BADGE ── */
+function updateTabBadge(pend) {
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  const base = cfg.empresa ? cfg.empresa + ' · Dashboard' : 'Dashboard'
+  document.title = pend > 0 ? `⚠ ${pend} pendente${pend!==1?'s':''} · ${base}` : base
+  let link = document.querySelector('link[rel="icon"]')
+  if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link) }
+  if (pend > 0) {
+    const n = pend > 9 ? '9+' : pend
+    const fs = n.toString().length > 1 ? '50' : '60'
+    link.href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%23f15c6d%22/><text x=%2250%22 y=%22.82em%22 text-anchor=%22middle%22 font-family=%22system-ui,sans-serif%22 font-size=%22${fs}%22 font-weight=%22700%22 fill=%22white%22>${n}</text></svg>`
+  } else {
+    link.href = cfg.favicon_url || `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${cfg.favicon_emoji||'💬'}</text></svg>`
+  }
+}
+
 async function carregar() {
   try {
+    setSplashProgress(40, 'Carregando dados...')
     const [r1,r2] = await Promise.all([fetch(`${API}/relatorio?data=${dataAtual}`), fetch(`${API}/contatos`)])
     if (!r1.ok) throw new Error()
+    setSplashProgress(80, 'Processando...')
     cache = await r1.json(); setStatus(true)
     renderInstBar(cache.contatos||[]); renderTudo(filtrar(cache))
     if (r2.ok) {
@@ -836,7 +927,12 @@ async function carregar() {
       const iaNao = todos.filter(c=>c.ia==='nao').length
       n('sIASim',iaSim); n('sIANao',iaNao)
     }
-  } catch { setStatus(false) }
+    hideSplash()
+  } catch {
+    setStatus(false)
+    setSplashProgress(100, 'Erro ao conectar')
+    setTimeout(hideSplash, 1500)
+  }
 }
 function filtrar(d) {
   if (instAtual==='todas') return d
@@ -868,6 +964,10 @@ function renderTudo(d) {
   document.getElementById('chipC').textContent=`${conv} conversa${conv!==1?'s':''}`
   renderBars(d.por_hora||Array(24).fill(0),d.hora_pico)
   renderTabela(d.contatos||[]); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
+  /* skeleton → dados reais */
+  document.getElementById('statsGrid')?.classList.add('loaded')
+  /* badge na aba */
+  updateTabBadge(pend)
 }
 /* ── ANIMATED COUNTER ── */
 function animateCount(el, endVal, duration) {
