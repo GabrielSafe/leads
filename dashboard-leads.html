@@ -313,12 +313,11 @@ td { padding:12px 16px; font-size:12px; color:var(--ink3); vertical-align:middle
 .tespera.mid  { background:var(--amber-lt); color:var(--amber) }
 .tespera.slow { background:var(--rose-lt);  color:var(--rose) }
 .tespera.none { color:var(--ink4) }
-.sbadge { display:inline-flex; align-items:center; gap:5px; padding:3px 8px; border-radius:6px; font-size:10px; font-weight:600 }
-.sbadge-dot { width:5px; height:5px; border-radius:50% }
-.sbadge.resp  { background:var(--green-lt); color:var(--green) }
-.sbadge.resp  .sbadge-dot { background:var(--green) }
-.sbadge.nresp { background:var(--rose-lt);  color:var(--rose) }
-.sbadge.nresp .sbadge-dot { background:var(--rose) }
+.sbadge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:6px; font-size:10px; font-weight:600; letter-spacing:0.2px }
+.sbadge svg { width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0 }
+.sbadge.resp { background:var(--green-lt); color:var(--green) }
+.sbadge.wait { background:var(--amber-lt); color:var(--amber) }
+.sbadge.pend { background:var(--rose-lt);  color:var(--rose) }
 
 /* ── RIGHT SIDEBAR ── */
 .rsidebar { display:flex; flex-direction:column; gap:12px }
@@ -789,6 +788,7 @@ th.sort-desc::after { content:' ↓'; color:var(--green) }
 .status-filter { display:flex; align-items:center; gap:6px; padding:8px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap }
 .sf-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--ink4); margin-right:2px; white-space:nowrap }
 .sf-pill { display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:99px; font-size:10px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--card2); color:var(--ink3); transition:all 0.15s }
+.sf-pill svg { width:11px; height:11px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0 }
 .sf-pill:hover { border-color:var(--border2); color:var(--ink) }
 .sf-pill.active { background:var(--green-lt); border-color:rgba(37,211,102,0.3); color:var(--green) }
 .sf-pill.sf-pend.active { background:var(--rose-lt); border-color:rgba(241,92,109,0.3); color:var(--rose) }
@@ -1019,10 +1019,10 @@ mark { background:rgba(245,166,35,0.38); color:inherit; border-radius:2px; paddi
         </div>
         <div class="status-filter" id="statusFilter">
           <span class="sf-lbl">Filtrar</span>
-          <button class="sf-pill active" data-sf="todos" onclick="setStatusFilter('todos')">Todos <span class="sf-cnt" id="sfcTodos">0</span></button>
-          <button class="sf-pill sf-resp" data-sf="resp" onclick="setStatusFilter('resp')">Respondidas <span class="sf-cnt" id="sfcResp">0</span></button>
-          <button class="sf-pill sf-pend" data-sf="pend" onclick="setStatusFilter('pend')">Pendentes <span class="sf-cnt" id="sfcPend">0</span></button>
-          <button class="sf-pill sf-wait" data-sf="wait" onclick="setStatusFilter('wait')">Aguardando <span class="sf-cnt" id="sfcWait">0</span></button>
+          <button class="sf-pill active" data-sf="todos" onclick="setStatusFilter('todos')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Todos <span class="sf-cnt" id="sfcTodos">0</span></button>
+          <button class="sf-pill sf-resp" data-sf="resp" onclick="setStatusFilter('resp')"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Respondidas <span class="sf-cnt" id="sfcResp">0</span></button>
+          <button class="sf-pill sf-pend" data-sf="pend" onclick="setStatusFilter('pend')"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>Pendentes <span class="sf-cnt" id="sfcPend">0</span></button>
+          <button class="sf-pill sf-wait" data-sf="wait" onclick="setStatusFilter('wait')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Aguardando <span class="sf-cnt" id="sfcWait">0</span></button>
         </div>
         <div class="twrap">
           <table id="mainTable">
@@ -1457,17 +1457,22 @@ function renderTabela(contatos) {
     const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
     const rowDelay=`animation-delay:${idx*38}ms`
     const rowCls=c.tem_pendencia?'row-pend':c.respondida?'row-resp':'row-wait'
+    const svgWarn=`<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-left:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`
     const turnosBadge=c.turnos_pendentes>0
-      ?`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ⚠${c.turnos_pendentes}</span>`
+      ?`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ${svgWarn}${c.turnos_pendentes}</span>`
       :`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
     return `<tr onclick="abrirDrawer('${c.telefone}')" class="${rowCls}" style="${rowDelay}">
-      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${hlText(c.nome||'Desconhecido',_tableFilter)}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${hlText(fTel(c.telefone),_tableFilter)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
+      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${hlText(c.nome||'Desconhecido',_tableFilter)}${c.tem_pendencia?` <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--rose);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`:''}</div><div class="cphone">${hlText(fTel(c.telefone),_tableFilter)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
       <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
       <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
       <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)">${c.total_msgs_cliente}<span style="color:var(--ink4);font-size:9px"> cli</span> / ${c.total_msgs_atendente}<span style="color:var(--ink4);font-size:9px"> ate</span></span></td>
       <td>${c.respondida?`<span class="tespera ${espera.cls}">${espera.label}</span>`:`<span class="tespera none">—</span>`}</td>
       <td>${turnosBadge}</td>
-      <td>${c.tem_pendencia?`<span class="sbadge nresp"><span class="sbadge-dot"></span>Pendente</span>`:c.respondida?`<span class="sbadge resp"><span class="sbadge-dot"></span>Respondida</span>`:`<span class="sbadge nresp"><span class="sbadge-dot"></span>Aguardando</span>`}</td>
+      <td>${c.tem_pendencia
+        ?`<span class="sbadge pend"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>Pendente</span>`
+        :c.respondida
+        ?`<span class="sbadge resp"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Respondida</span>`
+        :`<span class="sbadge wait"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Aguardando</span>`}</td>
     </tr>`}).join('')
 }
 function teClass(seg){if(seg===null)return{cls:'none',label:'—'};const label=fTMA(seg);if(seg<=120)return{cls:'fast',label};if(seg<=300)return{cls:'mid',label};return{cls:'slow',label}}
