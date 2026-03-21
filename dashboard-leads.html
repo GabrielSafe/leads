@@ -124,7 +124,7 @@ body.light {
 .sidebar-brand-name  { font-size:13px; font-weight:700; color:var(--ink); letter-spacing:-0.2px; line-height:1.2 }
 .sidebar-brand-slug  { font-size:10px; color:var(--ink3); margin-top:2px }
 
-.sidebar-nav { flex:1; padding:12px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto }
+.sidebar-nav { flex:1; padding:12px 10px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; -webkit-overflow-scrolling:touch }
 .nav-item {
   display:flex; align-items:center; gap:12px;
   padding:10px 12px; border-radius:var(--r);
@@ -775,7 +775,7 @@ th.sort-desc::after { content:' ↓'; color:var(--green) }
 .stats:not(.loaded) .sc-val,.stats:not(.loaded) .sc-desc { display:none }
 
 /* ── MOBILE SIDEBAR ── */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:199;backdrop-filter:blur(3px)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:199;}
 .sidebar-overlay.show{display:block}
 .menu-toggle{display:none;width:36px;height:36px;border-radius:var(--r);background:transparent;border:1px solid var(--border);color:var(--ink2);cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
 @media(max-width:700px){
@@ -784,6 +784,37 @@ th.sort-desc::after { content:' ↓'; color:var(--green) }
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
 }
+
+/* ── STATUS FILTER PILLS ── */
+.status-filter { display:flex; align-items:center; gap:6px; padding:8px 16px; border-bottom:1px solid var(--border); flex-wrap:wrap }
+.sf-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--ink4); margin-right:2px; white-space:nowrap }
+.sf-pill { display:inline-flex; align-items:center; gap:5px; padding:4px 11px; border-radius:99px; font-size:10px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--card2); color:var(--ink3); transition:all 0.15s }
+.sf-pill:hover { border-color:var(--border2); color:var(--ink) }
+.sf-pill.active { background:var(--green-lt); border-color:rgba(37,211,102,0.3); color:var(--green) }
+.sf-pill.sf-pend.active { background:var(--rose-lt); border-color:rgba(241,92,109,0.3); color:var(--rose) }
+.sf-pill.sf-wait.active { background:var(--amber-lt); border-color:rgba(245,166,35,0.3); color:var(--amber) }
+.sf-pill.sf-resp.active { background:var(--green-lt); border-color:rgba(37,211,102,0.3); color:var(--green) }
+.sf-cnt { font-family:'JetBrains Mono',monospace; background:var(--bg); padding:1px 5px; border-radius:4px; font-size:9px; opacity:0.8 }
+
+/* ── RESULT COUNTER ── */
+.result-count { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink4); white-space:nowrap; flex-shrink:0 }
+
+/* ── EXPORT BUTTON ── */
+.export-btn { display:inline-flex; align-items:center; gap:5px; padding:5px 11px; background:var(--card2); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:500; color:var(--ink3); cursor:pointer; transition:all 0.15s; white-space:nowrap; flex-shrink:0 }
+.export-btn:hover { border-color:var(--border2); color:var(--green); border-color:rgba(37,211,102,0.4) }
+.export-btn svg { width:13px; height:13px; stroke:currentColor; fill:none; stroke-linecap:round; stroke-linejoin:round }
+
+/* ── STICKY THEAD ── */
+.twrap { max-height:520px; overflow-y:auto; overflow-x:auto }
+thead tr th { position:sticky; top:0; z-index:2 }
+
+/* ── SEARCH HIGHLIGHT ── */
+mark { background:rgba(245,166,35,0.38); color:inherit; border-radius:2px; padding:0 1px }
+
+/* ── CARD FILTER ACTIVE ── */
+.sc.card-filter-on { outline:2px solid var(--green); outline-offset:2px }
+.sc.r.card-filter-on { outline-color:var(--rose) }
+.sc.a.card-filter-on { outline-color:var(--amber) }
 
 /* ── MOBILE FULL ── */
 @media(max-width:700px){
@@ -976,10 +1007,22 @@ th.sort-desc::after { content:' ↓'; color:var(--green) }
             <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input class="search-input" type="text" id="tableSearch" placeholder="Buscar nome ou telefone..." oninput="filterTable(this.value)">
           </div>
+          <span class="result-count" id="resultCount" style="display:none"></span>
+          <button class="export-btn" onclick="exportCSV()" title="Exportar tabela como CSV">
+            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSV
+          </button>
           <button class="density-btn" id="densityBtn" onclick="toggleDensity()" title="Modo compacto">
             <svg viewBox="0 0 24 24" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             Compacto
           </button>
+        </div>
+        <div class="status-filter" id="statusFilter">
+          <span class="sf-lbl">Filtrar</span>
+          <button class="sf-pill active" data-sf="todos" onclick="setStatusFilter('todos')">Todos <span class="sf-cnt" id="sfcTodos">0</span></button>
+          <button class="sf-pill sf-resp" data-sf="resp" onclick="setStatusFilter('resp')">Respondidas <span class="sf-cnt" id="sfcResp">0</span></button>
+          <button class="sf-pill sf-pend" data-sf="pend" onclick="setStatusFilter('pend')">Pendentes <span class="sf-cnt" id="sfcPend">0</span></button>
+          <button class="sf-pill sf-wait" data-sf="wait" onclick="setStatusFilter('wait')">Aguardando <span class="sf-cnt" id="sfcWait">0</span></button>
         </div>
         <div class="twrap">
           <table id="mainTable">
@@ -1039,7 +1082,7 @@ const CORES = ['g','a','b','r']
 const colorMap = {}, colorIdx = [0]
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 let dataAtual = dHoje(), cache = null, instAtual = 'todas', ontemCache = null
-let _allContatos = [], _tableFilter = '', _dense = false, _sortCol = -1, _sortDir = 1
+let _allContatos = [], _tableFilter = '', _dense = false, _sortCol = -1, _sortDir = 1, _statusFilter = 'todos'
 
 /* ── SCROLL REVEAL ── */
 function initScrollReveal() {
@@ -1099,6 +1142,8 @@ function inicializar() {
   initScrollTop()
   initKeyboardShortcuts()
   initSortableHeaders()
+  restoreDensity()
+  initCardFilters()
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializar)
 else inicializar()
@@ -1165,7 +1210,7 @@ function toggleHelpModal() {
       <button onclick="document.getElementById('helpModal').remove()">✕</button>
     </div>
     <div id="helpModalBody">
-      ${[['←','Dia anterior'],['→','Próximo dia'],['T','Ir para hoje'],['R','Atualizar dados'],['Esc','Fechar drawer'],['?','Este menu']
+      ${[['←','Dia anterior'],['→','Próximo dia'],['T','Ir para hoje'],['R','Atualizar dados'],['Esc','Fechar drawer / limpar busca'],['?','Este menu']
       ].map(([k,v])=>`<div class="hk-row"><kbd class="hk-key">${k}</kbd><span class="hk-desc">${v}</span></div>`).join('')}
     </div>
   </div>`
@@ -1183,6 +1228,10 @@ function initKeyboardShortcuts() {
     if ((e.key === 't' || e.key === 'T') && !drawerOpen) { e.preventDefault(); irHoje() }
     if ((e.key === 'r' || e.key === 'R') && !drawerOpen) { e.preventDefault(); carregar(); showToast('Atualizando...','info') }
     if (e.key === 'Escape' && drawerOpen) fecharDrawer()
+    if (e.key === 'Escape' && !drawerOpen) {
+      const inp = document.getElementById('tableSearch')
+      if (inp && inp.value) { inp.value = ''; filterTable('') }
+    }
     if (e.key === '?') toggleHelpModal()
   })
 }
@@ -1193,11 +1242,14 @@ function initPageTransitions() {
     link.addEventListener('click', e => {
       const href = link.getAttribute('href')
       if (!href || href === '#') return
-      const curr = window.location.pathname.split('/').pop() || 'index.html'
+      /* fechar sidebar no mobile antes de navegar */
+      const sb = document.getElementById('sidebar')
+      if (sb?.classList.contains('open')) toggleSidebar()
+      const curr = window.location.pathname.split('/').pop() || ''
       if (href === curr) return
       e.preventDefault()
       document.querySelector('.main')?.classList.add('page-out')
-      setTimeout(() => { window.location.href = href }, 230)
+      setTimeout(() => { window.location.href = href }, 220)
     })
   })
 }
@@ -1330,7 +1382,16 @@ function renderTudo(d) {
   if (prog) prog.style.width = (conv > 0 ? Math.round((resp/conv)*100) : 0) + '%'
   renderBars(d.por_hora||Array(24).fill(0),d.hora_pico)
   _allContatos = d.contatos||[]
-  renderTabela(applyTableFilters(_allContatos)); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
+  const filtered = applyTableFilters(_allContatos)
+  renderTabela(filtered); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
+  updateResultCount(filtered.length)
+  /* atualizar contadores das pills de status */
+  const all = _allContatos
+  const sf = (id, v) => { const e = document.getElementById(id); if(e) e.textContent = v }
+  sf('sfcTodos', all.length)
+  sf('sfcResp',  all.filter(c => c.respondida && !c.tem_pendencia).length)
+  sf('sfcPend',  all.filter(c => c.tem_pendencia).length)
+  sf('sfcWait',  all.filter(c => !c.respondida && !c.tem_pendencia).length)
   /* skeleton → dados reais */
   document.getElementById('statsGrid')?.classList.add('loaded')
   /* deltas vs ontem */
@@ -1382,9 +1443,20 @@ function renderUltList(contatos) {
       <div class="ult-msg"><span style="font-size:9px;opacity:0.5;margin-right:3px">${isAtt?'← IA':'→'}</span>${txt}</div>
       ${badge}</div>`}).join('')
 }
+function hlText(text, q) {
+  if (!q || !text) return text || ''
+  const safe = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return String(text).replace(new RegExp(`(${safe})`, 'gi'), '<mark>$1</mark>')
+}
 function renderTabela(contatos) {
   const tb=document.getElementById('tbody')
-  if(!contatos.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">Nenhuma conversa neste dia</div></div></td></tr>`;return}
+  if(!contatos.length){
+    const msg = _tableFilter
+      ? `Nenhum resultado para "<strong>${_tableFilter}</strong>"`
+      : (_statusFilter !== 'todos' ? 'Nenhuma conversa neste filtro' : 'Nenhuma conversa neste dia')
+    tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">${msg}</div></div></td></tr>`
+    return
+  }
   const copyIcon=`<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`
   tb.innerHTML=contatos.map((c,idx)=>{
     const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
@@ -1394,7 +1466,7 @@ function renderTabela(contatos) {
       ?`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ⚠${c.turnos_pendentes}</span>`
       :`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
     return `<tr onclick="abrirDrawer('${c.telefone}')" class="${rowCls}" style="${rowDelay}">
-      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${c.nome||'Desconhecido'}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${fTel(c.telefone)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
+      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${hlText(c.nome||'Desconhecido',_tableFilter)}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${hlText(fTel(c.telefone),_tableFilter)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
       <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
       <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
       <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)">${c.total_msgs_cliente}<span style="color:var(--ink4);font-size:9px"> cli</span> / ${c.total_msgs_atendente}<span style="color:var(--ink4);font-size:9px"> ate</span></span></td>
@@ -1447,6 +1519,11 @@ function fecharDrawer(){document.getElementById('drawer').classList.remove('open
 /* ── TABLE SEARCH, SORT, DENSITY ── */
 function applyTableFilters(list) {
   let out = list
+  if (_statusFilter !== 'todos') {
+    if (_statusFilter === 'pend') out = out.filter(c => c.tem_pendencia)
+    else if (_statusFilter === 'resp') out = out.filter(c => c.respondida && !c.tem_pendencia)
+    else if (_statusFilter === 'wait') out = out.filter(c => !c.respondida && !c.tem_pendencia)
+  }
   if (_tableFilter) {
     const q = _tableFilter
     out = out.filter(c => (c.nome||'').toLowerCase().includes(q) || String(c.telefone||'').includes(q))
@@ -1469,13 +1546,39 @@ function applyTableFilters(list) {
   }
   return out
 }
-function filterTable(q) { _tableFilter = q.toLowerCase().trim(); renderTabela(applyTableFilters(_allContatos)) }
+function filterTable(q) {
+  _tableFilter = q.toLowerCase().trim()
+  const filtered = applyTableFilters(_allContatos)
+  renderTabela(filtered)
+  updateResultCount(filtered.length)
+}
+function updateResultCount(shown) {
+  const el = document.getElementById('resultCount')
+  if (!el) return
+  const active = _tableFilter || _statusFilter !== 'todos'
+  if (active && _allContatos.length > 0) {
+    el.textContent = `${shown} / ${_allContatos.length}`
+    el.style.display = 'inline'
+  } else {
+    el.style.display = 'none'
+  }
+}
 function toggleDensity() {
   _dense = !_dense
   const tbl = document.getElementById('mainTable')
   if (tbl) tbl.classList.toggle('dense', _dense)
   const btn = document.getElementById('densityBtn')
   if (btn) btn.classList.toggle('dense-on', _dense)
+  localStorage.setItem('density', _dense ? '1' : '0')
+}
+function restoreDensity() {
+  if (localStorage.getItem('density') === '1') {
+    _dense = true
+    const tbl = document.getElementById('mainTable')
+    if (tbl) tbl.classList.add('dense')
+    const btn = document.getElementById('densityBtn')
+    if (btn) btn.classList.add('dense-on')
+  }
 }
 function initSortableHeaders() {
   document.querySelectorAll('th.sortable').forEach(th => {
@@ -1495,6 +1598,61 @@ function copyPhone(e, tel) {
   if (navigator.clipboard) {
     navigator.clipboard.writeText('+' + clean).then(() => showToast('Telefone copiado', 'ok'))
   }
+}
+
+/* ── STATUS FILTER ── */
+function setStatusFilter(sf) {
+  _statusFilter = sf
+  document.querySelectorAll('.sf-pill').forEach(p => p.classList.toggle('active', p.dataset.sf === sf))
+  /* highlight card ativo */
+  document.querySelectorAll('.sc').forEach(c => c.classList.remove('card-filter-on'))
+  const cardMap = { resp:'sResp', pend:'sPend', wait:'sNResp' }
+  if (sf !== 'todos' && cardMap[sf]) {
+    const el = document.getElementById(cardMap[sf])?.closest('.sc')
+    if (el) el.classList.add('card-filter-on')
+  }
+  const filtered = applyTableFilters(_allContatos)
+  renderTabela(filtered)
+  updateResultCount(filtered.length)
+}
+
+/* ── CARD CLICK → FILTRO ── */
+function initCardFilters() {
+  const cardMap = { sTotal:'todos', sResp:'resp', sNResp:'wait', sPend:'pend' }
+  Object.entries(cardMap).forEach(([id, sf]) => {
+    const el = document.getElementById(id)
+    if (!el) return
+    const card = el.closest('.sc')
+    if (card) card.addEventListener('click', (e) => {
+      if (e.target.closest('.copy-btn')) return
+      setStatusFilter(sf)
+    })
+  })
+}
+
+/* ── EXPORT CSV ── */
+function exportCSV() {
+  const list = applyTableFilters(_allContatos)
+  if (!list.length) { showToast('Nenhum dado para exportar', 'err'); return }
+  const heads = ['Nome','Telefone','1ª Msg','1ª Resposta','Msgs Cliente','Msgs Atendente','Turnos','TMA','Status']
+  const rows = list.map(c => [
+    c.nome||'Desconhecido',
+    fTel(c.telefone),
+    fH(c.primeira_msg_cliente?.horario),
+    c.primeira_msg_atendente ? fH(c.primeira_msg_atendente.horario) : '—',
+    c.total_msgs_cliente,
+    c.total_msgs_atendente,
+    `${c.turnos_respondidos}/${c.total_turnos}`,
+    fTMA(c.tma_segundos),
+    c.tem_pendencia ? 'Pendente' : c.respondida ? 'Respondida' : 'Aguardando'
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+  const csv = [heads.join(','), ...rows].join('\n')
+  const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = `atendimento_${dataAtual}.csv`
+  a.click(); URL.revokeObjectURL(url)
+  showToast(`${list.length} registros exportados`, 'ok')
 }
 function conectarSSE(){try{const es=new EventSource(`${API}/stream`);es.onmessage=()=>{carregar();showToast('Nova mensagem recebida','info')};es.onerror=()=>setTimeout(conectarSSE,5000)}catch{}}
 function fH(ts){if(!ts)return'—';return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
