@@ -163,8 +163,39 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 .itab-dot{width:5px;height:5px;border-radius:50%;background:var(--green);opacity:0.4}
 .itab.active .itab-dot{opacity:1}
 
+/* ── CALENDÁRIO 7 DIAS ── */
+.cal-strip{display:flex;align-items:center;gap:6px;margin-bottom:18px;flex-wrap:wrap;animation:fadeUp 0.4s ease both}
+.cal-day{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 10px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all 0.15s;min-width:48px}
+.cal-day:hover{border-color:var(--border2)}
+.cal-day.active{background:var(--card2);border-color:var(--border2)}
+.cal-dot{width:8px;height:8px;border-radius:50%}
+.cal-lbl{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:10px;color:var(--ink3);font-weight:500}
+.cal-day.active .cal-lbl{color:var(--ink);font-weight:700}
+.cal-day-name{font-size:9px;color:var(--ink4);text-transform:uppercase;letter-spacing:0.4px}
+
+/* ── PICO DE ATENDIMENTO ── */
+.hpico-wrap{overflow-x:auto;padding-bottom:4px}
+.hpico-chart{display:flex;align-items:flex-end;gap:4px;height:80px;min-width:max-content}
+.hpico-col{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:32px}
+.hpico-bar{width:20px;border-radius:4px 4px 0 0;background:var(--border2);transition:height 0.4s ease;min-height:3px}
+.hpico-col.pico .hpico-bar{background:var(--green)}
+.hpico-lbl{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:9px;color:var(--ink4)}
+.hpico-val{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:9px;color:var(--ink3);font-weight:600}
+.hpico-col.pico .hpico-lbl,.hpico-col.pico .hpico-val{color:var(--green)}
+.hpico-empty{font-size:12px;color:var(--ink4);padding:20px 0;text-align:center}
+
+/* ── DELTA VS ONTEM ── */
+.delta{font-size:10px;font-weight:700;margin-left:5px}
+.delta.up-good{color:var(--green)}.delta.up-bad{color:var(--rose)}
+.delta.dn-good{color:var(--green)}.delta.dn-bad{color:var(--rose)}
+
+/* ── COPY LINK ── */
+.copy-link-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--ink3);font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s}
+.copy-link-btn:hover{border-color:var(--green);color:var(--green)}
+.copy-link-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
 /* ── CURSOR POINTER ── */
-.dnavbtn,.today-btn,.itab{ cursor:pointer }
+.dnavbtn,.today-btn,.itab,.cal-day,.copy-link-btn{ cursor:pointer }
 </style>
 </head>
 <body>
@@ -225,14 +256,21 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
         <span class="inst-lbl">Instância</span>
         <div id="instBar"></div>
       </div>
-      <div class="date-nav">
-        <button class="dnavbtn" onclick="mudarDia(-1)">‹</button>
-        <div class="dlabel" id="dlabel">--/--/----</div>
-        <button class="dnavbtn" onclick="mudarDia(1)">›</button>
-        <input type="date" class="dpick" id="dpick" onchange="irData(this.value)">
-        <button class="today-btn" onclick="irHoje()">Hoje</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="date-nav">
+          <button class="dnavbtn" onclick="mudarDia(-1)">‹</button>
+          <div class="dlabel" id="dlabel">--/--/----</div>
+          <button class="dnavbtn" onclick="mudarDia(1)">›</button>
+          <input type="date" class="dpick" id="dpick" onchange="irData(this.value)">
+          <button class="today-btn" onclick="irHoje()">Hoje</button>
+        </div>
+        <button class="copy-link-btn" onclick="copiarLink()" title="Copiar link deste relatório">
+          <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Link
+        </button>
       </div>
     </div>
+    <div class="cal-strip" id="calStrip"></div>
     <div id="conteudo">
       <div class="page-loading"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div> Carregando relatório...</div>
     </div>
@@ -253,8 +291,11 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 <script>
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
-let dataAtual = dHoje()
-let instAtual = null
+const _params = new URLSearchParams(window.location.search)
+let dataAtual = _params.get('data') || dHoje()
+let instAtual = _params.get('instancia') || null
+let _ontemResumo = null
+let _calData = {}
 
 function setDateLabel(d) { const [y,m,dia]=d.split('-'); document.getElementById('dlabel').textContent=`${dia}/${m}/${y}`; document.getElementById('dpick').value=d }
 function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(dt.getDate()+delta); dataAtual=dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregarComInstancias() }
@@ -289,13 +330,100 @@ async function carregarComInstancias() {
 async function carregar() {
   const el=document.getElementById('conteudo')
   el.innerHTML=`<div class="page-loading"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div> Carregando relatório...</div>`
+  // Busca ontem para comparativo em paralelo
+  const ontemDate = new Date(dataAtual+'T12:00:00'); ontemDate.setDate(ontemDate.getDate()-1)
+  const ontemStr = ontemDate.toISOString().split('T')[0]
+  const qs = instAtual ? `data=${dataAtual}&instancia=${encodeURIComponent(instAtual)}` : `data=${dataAtual}`
+  const qsOntem = instAtual ? `data=${ontemStr}&instancia=${encodeURIComponent(instAtual)}` : `data=${ontemStr}`
+  try {
+    const [rHoje, rOntem] = await Promise.allSettled([
+      fetch(`${API}/relatorio-ia?${qs}`),
+      fetch(`${API}/relatorio-ia?${qsOntem}`)
+    ])
+    if (rHoje.status==='rejected'||!rHoje.value.ok) throw new Error()
+    _ontemResumo = rOntem.status==='fulfilled'&&rOntem.value.ok ? (await rOntem.value.json()).resumo||null : null
+    renderRelatorio(await rHoje.value.json())
+    carregarCalendario()
+    carregarHorario()
+  } catch {
+    _ontemResumo = null
+    el.innerHTML=`<div class="page-empty"><div class="page-empty-icon">📭</div><div class="page-empty-title">Nenhum relatório para este dia</div><div class="page-empty-sub">O relatório é gerado automaticamente às 20h</div></div>`
+    carregarCalendario()
+  }
+}
+
+/* ── CALENDÁRIO 7 DIAS ── */
+const DIAS_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+async function carregarCalendario() {
+  const dias = []
+  for (let i=6; i>=0; i--) {
+    const d=new Date(dataAtual+'T12:00:00'); d.setDate(d.getDate()-i)
+    dias.push(d.toISOString().split('T')[0])
+  }
+  const results = await Promise.allSettled(dias.map(async d => {
+    const qs = instAtual ? `data=${d}&instancia=${encodeURIComponent(instAtual)}` : `data=${d}`
+    const r = await fetch(`${API}/relatorio-ia?${qs}`)
+    if (!r.ok) return { data: d, score: 'none' }
+    const json = await r.json()
+    const rs = json.resumo||{}
+    const pS=rs.percentual_sem_resposta||0, pF=rs.percentual_finalizadas||0
+    return { data: d, score: pS>40||pF<30?'critico':pS>20||pF<60?'atencao':'bom' }
+  }))
+  _calData = {}
+  results.forEach(r => { if (r.status==='fulfilled'&&r.value) _calData[r.value.data]=r.value })
+  renderCalendario(dias)
+}
+function renderCalendario(dias) {
+  const dotColor = {bom:'var(--green)',atencao:'var(--amber)',critico:'var(--rose)',none:'var(--border)'}
+  document.getElementById('calStrip').innerHTML = dias.map(d => {
+    const info=_calData[d], score=info?.score||'none'
+    const [,m,dia]=d.split('-')
+    const dow = DIAS_PT[new Date(d+'T12:00:00').getDay()]
+    return `<button class="cal-day ${d===dataAtual?'active':''}" onclick="irData('${d}')">
+      <span class="cal-dot" style="background:${dotColor[score]}"></span>
+      <span class="cal-lbl">${dia}/${m}</span>
+      <span class="cal-day-name">${dow}</span>
+    </button>`
+  }).join('')
+}
+
+/* ── HORÁRIO DE PICO ── */
+async function carregarHorario() {
+  const el = document.getElementById('horaPicoBody')
+  if (!el) return
   try {
     const qs = instAtual ? `data=${dataAtual}&instancia=${encodeURIComponent(instAtual)}` : `data=${dataAtual}`
-    const r=await fetch(`${API}/relatorio-ia?${qs}`); if(!r.ok)throw new Error()
-    renderRelatorio(await r.json())
-  } catch {
-    el.innerHTML=`<div class="page-empty"><div class="page-empty-icon">📭</div><div class="page-empty-title">Nenhum relatório para este dia</div><div class="page-empty-sub">O relatório é gerado automaticamente às 20h</div></div>`
-  }
+    const r = await fetch(`${API}/stats-horario?${qs}`)
+    if (!r.ok) throw new Error()
+    const { por_hora } = await r.json()
+    const total = por_hora.reduce((a,b)=>a+b,0)
+    if (total===0) { el.innerHTML=`<div class="hpico-empty">Sem dados de horário para este dia</div>`; return }
+    const max = Math.max(...por_hora,1)
+    const pico = por_hora.indexOf(Math.max(...por_hora))
+    const horas = por_hora.map((v,i)=>({h:i,v})).filter(({h,v})=>v>0||(h>=7&&h<=21))
+    el.innerHTML=`<div class="hpico-wrap"><div class="hpico-chart">${horas.map(({h,v})=>`<div class="hpico-col${h===pico&&v>0?' pico':''}">
+      ${v>0?`<span class="hpico-val">${v}</span>`:'<span class="hpico-val" style="opacity:0">0</span>'}
+      <div class="hpico-bar" style="height:${Math.max(Math.round((v/max)*60),v>0?4:2)}px"></div>
+      <span class="hpico-lbl">${String(h).padStart(2,'0')}h</span>
+    </div>`).join('')}</div></div>`
+  } catch { el.innerHTML=`<div class="hpico-empty">Não foi possível carregar</div>` }
+}
+
+/* ── DELTA VS ONTEM ── */
+function delta(cur, prev, maiorEBom=true) {
+  if (prev==null||prev===0&&cur===0) return ''
+  const d=cur-prev; if(d===0) return ''
+  const up=d>0, good=maiorEBom?up:!up
+  const cls=up?(good?'up-good':'up-bad'):(good?'dn-good':'dn-bad')
+  return `<span class="delta ${cls}">${up?'↑':'↓'}${Math.abs(d)}</span>`
+}
+
+/* ── COPIAR LINK ── */
+function copiarLink() {
+  const url=new URL(window.location.href)
+  url.searchParams.set('data',dataAtual)
+  if(instAtual) url.searchParams.set('instancia',instAtual)
+  navigator.clipboard.writeText(url.toString()).then(()=>showToast('Link copiado!','ok')).catch(()=>showToast('Erro ao copiar','err'))
 }
 
 function renderRelatorio(d) {
@@ -330,14 +458,15 @@ function renderRelatorio(d) {
     <div><div class="alert-txt">${pSem}% das conversas ficaram sem resposta</div><div class="alert-sub">${r.sem_resposta||0} de ${r.total_conversas||0} atendimentos não foram respondidos no dia.</div></div>
   </div>` : ''
 
+  const o=_ontemResumo
   const secResumo=`<div class="section" style="transition-delay:0ms">
-    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">01</div><div class="section-title">Resumo Executivo</div></div></div>
+    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">01</div><div class="section-title">Resumo Executivo</div></div>${o?`<span style="font-size:10px;color:var(--ink4)">vs ontem</span>`:''}</div>
     <div class="section-body">
       <div class="exec-grid">
-        <div class="exec-card"><div class="exec-card-top">Total</div><div class="exec-card-val">${r.total_conversas||0}</div><div class="exec-card-lbl">conversas no dia</div></div>
-        <div class="exec-card fin"><div class="exec-card-top">Finalizadas</div><div class="exec-card-val">${r.finalizadas||0}</div><div class="exec-card-pct">${pFin}%</div><div class="exec-card-lbl">concluídas</div></div>
-        <div class="exec-card and"><div class="exec-card-top">Em andamento</div><div class="exec-card-val">${r.em_andamento||0}</div><div class="exec-card-pct">${r.percentual_em_andamento||0}%</div><div class="exec-card-lbl">em progresso</div></div>
-        <div class="exec-card sem"><div class="exec-card-top">Sem resposta</div><div class="exec-card-val">${r.sem_resposta||0}</div><div class="exec-card-pct">${pSem}%</div><div class="exec-card-lbl">não atendidas</div></div>
+        <div class="exec-card"><div class="exec-card-top">Total</div><div class="exec-card-val">${r.total_conversas||0}${delta(r.total_conversas||0,o?.total_conversas,true)}</div><div class="exec-card-lbl">conversas no dia</div></div>
+        <div class="exec-card fin"><div class="exec-card-top">Finalizadas</div><div class="exec-card-val">${r.finalizadas||0}${delta(r.finalizadas||0,o?.finalizadas,true)}</div><div class="exec-card-pct">${pFin}%</div><div class="exec-card-lbl">concluídas</div></div>
+        <div class="exec-card and"><div class="exec-card-top">Em andamento</div><div class="exec-card-val">${r.em_andamento||0}${delta(r.em_andamento||0,o?.em_andamento,false)}</div><div class="exec-card-pct">${r.percentual_em_andamento||0}%</div><div class="exec-card-lbl">em progresso</div></div>
+        <div class="exec-card sem"><div class="exec-card-top">Sem resposta</div><div class="exec-card-val">${r.sem_resposta||0}${delta(r.sem_resposta||0,o?.sem_resposta,false)}</div><div class="exec-card-pct">${pSem}%</div><div class="exec-card-lbl">não atendidas</div></div>
       </div>
       <div class="exec-progress">
         <div class="ep-seg fin" style="width:${pFin}%"></div>
@@ -356,15 +485,19 @@ function renderRelatorio(d) {
       <div class="hor-card"><div class="hor-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div><div><div class="hor-lbl">Última resposta da equipe</div><div class="hor-time">${h.ultima_resposta_hora||'—'}</div></div></div>
     </div></div></div>`
 
-  const secRecl=`<div class="section" style="transition-delay:140ms">
-    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">03</div><div class="section-title">Reclamações e Críticas</div></div>${recl.length>0?`<span style="font-family:'Cascadia Code',Consolas,monospace;font-size:10px;color:var(--rose);font-weight:600">${recl.length} registro${recl.length>1?'s':''}</span>`:''}</div>
+  const secPico=`<div class="section" style="transition-delay:140ms">
+    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">03</div><div class="section-title">Pico de Atendimento</div></div></div>
+    <div class="section-body" id="horaPicoBody"><div class="page-loading"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div></div></div>`
+
+  const secRecl=`<div class="section" style="transition-delay:180ms">
+    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">04</div><div class="section-title">Reclamações e Críticas</div></div>${recl.length>0?`<span style="font-family:'Cascadia Code',Consolas,monospace;font-size:10px;color:var(--rose);font-weight:600">${recl.length} registro${recl.length>1?'s':''}</span>`:''}</div>
     <div class="section-body">${recl.length===0
       ?`<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Nenhuma reclamação registrada no período</div></div>`
       :`<div class="recl-grid">${recl.map(rc=>{const gc=gravCls(rc.gravidade);return`<div class="recl-card ${gc}"><div class="recl-card-head"><span class="recl-badge ${gc}">${rc.gravidade}</span><span class="recl-num">#${rc.numero}</span></div><div class="recl-card-body"><div class="recl-nome">${rc.cliente||'—'}</div><div class="recl-tel">${rc.telefone||''}</div><div class="recl-resumo">${rc.resumo||''}</div></div></div>`}).join('')}</div>`}
     </div></div>`
 
-  const secMel=`<div class="section" style="transition-delay:200ms">
-    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">04</div><div class="section-title">Pontos de Melhoria</div></div></div>
+  const secMel=`<div class="section" style="transition-delay:220ms">
+    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">05</div><div class="section-title">Pontos de Melhoria</div></div></div>
     <div class="section-body">${mel.length===0
       ?`<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Atendimento dentro dos padrões de qualidade</div></div>`
       :`<div class="melhoria-list">${mel.map((m,i)=>`<div class="melhoria-card" id="mel${i}">
@@ -379,11 +512,11 @@ function renderRelatorio(d) {
       </div>`).join('')}</div>`}
     </div></div>`
 
-  const secObs = d.observacoes ? `<div class="section" style="transition-delay:260ms"><div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">05</div><div class="section-title">Observações Gerais</div></div></div><div class="section-body"><div class="obs-card"><div class="obs-txt">${d.observacoes}</div></div></div></div>` : ''
+  const secObs = d.observacoes ? `<div class="section" style="transition-delay:260ms"><div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">06</div><div class="section-title">Observações Gerais</div></div></div><div class="section-body"><div class="obs-card"><div class="obs-txt">${d.observacoes}</div></div></div></div>` : ''
 
   const footer=`<div class="report-footer"><div class="footer-brand">Relatório gerado por <span>${d.empresa||instAtual||''}</span></div><div class="footer-date">${dataAtual}</div></div>`
 
-  document.getElementById('conteudo').innerHTML = secHeader+secAlerta+secResumo+secHorarios+secRecl+secMel+secObs+footer
+  document.getElementById('conteudo').innerHTML = secHeader+secAlerta+secResumo+secHorarios+secPico+secRecl+secMel+secObs+footer
 }
 
 function toggleMel(i) {

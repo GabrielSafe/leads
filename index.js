@@ -199,6 +199,35 @@ const horaP = porHora.indexOf(Math.max(...porHora))
 })
 
 
+app.get('/stats-horario', async (req, res) => {
+  try {
+    const data = req.query.data || hoje()
+    const instancia = req.query.instancia
+    const por_hora = Array(24).fill(0)
+    const keys = await redisContatos.keys('*')
+    for (const k of keys) {
+      if (instancia) {
+        const tipo = await redisContatos.type(k)
+        let inst = null
+        if (tipo === 'hash') inst = await redisContatos.hget(k, 'instancia')
+        else if (tipo === 'string') { try { inst = JSON.parse(await redisContatos.get(k)).instancia } catch {} }
+        if (inst !== instancia) continue
+      }
+      const tipoMsg = await redisMensagens.type(k)
+      if (tipoMsg !== 'list') continue
+      const msgs = (await redisMensagens.lrange(k, 0, -1))
+        .map(m => { try { return JSON.parse(m) } catch { return null } }).filter(Boolean)
+      const primeira = msgs
+        .filter(m => !isAtendente(m.nome) && m.timestamp?.startsWith(data))
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))[0]
+      if (!primeira) continue
+      const horaBR = new Date(primeira.timestamp).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false })
+      por_hora[parseInt(horaBR) % 24]++
+    }
+    res.json({ por_hora })
+  } catch(err) { res.status(500).json({ erro: err.message }) }
+})
+
 app.get('/relatorio-instancias', async (req, res) => {
   try {
     const data = req.query.data || hoje()
