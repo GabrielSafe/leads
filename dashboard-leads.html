@@ -276,7 +276,10 @@ async function carregarTags() {
 }
 async function salvarTags(tel, tags) {
   _tagsCache[tel] = tags
-  try { await fetch(`/api/tags/${tel}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tags}) }) } catch {}
+  try {
+    const r = await fetch(`/api/tags/${tel}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tags}) })
+    if (!r.ok) { const err = await r.json().catch(()=>{}); showToast('Erro ao salvar tag: ' + (err?.erro||r.status), 'err') }
+  } catch(e) { showToast('Erro de conexão ao salvar tag', 'err') }
 }
 async function addTag(tel, tag) {
   tag = tag.trim(); if (!tag) return
