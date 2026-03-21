@@ -1,8 +1,12 @@
 FROM nginx:alpine
 # cache-bust 20260306003437
 COPY dashboard-leads.html /usr/share/nginx/html/
-COPY relatorio-ia.html /usr/share/nginx/html/
-COPY contatos.html /usr/share/nginx/html/
+COPY dashboard.css        /usr/share/nginx/html/
+COPY relatorio-ia.html    /usr/share/nginx/html/
+COPY contatos.html        /usr/share/nginx/html/
+COPY chat.html            /usr/share/nginx/html/
+COPY ferramentas.html     /usr/share/nginx/html/
+COPY config.js            /usr/share/nginx/html/
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
