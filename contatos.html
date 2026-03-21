@@ -79,13 +79,6 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
 .tool-icon-wrap svg{width:20px;height:20px;stroke:var(--green);}
 .hor-icon svg{width:16px;height:16px;stroke:var(--ink3);}
 
-/* TAGS */
-.ctag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:99px}
-.ctag-vip{background:rgba(245,166,35,0.18);color:var(--amber)}
-.ctag-urg{background:var(--rose-lt);color:var(--rose)}
-.ctag-prob{background:var(--violet-lt);color:var(--violet)}
-.ctag-ok{background:var(--green-lt);color:var(--green)}
-.ctag-custom{background:var(--blue-lt);color:var(--blue)}
 .sidebar-logo svg{width:22px;height:22px;stroke:#111b21;}
 
 .reset-btn{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:var(--r);background:var(--amber-lt);border:1px solid rgba(245,166,35,0.25);color:var(--amber);font-size:11px;font-weight:600;cursor:pointer;transition:all 0.15s}
@@ -151,7 +144,7 @@ td{padding:13px 16px;font-size:12px;color:var(--ink3);vertical-align:middle}
       <div class="toolbar-left">
         <div class="search-wrap">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input class="search-input" id="searchInput" type="text" placeholder="Buscar nome, telefone ou #tag..." oninput="filtrar()">
+          <input class="search-input" id="searchInput" type="text" placeholder="Buscar nome ou telefone..." oninput="filtrar()">
         </div>
         <button class="filter-btn active" id="filtroTodos" onclick="setFiltroIA('todos')">Todos</button>
         <button class="filter-btn" id="filtroAtiva" onclick="setFiltroIA('ativa')">IA Ativa</button>
@@ -212,18 +205,6 @@ const POR_PAGINA = 20
 const CORES = ['#25d366','#53bdeb','#f5a623','#f15c6d','#bf59cf','#00a884','#0288d1','#e91e8c']
 const colorMap = {}
 let todosContatos = [], filtrados = [], paginaAtual = 1, filtroIA = 'todos'
-let _tagsCache = {}
-
-async function carregarTags() {
-  try {
-    const r = await fetch(`${API}/tags`)
-    if (r.ok) { _tagsCache = await r.json() }
-  } catch {}
-}
-function tagCls(tag) {
-  const m = { 'VIP':'vip','Urgente':'urg','Problema':'prob','Resolvido':'ok' }
-  return m[tag] || 'custom'
-}
 
 function corC(tel) { if (!colorMap[tel]) colorMap[tel] = CORES[Object.keys(colorMap).length % CORES.length]; return colorMap[tel] }
 function inicial(nome) { if (!nome) return '?'; return nome.trim().split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() }
@@ -246,16 +227,7 @@ function filtrar() {
   let base = filtroIA==='ativa' ? todosContatos.filter(c=>!c.ia||c.ia==='sim')
            : filtroIA==='pausada' ? todosContatos.filter(c=>c.ia==='nao')
            : [...todosContatos]
-  if (q) {
-    if (q.startsWith('#')) {
-      const tag = q.slice(1)
-      filtrados = base.filter(c => (_tagsCache[c.telefone]||[]).some(t => t.toLowerCase().includes(tag)))
-    } else {
-      filtrados = base.filter(c=>(c.nome||'').toLowerCase().includes(q)||(c.telefone||'').includes(q))
-    }
-  } else {
-    filtrados = base
-  }
+  filtrados = q ? base.filter(c=>(c.nome||'').toLowerCase().includes(q)||(c.telefone||'').includes(q)) : base
   filtrados.sort((a,b)=>new Date(b.primeiro_contato||0)-new Date(a.primeiro_contato||0))
   paginaAtual = 1; renderTabela()
 }
@@ -276,7 +248,7 @@ function renderTabela() {
   document.getElementById('tableWrap').innerHTML = `<div class="twrap"><table>
     <thead><tr><th>Contato</th><th>Primeiro contato</th><th>Primeira mensagem</th><th>Msgs</th><th>Instância</th><th>IA</th></tr></thead>
     <tbody>${pagina.map((c,idx)=>`<tr style="animation-delay:${idx*38}ms">
-      <td><div class="contact-cell"><div class="avatar" style="background:${corC(c.telefone)}">${inicial(c.nome)}</div><div><div class="contact-name">${c.nome||'Desconhecido'}</div><div class="contact-phone">${c.telefone||''}</div>${(_tagsCache[c.telefone]||[]).length?`<div style="margin-top:3px;display:flex;flex-wrap:wrap;gap:3px">${(_tagsCache[c.telefone]||[]).map(t=>`<span class="ctag ctag-${tagCls(t)}">${t}</span>`).join('')}</div>`:''}</div></div></td>
+      <td><div class="contact-cell"><div class="avatar" style="background:${corC(c.telefone)}">${inicial(c.nome)}</div><div><div class="contact-name">${c.nome||'Desconhecido'}</div><div class="contact-phone">${c.telefone||''}</div></div></div></td>
       <td><div class="date-cell">${fData(c.primeiro_contato)}</div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px">${fHora(c.primeiro_contato)}</div></td>
       <td><div class="first-msg" title="${c.primeira_mensagem||''}">${c.primeira_mensagem||'—'}</div></td>
       <td><span class="msgs-badge">${c.total_mensagens||0}</span></td>
@@ -305,7 +277,7 @@ function exportarExcel() {
   a.href=url; a.download='contatos_'+new Date().toISOString().split('T')[0]+'.csv'; a.click(); URL.revokeObjectURL(url)
 }
 ;(function(){
-  carregarTags(); carregar(); setInterval(carregar,60000)
+  carregar(); setInterval(carregar,60000)
 })()
 </script>
 <script>

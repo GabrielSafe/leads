@@ -902,35 +902,3 @@ mark { background:rgba(245,166,35,0.38); color:inherit; border-radius:2px; paddi
 .av.v { background:linear-gradient(135deg,#7b1fa2,#bf59cf) }
 .av.o { background:linear-gradient(135deg,#e65100,#f5a623) }
 
-/* ── TAGS ── */
-.dtags { padding:12px 20px 14px; border-bottom:1px solid var(--border) }
-.dtags-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--ink4); margin-bottom:8px }
-.dtags-list { display:flex; flex-wrap:wrap; gap:5px; min-height:24px }
-.dtag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:99px; font-size:10px; font-weight:600; border:1px solid transparent; transition:opacity 0.15s }
-.dtag svg { width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:2.5; stroke-linecap:round; cursor:pointer; opacity:0.7; flex-shrink:0 }
-.dtag svg:hover { opacity:1 }
-.dtag.vip    { background:rgba(245,166,35,0.18);  color:var(--amber);  border-color:rgba(245,166,35,0.3) }
-.dtag.urg    { background:var(--rose-lt);          color:var(--rose);   border-color:rgba(241,92,109,0.3) }
-.dtag.prob   { background:var(--violet-lt);        color:var(--violet); border-color:rgba(191,89,207,0.3) }
-.dtag.ok     { background:var(--green-lt);         color:var(--green);  border-color:rgba(37,211,102,0.3) }
-.dtag.custom { background:var(--blue-lt);          color:var(--blue);   border-color:rgba(83,189,235,0.3) }
-
-.dtags-presets { display:flex; flex-wrap:wrap; gap:4px; margin:8px 0 }
-.dtag-preset { padding:3px 9px; border-radius:99px; font-size:10px; font-weight:600; cursor:pointer; border:1px dashed var(--border2); color:var(--ink3); background:transparent; transition:all 0.15s }
-.dtag-preset:hover { border-color:var(--green); color:var(--green) }
-
-.dtags-input-row { display:flex; gap:6px; margin-top:6px }
-.dtag-input { flex:1; padding:5px 10px; border-radius:var(--r); background:var(--card2); border:1px solid var(--border); font-size:11px; color:var(--ink); outline:none; font-family:'Plus Jakarta Sans',sans-serif }
-.dtag-input:focus { border-color:var(--green) }
-.dtag-input::placeholder { color:var(--ink4) }
-.dtag-add-btn { padding:5px 12px; border-radius:var(--r); background:var(--green-lt); border:1px solid rgba(37,211,102,0.3); color:var(--green); font-size:11px; font-weight:600; cursor:pointer; transition:all 0.15s; white-space:nowrap }
-.dtag-add-btn:hover { background:var(--green); color:#111b21 }
-
-/* tags na tabela */
-.row-tags { display:flex; gap:3px; flex-wrap:wrap; margin-top:3px }
-.rtag { font-size:9px; font-weight:700; padding:1px 6px; border-radius:99px; border:1px solid transparent }
-.rtag.vip    { background:rgba(245,166,35,0.18);  color:var(--amber);  border-color:rgba(245,166,35,0.3) }
-.rtag.urg    { background:var(--rose-lt);          color:var(--rose);   border-color:rgba(241,92,109,0.3) }
-.rtag.prob   { background:var(--violet-lt);        color:var(--violet); border-color:rgba(191,89,207,0.3) }
-.rtag.ok     { background:var(--green-lt);         color:var(--green);  border-color:rgba(37,211,102,0.3) }
-.rtag.custom { background:var(--blue-lt);          color:var(--blue);   border-color:rgba(83,189,235,0.3) }
