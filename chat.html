@@ -480,16 +480,6 @@ function conectarSSE() {
 })()
 </script>
 <script>
-/* ── RIPPLE (page-specific selectors) ── */
-function initRipple() {
-  document.querySelectorAll('.icon-btn,.btn-ia').forEach(btn => {
-    btn.addEventListener('click', addRipple)
-  })
-}
-document.addEventListener('DOMContentLoaded', () => {
-  initScrollReveal()
-  initRipple()
-})
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof initPageTransitions === 'function') initPageTransitions()
   initScrollTop()

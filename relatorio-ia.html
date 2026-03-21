@@ -269,7 +269,6 @@ function renderRelatorio(d) {
   const footer=`<div class="report-footer"><div class="footer-brand">Relatório gerado por <span>${d.empresa||''}</span></div><div class="footer-date">${dataAtual}</div></div>`
 
   document.getElementById('conteudo').innerHTML = secResumo+secHorarios+secRecl+secMel+secObs+footer
-  if (typeof initScrollReveal === 'function') initScrollReveal()
 }
 
 ;(function(){
@@ -277,16 +276,6 @@ function renderRelatorio(d) {
 })()
 </script>
 <script>
-/* ── RIPPLE (page-specific selectors) ── */
-function initRipple() {
-  document.querySelectorAll('.today-btn,.dnavbtn,.icon-btn,.itab').forEach(btn => {
-    btn.addEventListener('click', addRipple)
-  })
-}
-document.addEventListener('DOMContentLoaded', () => {
-  initScrollReveal()
-  initRipple()
-})
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof initPageTransitions === 'function') initPageTransitions()
   initScrollTop()

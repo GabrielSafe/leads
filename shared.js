@@ -23,31 +23,6 @@ function toggleSidebar() {
   if (close) close.style.display = isOpen ? 'block' : 'none'
 }
 
-/* ── SCROLL REVEAL ── */
-function initScrollReveal() {
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 70)
-        obs.unobserve(entry.target)
-      }
-    })
-  }, { threshold: 0.08 })
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
-}
-
-/* ── RIPPLE ── */
-function addRipple(e) {
-  const btn = e.currentTarget
-  const wave = document.createElement('span')
-  wave.className = 'ripple-wave'
-  const rect = btn.getBoundingClientRect()
-  const size = Math.max(rect.width, rect.height)
-  wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`
-  btn.classList.add('ripple-host')
-  btn.appendChild(wave)
-  wave.addEventListener('animationend', () => wave.remove())
-}
 
 /* ── PAGE TRANSITIONS ── */
 function initPageTransitions() {

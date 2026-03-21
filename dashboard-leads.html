@@ -27,8 +27,6 @@
     </div>
     <div id="splash-name">Atendimento</div>
     <div id="splash-sub">Painel de gestão</div>
-    <div id="splash-progress"><div id="splash-bar"></div></div>
-    <div id="splash-status">Conectando...</div>
   </div>
 </div>
 
@@ -176,6 +174,7 @@
             <tbody id="tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="empty-txt">Carregando...</div></div></td></tr></tbody>
           </table>
         </div>
+        <div id="tablePag" style="display:none"></div>
       </div>
 
       <div class="rsidebar">
@@ -254,37 +253,9 @@ const colorMap = {}, colorIdx = [0]
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 let dataAtual = dHoje(), cache = null, instAtual = 'todas', ontemCache = null
 let _allContatos = [], _tableFilter = '', _dense = false, _sortCol = -1, _sortDir = 1, _statusFilter = 'todos'
+let _page = 1, _searchTimer = null
+const _PAGE_SIZE = 30
 
-/* ── SCROLL REVEAL ── */
-function initScrollReveal() {
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => entry.target.classList.add('visible'), i * 70)
-        obs.unobserve(entry.target)
-      }
-    })
-  }, { threshold: 0.08 })
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
-}
-
-/* ── RIPPLE ── */
-function addRipple(e) {
-  const btn = e.currentTarget
-  const wave = document.createElement('span')
-  wave.className = 'ripple-wave'
-  const rect = btn.getBoundingClientRect()
-  const size = Math.max(rect.width, rect.height)
-  wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`
-  btn.classList.add('ripple-host')
-  btn.appendChild(wave)
-  wave.addEventListener('animationend', () => wave.remove())
-}
-function initRipple() {
-  document.querySelectorAll('.today-btn,.dnavbtn,.icon-btn,.itab').forEach(btn => {
-    btn.addEventListener('click', addRipple)
-  })
-}
 
 function inicializar() {
   const t = localStorage.getItem('theme')
@@ -302,39 +273,18 @@ function inicializar() {
   if (cfg.empresa) {
     const el = document.getElementById('splash-name'); if (el) el.textContent = cfg.empresa
   }
-  setSplashProgress(15, 'Iniciando...')
   updateGreeting()
   dataAtual = dHoje(); setDateLabel(dataAtual); initBars(); carregar(); conectarSSE()
   setInterval(() => { const el = document.getElementById('clock'); if(el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
-  setInterval(carregar, 60000)
-  initScrollReveal()
-  initRipple()
   initPageTransitions()
   initScrollTop()
   initKeyboardShortcuts()
   initSortableHeaders()
   restoreDensity()
   initCardFilters()
-  initCardTilt()
   initTooltips()
 }
 
-function initCardTilt() {
-  if (window.matchMedia('(hover:none)').matches) return /* ignora touch-only */
-  document.querySelectorAll('.sc').forEach(card => {
-    card.addEventListener('mouseenter', () => { card.style.willChange = 'transform' })
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect()
-      const x = (e.clientX - r.left) / r.width  - 0.5
-      const y = (e.clientY - r.top)  / r.height - 0.5
-      card.style.transform = `perspective(480px) rotateY(${x*9}deg) rotateX(${-y*9}deg) translateZ(6px)`
-    })
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = ''
-      card.style.willChange = 'auto'
-    })
-  })
-}
 
 function initTooltips() {
   const tips = [
@@ -463,20 +413,11 @@ function updateGreeting() {
   const sub = document.getElementById('pageSub')
   if (sub) sub.textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'numeric', month:'long'})
 }
-function setSplashProgress(pct, status) {
-  const bar = document.getElementById('splash-bar')
-  const txt = document.getElementById('splash-status')
-  if (bar) bar.style.width = pct + '%'
-  if (txt && status) txt.textContent = status
-}
 function hideSplash() {
   if (_splashHidden) return
   _splashHidden = true
-  setSplashProgress(100, 'Pronto')
-  setTimeout(() => {
-    const s = document.getElementById('splash')
-    if (s) { s.classList.add('hide'); setTimeout(() => s.remove(), 600) }
-  }, 350)
+  const s = document.getElementById('splash')
+  if (s) { s.classList.add('hide'); setTimeout(() => s.remove(), 400) }
 }
 /* ── FAVICON / TAB BADGE ── */
 function updateTabBadge(pend) {
@@ -496,12 +437,10 @@ function updateTabBadge(pend) {
 
 async function carregar() {
   try {
-    setSplashProgress(40, 'Carregando dados...')
     const yday = new Date(dataAtual+'T12:00:00'); yday.setDate(yday.getDate()-1)
     const ydayStr = yday.toISOString().split('T')[0]
     const [r1,r2,r3] = await Promise.all([fetch(`${API}/relatorio?data=${dataAtual}`), fetch(`${API}/contatos`), fetch(`${API}/relatorio?data=${ydayStr}`)])
     if (!r1.ok) throw new Error()
-    setSplashProgress(80, 'Processando...')
     cache = await r1.json(); setStatus(true)
     ontemCache = r3.ok ? await r3.json() : null
     renderInstBar(cache.contatos||[]); renderTudo(filtrar(cache))
@@ -516,10 +455,9 @@ async function carregar() {
     _firstLoad = false
   } catch {
     setStatus(false)
-    setSplashProgress(100, 'Erro ao conectar')
     if (!_firstLoad) showToast('Falha ao atualizar', 'err')
     _firstLoad = false
-    setTimeout(hideSplash, 1500)
+    hideSplash()
   }
 }
 function filtrar(d) {
@@ -534,7 +472,6 @@ function renderInstBar(contatos) {
   const bar=document.getElementById('instBar'), total=contatos.length
   bar.innerHTML=`<button class="itab ${instAtual==='todas'?'active':''}" onclick="trocarInstancia('todas')"><div class="itab-dot"></div>Todas<span class="itab-n">${total}</span></button>`+
     Object.entries(inst).map(([nm,c])=>`<button class="itab ${instAtual===nm?'active':''}" onclick="trocarInstancia('${nm}')"><div class="itab-dot"></div>${nm}<span class="itab-n">${c}</span></button>`).join('')
-  bar.querySelectorAll('.itab').forEach(btn => btn.addEventListener('click', addRipple))
 }
 function setStatus(ok) {
   const pill=document.getElementById('statusPill'),dot=document.getElementById('sdot'),txt=document.getElementById('stxt')
@@ -658,10 +595,16 @@ function renderTabela(contatos) {
       ? `Nenhum resultado para "<strong>${_tableFilter}</strong>"`
       : (_statusFilter !== 'todos' ? 'Nenhuma conversa neste filtro' : 'Nenhuma conversa neste dia')
     tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">${msg}</div></div></td></tr>`
+    renderPaginacao(0)
     return
   }
+  const total = contatos.length
+  const totalPags = Math.ceil(total / _PAGE_SIZE)
+  if (_page > totalPags) _page = totalPags
+  const inicio = (_page - 1) * _PAGE_SIZE
+  const pagina = contatos.slice(inicio, inicio + _PAGE_SIZE)
   const copyIcon=`<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`
-  tb.innerHTML=contatos.map((c,idx)=>{
+  tb.innerHTML=pagina.map((c,idx)=>{
     const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
     const rowDelay=`animation-delay:${idx*38}ms`
     const rowCls=c.tem_pendencia?'row-pend':c.respondida?'row-resp':'row-wait'
@@ -682,6 +625,28 @@ function renderTabela(contatos) {
         ?`<span class="sbadge resp"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Respondida</span>`
         :`<span class="sbadge wait"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Aguardando</span>`}</td>
     </tr>`}).join('')
+  renderPaginacao(contatos.length)
+}
+function renderPaginacao(total) {
+  const el = document.getElementById('tablePag'); if (!el) return
+  const totalPags = Math.ceil(total / _PAGE_SIZE)
+  if (totalPags <= 1) { el.style.display = 'none'; return }
+  el.style.display = 'flex'
+  const inicio = (_page - 1) * _PAGE_SIZE + 1
+  const fim = Math.min(_page * _PAGE_SIZE, total)
+  el.innerHTML = `
+    <span class="pag-info">${inicio}–${fim} de ${total}</span>
+    <div class="pag-btns">
+      <button class="pag-btn" onclick="mudarPagDash(-1)" ${_page===1?'disabled':''}>‹</button>
+      <span class="pag-cur">${_page} / ${totalPags}</span>
+      <button class="pag-btn" onclick="mudarPagDash(1)" ${_page===totalPags?'disabled':''}>›</button>
+    </div>`
+}
+function mudarPagDash(delta) {
+  _page += delta
+  const filtered = applyTableFilters(_allContatos)
+  renderTabela(filtered)
+  document.querySelector('.content')?.scrollTo({ top: 0, behavior: 'smooth' })
 }
 function teClass(seg){if(seg===null)return{cls:'none',label:'—'};const label=fTMA(seg);if(seg<=120)return{cls:'fast',label};if(seg<=300)return{cls:'mid',label};return{cls:'slow',label}}
 function initBars(){const c=document.getElementById('bars');if(!c)return;c.innerHTML='';for(let h=0;h<24;h++){const w=document.createElement('div');w.className='bw';w.innerHTML=`<div class="bbar" id="bar-${h}" style="height:2px"></div><div class="blabel">${h%6===0?h+'h':''}</div>`;c.appendChild(w)}}
@@ -755,10 +720,14 @@ function applyTableFilters(list) {
   return out
 }
 function filterTable(q) {
-  _tableFilter = q.toLowerCase().trim()
-  const filtered = applyTableFilters(_allContatos)
-  renderTabela(filtered)
-  updateResultCount(filtered.length)
+  clearTimeout(_searchTimer)
+  _searchTimer = setTimeout(() => {
+    _tableFilter = q.toLowerCase().trim()
+    _page = 1
+    const filtered = applyTableFilters(_allContatos)
+    renderTabela(filtered)
+    updateResultCount(filtered.length)
+  }, 250)
 }
 function updateResultCount(shown) {
   const el = document.getElementById('resultCount')
@@ -810,7 +779,7 @@ function copyPhone(e, tel) {
 
 /* ── STATUS FILTER ── */
 function setStatusFilter(sf) {
-  _statusFilter = sf
+  _statusFilter = sf; _page = 1
   document.querySelectorAll('.sf-pill').forEach(p => p.classList.toggle('active', p.dataset.sf === sf))
   /* highlight card ativo */
   document.querySelectorAll('.sc').forEach(c => c.classList.remove('card-filter-on'))

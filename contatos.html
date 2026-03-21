@@ -201,7 +201,7 @@ const API = window.location.port === '3001' || window.location.hostname === 'loc
 const POR_PAGINA = 20
 const CORES = ['#25d366','#53bdeb','#f5a623','#f15c6d','#bf59cf','#00a884','#0288d1','#e91e8c']
 const colorMap = {}
-let todosContatos = [], filtrados = [], paginaAtual = 1, filtroIA = 'todos'
+let todosContatos = [], filtrados = [], paginaAtual = 1, filtroIA = 'todos', _filtrarTimer = null
 
 function corC(tel) { if (!colorMap[tel]) colorMap[tel] = CORES[Object.keys(colorMap).length % CORES.length]; return colorMap[tel] }
 function inicial(nome) { if (!nome) return '?'; return nome.trim().split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase() }
@@ -220,6 +220,10 @@ async function carregar() {
 }
 
 function filtrar() {
+  clearTimeout(_filtrarTimer)
+  _filtrarTimer = setTimeout(_filtrarExec, 250)
+}
+function _filtrarExec() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim()
   let base = filtroIA==='ativa' ? todosContatos.filter(c=>!c.ia||c.ia==='sim')
            : filtroIA==='pausada' ? todosContatos.filter(c=>c.ia==='nao')
@@ -297,16 +301,6 @@ async function resetarIA() {
 
 </script>
 <script>
-/* ── RIPPLE (page-specific selectors) ── */
-function initRipple() {
-  document.querySelectorAll('.today-btn,.dnavbtn,.icon-btn,.itab,.btn,.pg-btn').forEach(btn => {
-    btn.addEventListener('click', addRipple)
-  })
-}
-document.addEventListener('DOMContentLoaded', () => {
-  initScrollReveal()
-  initRipple()
-})
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof initPageTransitions === 'function') initPageTransitions()
   initScrollTop()
