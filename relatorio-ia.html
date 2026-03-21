@@ -118,6 +118,42 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 
 @media(max-width:700px){.exec-grid{grid-template-columns:repeat(2,1fr)};.hor-grid{grid-template-columns:1fr}}
 
+/* ── REPORT HEADER ── */
+.rep-header{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow);animation:fadeUp 0.4s ease both}
+.rep-empresa{font-size:15px;font-weight:700;color:var(--ink)}
+.rep-data{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:11px;color:var(--ink4);margin-top:4px}
+.score-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:99px;font-size:12px;font-weight:700;letter-spacing:0.3px}
+.score-badge.bom{background:var(--green-lt);border:1px solid rgba(37,211,102,0.3);color:var(--green)}
+.score-badge.atencao{background:var(--amber-lt);border:1px solid rgba(245,166,35,0.3);color:var(--amber)}
+.score-badge.critico{background:var(--rose-lt);border:1px solid rgba(255,82,82,0.3);color:var(--rose)}
+.score-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+
+/* ── ALERT BANNER ── */
+.alert-banner{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:rgba(255,82,82,0.07);border:1px solid rgba(255,82,82,0.2);border-radius:var(--r);margin-bottom:14px;animation:fadeUp 0.4s ease both}
+.alert-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.alert-txt{font-size:12px;font-weight:600;color:var(--rose);line-height:1.4}
+.alert-sub{font-size:11px;color:var(--ink3);margin-top:3px;font-weight:400}
+
+/* ── TMA COLOR VARIANTS ── */
+.tma-card.tma-ok .tma-val{color:var(--green)}
+.tma-card.tma-warn .tma-val{color:var(--amber)}
+.tma-card.tma-crit .tma-val{color:var(--rose)}
+.exec-progress{height:8px!important}
+
+/* ── RECLAMAÇÕES BORDER ── */
+.recl-card.alta{border-left:3px solid var(--rose)}
+.recl-card.media{border-left:3px solid var(--amber)}
+.recl-card.baixa{border-left:3px solid var(--green)}
+
+/* ── MELHORIAS COLAPSÁVEIS ── */
+.melhoria-head{cursor:pointer;user-select:none;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.melhoria-toggle{margin-left:auto;width:22px;height:22px;border-radius:6px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.melhoria-toggle svg{width:11px;height:11px;stroke:var(--ink3);transition:transform 0.2s}
+.melhoria-card.open .melhoria-toggle svg{transform:rotate(180deg)}
+.melhoria-exemplos{display:none;flex-direction:column;gap:8px}
+.melhoria-card.open .melhoria-exemplos{display:flex}
+.melhoria-count{font-size:10px;color:var(--ink4);margin-left:4px}
+
 /* ── INSTÂNCIA PILLS ── */
 .inst-wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .inst-lbl{font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--ink3);margin-right:4px}
@@ -265,22 +301,50 @@ async function carregar() {
 function renderRelatorio(d) {
   const r=d.resumo||{}, h=d.horarios||{}, recl=d.reclamacoes||[], mel=d.pontos_melhoria||[]
   const gravCls=g=>({'ALTA':'alta','MEDIA':'media','BAIXA':'baixa'})[g?.toUpperCase()]||'baixa'
+  const chevron=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>`
+
+  // Score geral
+  const pSem=r.percentual_sem_resposta||0, pFin=r.percentual_finalizadas||0
+  const score = pSem>40||pFin<30 ? 'critico' : pSem>20||pFin<60 ? 'atencao' : 'bom'
+  const scoreLbl = {critico:'Crítico',atencao:'Atenção',bom:'Bom'}[score]
+
+  // TMA color
+  const tma=r.tma_minutos||0
+  const tmaCls = tma<=10 ? 'tma-ok' : tma<=30 ? 'tma-warn' : 'tma-crit'
+  const tmaNote = tma<=10 ? '· dentro do ideal' : tma<=30 ? '· atenção ao tempo' : '· acima do recomendado'
+
+  // Data formatada
+  const [ay,am,ad]=(dataAtual||'').split('-')
+  const dataFmt=`${ad||'--'}/${am||'--'}/${ay||'----'}`
+
+  const secHeader=`<div class="rep-header">
+    <div>
+      <div class="rep-empresa">${d.empresa||instAtual||'Relatório'}</div>
+      <div class="rep-data">${dataFmt}</div>
+    </div>
+    <span class="score-badge ${score}"><span class="score-dot"></span>${scoreLbl}</span>
+  </div>`
+
+  const secAlerta = pSem>30 ? `<div class="alert-banner">
+    <span class="alert-icon">⚠️</span>
+    <div><div class="alert-txt">${pSem}% das conversas ficaram sem resposta</div><div class="alert-sub">${r.sem_resposta||0} de ${r.total_conversas||0} atendimentos não foram respondidos no dia.</div></div>
+  </div>` : ''
 
   const secResumo=`<div class="section" style="transition-delay:0ms">
     <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">01</div><div class="section-title">Resumo Executivo</div></div></div>
     <div class="section-body">
       <div class="exec-grid">
-        <div class="exec-card" style="transition-delay:0ms"><div class="exec-card-top">Total</div><div class="exec-card-val">${r.total_conversas||0}</div><div class="exec-card-lbl">conversas no dia</div></div>
-        <div class="exec-card fin" style="transition-delay:80ms"><div class="exec-card-top">Finalizadas</div><div class="exec-card-val">${r.finalizadas||0}</div><div class="exec-card-pct">${r.percentual_finalizadas||0}%</div><div class="exec-card-lbl">concluídas</div></div>
-        <div class="exec-card and" style="transition-delay:140ms"><div class="exec-card-top">Em andamento</div><div class="exec-card-val">${r.em_andamento||0}</div><div class="exec-card-pct">${r.percentual_em_andamento||0}%</div><div class="exec-card-lbl">em progresso</div></div>
-        <div class="exec-card sem" style="transition-delay:200ms"><div class="exec-card-top">Sem resposta</div><div class="exec-card-val">${r.sem_resposta||0}</div><div class="exec-card-pct">${r.percentual_sem_resposta||0}%</div><div class="exec-card-lbl">não atendidas</div></div>
+        <div class="exec-card"><div class="exec-card-top">Total</div><div class="exec-card-val">${r.total_conversas||0}</div><div class="exec-card-lbl">conversas no dia</div></div>
+        <div class="exec-card fin"><div class="exec-card-top">Finalizadas</div><div class="exec-card-val">${r.finalizadas||0}</div><div class="exec-card-pct">${pFin}%</div><div class="exec-card-lbl">concluídas</div></div>
+        <div class="exec-card and"><div class="exec-card-top">Em andamento</div><div class="exec-card-val">${r.em_andamento||0}</div><div class="exec-card-pct">${r.percentual_em_andamento||0}%</div><div class="exec-card-lbl">em progresso</div></div>
+        <div class="exec-card sem"><div class="exec-card-top">Sem resposta</div><div class="exec-card-val">${r.sem_resposta||0}</div><div class="exec-card-pct">${pSem}%</div><div class="exec-card-lbl">não atendidas</div></div>
       </div>
       <div class="exec-progress">
-        <div class="ep-seg fin" style="width:${r.percentual_finalizadas||0}%"></div>
+        <div class="ep-seg fin" style="width:${pFin}%"></div>
         <div class="ep-seg and" style="width:${r.percentual_em_andamento||0}%"></div>
-        <div class="ep-seg sem" style="width:${r.percentual_sem_resposta||0}%"></div>
+        <div class="ep-seg sem" style="width:${pSem}%"></div>
       </div>
-      <div class="tma-card"><div class="tma-icon">⏱</div><div><div class="tma-val">${r.tma_minutos||0} min</div><div class="tma-lbl">Tempo médio por atendimento</div></div></div>
+      <div class="tma-card ${tmaCls}"><div class="tma-icon">⏱</div><div><div class="tma-val">${tma} min</div><div class="tma-lbl">Tempo médio por atendimento ${tmaNote}</div></div></div>
     </div></div>`
 
   const secHorarios=`<div class="section" style="transition-delay:80ms">
@@ -293,24 +357,37 @@ function renderRelatorio(d) {
     </div></div></div>`
 
   const secRecl=`<div class="section" style="transition-delay:140ms">
-    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">03</div><div class="section-title">Reclamações e Críticas</div></div></div>
+    <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">03</div><div class="section-title">Reclamações e Críticas</div></div>${recl.length>0?`<span style="font-family:'Cascadia Code',Consolas,monospace;font-size:10px;color:var(--rose);font-weight:600">${recl.length} registro${recl.length>1?'s':''}</span>`:''}</div>
     <div class="section-body">${recl.length===0
       ?`<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Nenhuma reclamação registrada no período</div></div>`
-      :`<div class="recl-grid">${recl.map(rc=>`<div class="recl-card"><div class="recl-card-head"><span class="recl-badge ${gravCls(rc.gravidade)}">${rc.gravidade}</span><span class="recl-num">#${rc.numero}</span></div><div class="recl-card-body"><div class="recl-nome">${rc.cliente||'—'}</div><div class="recl-tel">${rc.telefone||''}</div><div class="recl-resumo">${rc.resumo||''}</div></div></div>`).join('')}</div>`}
+      :`<div class="recl-grid">${recl.map(rc=>{const gc=gravCls(rc.gravidade);return`<div class="recl-card ${gc}"><div class="recl-card-head"><span class="recl-badge ${gc}">${rc.gravidade}</span><span class="recl-num">#${rc.numero}</span></div><div class="recl-card-body"><div class="recl-nome">${rc.cliente||'—'}</div><div class="recl-tel">${rc.telefone||''}</div><div class="recl-resumo">${rc.resumo||''}</div></div></div>`}).join('')}</div>`}
     </div></div>`
 
   const secMel=`<div class="section" style="transition-delay:200ms">
     <div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">04</div><div class="section-title">Pontos de Melhoria</div></div></div>
     <div class="section-body">${mel.length===0
       ?`<div class="recl-empty"><div class="recl-empty-icon">✅</div><div class="recl-empty-txt">Atendimento dentro dos padrões de qualidade</div></div>`
-      :`<div class="melhoria-list">${mel.map((m,i)=>`<div class="melhoria-card"><div class="melhoria-head"><div class="melhoria-idx">${i+1}</div><div class="melhoria-titulo">${m.titulo||''}</div></div><div class="melhoria-desc">${m.descricao||''}</div><div class="melhoria-exemplos">${(m.exemplos||[]).map(e=>`<div class="exemplo-card"><div class="exemplo-head"><div><div class="exemplo-cliente">${e.cliente||'—'}</div><div class="exemplo-tel">${e.telefone||''}</div></div><div class="exemplo-hora">${e.horario||''}</div></div><div class="exemplo-msg">"${e.mensagem||''}"</div>${e.contexto?`<div class="exemplo-ctx">${e.contexto}</div>`:''}</div>`).join('')}</div></div>`).join('')}</div>`}
+      :`<div class="melhoria-list">${mel.map((m,i)=>`<div class="melhoria-card" id="mel${i}">
+        <div class="melhoria-head" onclick="toggleMel(${i})">
+          <div class="melhoria-idx">${i+1}</div>
+          <div class="melhoria-titulo">${m.titulo||''}</div>
+          ${(m.exemplos||[]).length?`<span class="melhoria-count">${(m.exemplos||[]).length} ex.</span>`:''}
+          <div class="melhoria-toggle">${chevron}</div>
+        </div>
+        <div class="melhoria-desc">${m.descricao||''}</div>
+        <div class="melhoria-exemplos">${(m.exemplos||[]).map(e=>`<div class="exemplo-card"><div class="exemplo-head"><div><div class="exemplo-cliente">${e.cliente||'—'}</div><div class="exemplo-tel">${e.telefone||''}</div></div><div class="exemplo-hora">${e.horario||''}</div></div><div class="exemplo-msg">"${e.mensagem||''}"</div>${e.contexto?`<div class="exemplo-ctx">${e.contexto}</div>`:''}</div>`).join('')}</div>
+      </div>`).join('')}</div>`}
     </div></div>`
 
   const secObs = d.observacoes ? `<div class="section" style="transition-delay:260ms"><div class="section-head"><div style="display:flex;align-items:center"><div class="section-num">05</div><div class="section-title">Observações Gerais</div></div></div><div class="section-body"><div class="obs-card"><div class="obs-txt">${d.observacoes}</div></div></div></div>` : ''
 
-  const footer=`<div class="report-footer"><div class="footer-brand">Relatório gerado por <span>${d.empresa||''}</span></div><div class="footer-date">${dataAtual}</div></div>`
+  const footer=`<div class="report-footer"><div class="footer-brand">Relatório gerado por <span>${d.empresa||instAtual||''}</span></div><div class="footer-date">${dataAtual}</div></div>`
 
-  document.getElementById('conteudo').innerHTML = secResumo+secHorarios+secRecl+secMel+secObs+footer
+  document.getElementById('conteudo').innerHTML = secHeader+secAlerta+secResumo+secHorarios+secRecl+secMel+secObs+footer
+}
+
+function toggleMel(i) {
+  document.getElementById('mel'+i)?.classList.toggle('open')
 }
 
 ;(function(){
