@@ -1239,17 +1239,12 @@ function initKeyboardShortcuts() {
 /* ── PAGE TRANSITIONS ── */
 function initPageTransitions() {
   document.querySelectorAll('.nav-item[href]').forEach(link => {
-    link.addEventListener('click', e => {
-      const href = link.getAttribute('href')
-      if (!href || href === '#') return
-      /* fechar sidebar no mobile antes de navegar */
+    link.addEventListener('click', () => {
+      /* fechar sidebar no mobile */
       const sb = document.getElementById('sidebar')
       if (sb?.classList.contains('open')) toggleSidebar()
-      const curr = window.location.pathname.split('/').pop() || ''
-      if (href === curr) return
-      e.preventDefault()
+      /* animação de saída visual (browser navega normalmente pelo href) */
       document.querySelector('.main')?.classList.add('page-out')
-      setTimeout(() => { window.location.href = href }, 220)
     })
   })
 }
