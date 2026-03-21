@@ -14,9 +14,6 @@
   if (cfg.empresa) document.title = cfg.empresa + ' · Chat'
 })()
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <style>
 /* ── CHAT SPECIFIC TOKENS ── */
@@ -42,7 +39,7 @@ body.light {
 .cl-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px}
 .cl-search{position:relative}
 .cl-search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink4);pointer-events:none}
-.cl-search input{width:100%;padding:7px 12px 7px 32px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;outline:none;transition:border-color 0.2s}
+.cl-search input{width:100%;padding:7px 12px 7px 32px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:12px;outline:none;transition:border-color 0.2s}
 .cl-search input:focus{border-color:var(--green)}
 .cl-search input::placeholder{color:var(--ink4)}
 .cl-filters{display:flex;gap:6px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg3)}
@@ -67,7 +64,7 @@ body.light {
 .ci-info{flex:1;min-width:0}
 .ci-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px}
 .ci-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ci-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);flex-shrink:0}
+.ci-time{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:10px;color:var(--ink4);flex-shrink:0}
 .ci-bottom{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .ci-preview{font-size:11px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 .ci-badge{flex-shrink:0;display:flex;align-items:center;gap:4px}
@@ -91,7 +88,7 @@ body.light {
 .ch-left{display:flex;align-items:center;gap:10px}
 .ch-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
 .ch-name{font-size:13px;font-weight:700;color:var(--ink)}
-.ch-phone{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink4);margin-top:1px}
+.ch-phone{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:10px;color:var(--ink4);margin-top:1px}
 .ch-right{display:flex;align-items:center;gap:6px}
 .ia-toggle{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;border:none}
 .ia-toggle.ativa{background:var(--green-lt);color:var(--green);border:1px solid rgba(37,211,102,0.25)}
@@ -115,7 +112,7 @@ body.light {
 .msg-row.in .bubble{background:var(--bubble-in);border-radius:0 8px 8px 8px;border:1px solid var(--border)}
 .bubble-sender{font-size:10px;font-weight:700;margin-bottom:3px;opacity:0.9}
 .bubble-text{font-size:13px;color:var(--ink);line-height:1.5}
-.bubble-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink3);margin-top:4px;text-align:right}
+.bubble-time{font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:9px;color:var(--ink3);margin-top:4px;text-align:right}
 @keyframes bubbleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
 
 /* MOBILE */
