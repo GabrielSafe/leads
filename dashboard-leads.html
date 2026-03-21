@@ -242,6 +242,7 @@
     <button class="dclose" onclick="fecharDrawer()">✕</button>
   </div>
   <div class="dquick" id="dquick" style="display:none"></div>
+  <div class="dtags" id="drawerTags" style="display:none"></div>
   <div class="dbody" id="dbody"></div>
 </div>
 
@@ -257,6 +258,55 @@ const colorMap = {}, colorIdx = [0]
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 let dataAtual = dHoje(), cache = null, instAtual = 'todas', ontemCache = null
 let _allContatos = [], _tableFilter = '', _dense = false, _sortCol = -1, _sortDir = 1, _statusFilter = 'todos'
+let _tagsCache = {}
+
+const TAG_PRESETS = [
+  { label:'VIP', cls:'vip' }, { label:'Urgente', cls:'urg' },
+  { label:'Problema', cls:'prob' }, { label:'Resolvido', cls:'ok' }
+]
+function tagCls(tag) {
+  const m = { 'VIP':'vip','Urgente':'urg','Problema':'prob','Resolvido':'ok' }
+  return m[tag] || 'custom'
+}
+async function carregarTags() {
+  try {
+    const r = await fetch('/api/tags')
+    if (r.ok) { _tagsCache = await r.json(); renderTabela(applyTableFilters(_allContatos)) }
+  } catch {}
+}
+async function salvarTags(tel, tags) {
+  _tagsCache[tel] = tags
+  try { await fetch(`/api/tags/${tel}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tags}) }) } catch {}
+}
+async function addTag(tel, tag) {
+  tag = tag.trim(); if (!tag) return
+  const tags = [...new Set([...(_tagsCache[tel]||[]), tag])]
+  await salvarTags(tel, tags)
+  renderDrawerTags(tel)
+  renderTabela(applyTableFilters(_allContatos))
+}
+async function removeTag(tel, tag) {
+  const tags = (_tagsCache[tel]||[]).filter(t => t !== tag)
+  await salvarTags(tel, tags)
+  renderDrawerTags(tel)
+  renderTabela(applyTableFilters(_allContatos))
+}
+function renderDrawerTags(tel) {
+  const el = document.getElementById('drawerTags'); if (!el) return
+  el.style.display = 'block'
+  const tags = _tagsCache[tel] || []
+  const existingLabels = new Set(tags)
+  const presetsHtml = TAG_PRESETS.filter(p => !existingLabels.has(p.label))
+    .map(p => `<button class="dtag-preset" onclick="addTag('${tel}','${p.label}')">${p.label}</button>`).join('')
+  el.innerHTML = `
+    <div class="dtags-title">Tags</div>
+    <div class="dtags-list">${tags.map(t => `<span class="dtag ${tagCls(t)}">${t}<svg viewBox="0 0 24 24" onclick="removeTag('${tel}','${t}')"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>`).join('') || '<span style="font-size:11px;color:var(--ink4)">Sem tags</span>'}</div>
+    ${presetsHtml ? `<div class="dtags-presets">${presetsHtml}</div>` : ''}
+    <div class="dtags-input-row">
+      <input class="dtag-input" id="tagInput_${tel}" placeholder="Nova tag..." maxlength="20" onkeydown="if(event.key==='Enter')addTag('${tel}',this.value),this.value=''">
+      <button class="dtag-add-btn" onclick="const i=document.getElementById('tagInput_${tel}');addTag('${tel}',i.value);i.value=''">+ Adicionar</button>
+    </div>`
+}
 
 /* ── SCROLL REVEAL ── */
 function initScrollReveal() {
@@ -320,6 +370,7 @@ function inicializar() {
   initCardFilters()
   initCardTilt()
   initTooltips()
+  carregarTags()
 }
 
 function initCardTilt() {
@@ -673,7 +724,7 @@ function renderTabela(contatos) {
       ?`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ${svgWarn}${c.turnos_pendentes}</span>`
       :`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
     return `<tr onclick="abrirDrawer('${c.telefone}')" class="${rowCls}" style="${rowDelay}">
-      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${hlText(c.nome||'Desconhecido',_tableFilter)}${c.tem_pendencia?` <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--rose);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`:''}</div><div class="cphone">${hlText(fTel(c.telefone),_tableFilter)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
+      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${hlText(c.nome||'Desconhecido',_tableFilter)}${c.tem_pendencia?` <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--rose);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`:''}</div><div class="cphone">${hlText(fTel(c.telefone),_tableFilter)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div>${(_tagsCache[c.telefone]||[]).length?`<div class="row-tags">${(_tagsCache[c.telefone]||[]).map(t=>`<span class="rtag ${tagCls(t)}">${t}</span>`).join('')}</div>`:''}</div></div></td>
       <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
       <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
       <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)">${c.total_msgs_cliente}<span style="color:var(--ink4);font-size:9px"> cli</span> / ${c.total_msgs_atendente}<span style="color:var(--ink4);font-size:9px"> ate</span></span></td>
@@ -723,6 +774,7 @@ function abrirDrawer(tel) {
       </div>
     </div>`}).join('')
   document.getElementById('dbody').innerHTML=resumo+timeline
+  renderDrawerTags(tel)
   document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show')
 }
 function fecharDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show')}

@@ -322,6 +322,32 @@ app.post('/contato/:telefone/ia', async (req, res) => {
   }
 })
 
+/* ── TAGS ── */
+app.get('/tags', async (req, res) => {
+  try {
+    const raw = await redisContatos.hgetall('_tags') || {}
+    const tags = {}
+    for (const [tel, val] of Object.entries(raw)) {
+      try { tags[tel] = JSON.parse(val) } catch { tags[tel] = [] }
+    }
+    res.json(tags)
+  } catch(err) { res.status(500).json({ erro: err.message }) }
+})
+
+app.post('/tags/:telefone', async (req, res) => {
+  try {
+    const { telefone } = req.params
+    const { tags } = req.body
+    if (!Array.isArray(tags)) return res.status(400).json({ erro: 'tags deve ser array' })
+    if (tags.length === 0) {
+      await redisContatos.hdel('_tags', telefone)
+    } else {
+      await redisContatos.hset('_tags', telefone, JSON.stringify(tags))
+    }
+    res.json({ ok: true })
+  } catch(err) { res.status(500).json({ erro: err.message }) }
+})
+
 app.get('/status', async (req, res) => {
   try {
     await redisContatos.ping(); await redisMensagens.ping(); await redisRelatorios.ping()
