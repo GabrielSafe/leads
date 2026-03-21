@@ -307,7 +307,7 @@ function inicializar() {
   updateGreeting()
   dataAtual = dHoje(); setDateLabel(dataAtual); initBars(); carregar(); conectarSSE()
   setInterval(() => { const el = document.getElementById('clock'); if(el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
-  setInterval(carregar, 15000)
+  setInterval(carregar, 60000)
   initScrollReveal()
   initRipple()
   initPageTransitions()
