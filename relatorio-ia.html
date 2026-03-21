@@ -118,11 +118,14 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 
 @media(max-width:700px){.exec-grid{grid-template-columns:repeat(2,1fr)};.hor-grid{grid-template-columns:1fr}}
 
-/* ── SELETOR DE INSTÂNCIA ── */
-.inst-select{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;outline:none;transition:border-color 0.15s;appearance:none;padding-right:26px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
-.inst-select:hover,.inst-select:focus{border-color:var(--green)}
-.inst-wrap{display:flex;align-items:center;gap:6px}
-.inst-lbl{font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--ink4)}
+/* ── INSTÂNCIA PILLS ── */
+.inst-wrap{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.inst-lbl{font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--ink3);margin-right:4px}
+.itab{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;background:var(--card);border:1px solid var(--border);font-size:11px;font-weight:500;color:var(--ink3);cursor:pointer;transition:all 0.15s}
+.itab:hover{border-color:var(--border2);color:var(--ink2)}
+.itab.active{background:var(--green-lt);border-color:rgba(37,211,102,0.3);color:var(--green);font-weight:600}
+.itab-dot{width:5px;height:5px;border-radius:50%;background:var(--green);opacity:0.4}
+.itab.active .itab-dot{opacity:1}
 
 /* ── CURSOR POINTER ── */
 .dnavbtn,.today-btn,.itab{ cursor:pointer }
@@ -183,8 +186,8 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
   <div class="content">
     <div class="toolbar">
       <div class="inst-wrap" id="instWrap" style="display:none">
-        <span class="inst-lbl">Loja</span>
-        <select class="inst-select" id="instSelect" onchange="trocarInstancia(this.value)"></select>
+        <span class="inst-lbl">Instância</span>
+        <div id="instBar"></div>
       </div>
       <div class="date-nav">
         <button class="dnavbtn" onclick="mudarDia(-1)">‹</button>
@@ -221,25 +224,29 @@ function setDateLabel(d) { const [y,m,dia]=d.split('-'); document.getElementById
 function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(dt.getDate()+delta); dataAtual=dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregarComInstancias() }
 function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregarComInstancias() }
 function irHoje() { dataAtual=dHoje(); setDateLabel(dataAtual); carregarComInstancias() }
-function trocarInstancia(v) { instAtual=v; carregar() }
+function trocarInstancia(v) { instAtual=v; renderInstBar(_instancias); carregar() }
+function renderInstBar(lista) {
+  document.getElementById('instBar').innerHTML = lista
+    .map(i=>`<button class="itab ${instAtual===i?'active':''}" onclick="trocarInstancia('${i}')"><div class="itab-dot"></div>${i}</button>`)
+    .join('')
+}
 
+let _instancias = []
 async function carregarComInstancias() {
   try {
     const r = await fetch(`${API}/relatorio-instancias?data=${dataAtual}`)
     const { instancias } = await r.json()
+    _instancias = instancias
     const wrap = document.getElementById('instWrap')
-    const sel = document.getElementById('instSelect')
     if (instancias.length > 0) {
-      sel.innerHTML = instancias.map(i => `<option value="${i}">${i}</option>`).join('')
-      // manter seleção atual se ainda existir, senão pega a primeira
       if (!instancias.includes(instAtual)) instAtual = instancias[0]
-      sel.value = instAtual
+      renderInstBar(instancias)
       wrap.style.display = 'flex'
     } else {
       instAtual = null
       wrap.style.display = 'none'
     }
-  } catch { instAtual = null }
+  } catch { instAtual = null; _instancias = [] }
   carregar()
 }
 
