@@ -277,7 +277,7 @@ async function carregarTags() {
 async function salvarTags(tel, tags) {
   _tagsCache[tel] = tags
   try {
-    const r = await fetch(`/api/tags/${tel}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tags}) })
+    const r = await fetch(`/api/tags/${encodeURIComponent(tel)}`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({tags}) })
     if (!r.ok) { const err = await r.json().catch(()=>{}); showToast('Erro ao salvar tag: ' + (err?.erro||r.status), 'err') }
   } catch(e) { showToast('Erro de conexão ao salvar tag', 'err') }
 }
