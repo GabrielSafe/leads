@@ -154,7 +154,7 @@
         <div class="panel-toolbar">
           <div class="search-wrap">
             <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input class="search-input" type="text" id="tableSearch" placeholder="Buscar nome ou telefone..." oninput="filterTable(this.value)">
+            <input class="search-input" type="text" id="tableSearch" placeholder="Buscar nome, telefone ou #tag..." oninput="filterTable(this.value)">
           </div>
           <span class="result-count" id="resultCount" style="display:none"></span>
           <button class="export-btn" onclick="exportCSV()" title="Exportar tabela como CSV">
@@ -789,7 +789,12 @@ function applyTableFilters(list) {
   }
   if (_tableFilter) {
     const q = _tableFilter
-    out = out.filter(c => (c.nome||'').toLowerCase().includes(q) || String(c.telefone||'').includes(q))
+    if (q.startsWith('#')) {
+      const tag = q.slice(1)
+      out = out.filter(c => (_tagsCache[c.telefone]||[]).some(t => t.toLowerCase().includes(tag)))
+    } else {
+      out = out.filter(c => (c.nome||'').toLowerCase().includes(q) || String(c.telefone||'').includes(q))
+    }
   }
   if (_sortCol >= 0) {
     out = [...out].sort((a, b) => {
