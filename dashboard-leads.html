@@ -581,6 +581,93 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 #splash-bar  { height:100%; width:0%; background:linear-gradient(90deg,var(--green2),var(--green)); border-radius:99px; transition:width 0.45s ease }
 #splash-status { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink4); letter-spacing:0.3px }
 
+/* ── DOT PATTERN BACKGROUND ── */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:radial-gradient(circle, rgba(255,255,255,0.038) 1px, transparent 1px);
+  background-size:24px 24px;
+}
+body.light::before { background-image:radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px) }
+.app { position:relative; z-index:1 }
+
+/* ── GRADIENT TEXT NOS NÚMEROS ── */
+.sc.g .sc-val { background:linear-gradient(135deg,var(--green) 0%,#53bdeb 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+.sc.r .sc-val { background:linear-gradient(135deg,var(--rose) 0%,var(--violet) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+.sc.a .sc-val { background:linear-gradient(135deg,var(--amber) 0%,var(--rose) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+.sc.b .sc-val { background:linear-gradient(135deg,var(--blue) 0%,var(--violet) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+
+/* ── WATERMARK ICON ── */
+.sc-wm { position:absolute; top:10px; right:10px; opacity:0.07; pointer-events:none; transition:opacity 0.2s }
+.sc:hover .sc-wm { opacity:0.15 }
+.sc-wm svg { width:42px; height:42px; fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round }
+.sc.g .sc-wm svg { stroke:var(--green) }
+.sc.r .sc-wm svg { stroke:var(--rose) }
+.sc.a .sc-wm svg { stroke:var(--amber) }
+.sc.b .sc-wm svg { stroke:var(--blue) }
+
+/* ── PROGRESS BAR RESPONDIDAS ── */
+.sc-progress { height:3px; background:var(--border); border-radius:99px; overflow:hidden; margin-top:10px }
+.sc-progress-bar { height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg,var(--green2),var(--green)); transition:width 0.8s cubic-bezier(0.16,1,0.3,1) }
+
+/* ── ROW STATUS COLORS ── */
+tbody tr.row-resp { background:rgba(37,211,102,0.03) }
+tbody tr.row-pend { background:rgba(241,92,109,0.05) }
+tbody tr.row-wait { background:rgba(245,166,35,0.03) }
+tbody tr.row-resp:hover { background:rgba(37,211,102,0.08) }
+tbody tr.row-pend:hover { background:rgba(241,92,109,0.09) }
+tbody tr.row-wait:hover { background:rgba(245,166,35,0.07) }
+
+/* ── PANEL TOOLBAR (SEARCH + DENSITY) ── */
+.panel-toolbar { display:flex; align-items:center; gap:8px; padding:10px 16px; border-bottom:1px solid var(--border) }
+.search-wrap { flex:1; display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:6px 12px; transition:border-color 0.2s }
+.search-wrap:focus-within { border-color:rgba(37,211,102,0.5) }
+.search-wrap svg { width:13px; height:13px; stroke:var(--ink4); flex-shrink:0; fill:none }
+.search-input { flex:1; background:none; border:none; outline:none; font-size:12px; color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif }
+.search-input::placeholder { color:var(--ink4) }
+.density-btn { display:flex; align-items:center; gap:5px; padding:5px 11px; background:var(--card2); border:1px solid var(--border); border-radius:8px; font-size:11px; font-weight:500; color:var(--ink3); cursor:pointer; transition:all 0.15s; white-space:nowrap }
+.density-btn:hover { border-color:var(--border2); color:var(--ink) }
+.density-btn.dense-on { background:var(--green-lt); border-color:rgba(37,211,102,0.3); color:var(--green) }
+.density-btn svg { width:13px; height:13px; stroke:currentColor; fill:none }
+
+/* ── DENSE TABLE ── */
+.dense td { padding:7px 16px !important }
+.dense .av { width:26px; height:26px; font-size:11px }
+
+/* ── SORTABLE HEADERS ── */
+th.sortable { cursor:pointer; user-select:none; transition:color 0.15s }
+th.sortable:hover { color:var(--ink2) }
+th.sort-asc::after  { content:' ↑'; color:var(--green) }
+th.sort-desc::after { content:' ↓'; color:var(--green) }
+
+/* ── FOCUS RING ── */
+:focus-visible { outline:2px solid rgba(37,211,102,0.6); outline-offset:2px; border-radius:4px }
+
+/* ── COPY PHONE ── */
+.copy-btn { display:inline-flex; align-items:center; gap:4px; background:none; border:none; color:var(--ink4); cursor:pointer; font-size:10px; padding:0 0 0 6px; transition:color 0.15s; font-family:'JetBrains Mono',monospace; vertical-align:middle }
+.copy-btn:hover { color:var(--green) }
+.copy-btn svg { width:11px; height:11px; stroke:currentColor; fill:none; stroke-linecap:round; stroke-linejoin:round }
+
+/* ── DRAWER AVATAR ── */
+.dav { width:46px; height:46px; border-radius:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; color:#fff }
+.dav.g { background:linear-gradient(135deg,#128c7e,#25d366) }
+.dav.a { background:linear-gradient(135deg,#c07a10,#f5a623) }
+.dav.b { background:linear-gradient(135deg,#0277bd,#53bdeb) }
+.dav.r { background:linear-gradient(135deg,#c62828,#f15c6d) }
+
+/* ── DRAWER QUICK STATS ── */
+.dquick { display:flex; gap:8px; padding:12px 22px; border-bottom:1px solid var(--border); background:var(--bg2); flex-wrap:wrap }
+.dqs { display:flex; flex-direction:column; gap:2px; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; flex:1; min-width:68px }
+.dqs-val { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; color:var(--ink) }
+.dqs-lbl { font-size:9px; color:var(--ink4); text-transform:uppercase; letter-spacing:0.5px }
+
+/* ── SIDEBAR SECTIONS ── */
+.nav-section { font-size:8px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--ink4); padding:14px 14px 4px; margin-top:2px }
+
+/* ── SCROLLBAR POLISH ── */
+::-webkit-scrollbar { width:3px; height:3px }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:99px }
+::-webkit-scrollbar-thumb:hover { background:var(--ink4) }
+
 /* ── DELTA VS ONTEM ── */
 .sc-delta {
   font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:600;
@@ -779,6 +866,7 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
   </div>
 
   <div class="sidebar-nav">
+    <div class="nav-section">Principal</div>
     <a href="dashboard-leads.html" class="nav-item active">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       <span>Dashboard</span>
@@ -787,6 +875,7 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span>Contatos</span>
     </a>
+    <div class="nav-section">Análise</div>
     <a href="relatorio-ia.html" class="nav-item">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span>Relatório IA</span>
@@ -796,6 +885,7 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
       <span>Chat</span>
       <span class="nav-badge" id="chatBadge" style="display:none">0</span>
     </a>
+    <div class="nav-section">Config</div>
     <a href="ferramentas.html" class="nav-item">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
       <span>Ferramentas</span>
@@ -857,15 +947,15 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 
     <!-- STATS -->
     <div class="stats" id="statsGrid">
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="sc-delta" id="dTotal"></div><div class="bgn" id="bgTotal">0</div></div>
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="sc-delta" id="dResp"></div><div class="bgn" id="bgResp">0</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="sc-delta" id="dNResp"></div><div class="bgn" id="bgNResp">0</div></div>
-      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="sc-delta" id="dMsgs"></div><div class="bgn" id="bgMsgsTotal">0</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="sc-delta" id="dPend"></div><div class="bgn" id="bgPend">0</div></div>
-      <div class="sc a"><div class="sc-label a"><span class="sc-dot"></span>TMA</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTMA">—</div><div class="sc-desc">tempo médio por turno</div><div class="bgn" id="bgTMA">—</div></div>
-      <div class="sc b"><div class="sc-label b"><span class="sc-dot"></span>Pico</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPico">—</div><div class="sc-desc">hora com mais contatos</div><div class="bgn" id="bgPico">—</div></div>
-      <div class="sc g"><div class="sc-label g"><span class="sc-dot"></span>IA Ativa</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIASim">—</div><div class="sc-desc">contatos com IA ativa</div><div class="bgn" id="bgIASim">—</div></div>
-      <div class="sc r"><div class="sc-label r"><span class="sc-dot"></span>IA Pausada</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIANao">—</div><div class="sc-desc">aguardando humano</div><div class="bgn" id="bgIANao">—</div></div>
+      <div class="sc g"><div class="sc-wm"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div class="sc-label g"><span class="sc-dot"></span>Conversas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTotal">0</div><div class="sc-desc">contatos no dia</div><div class="sc-delta" id="dTotal"></div><div class="bgn" id="bgTotal">0</div></div>
+      <div class="sc g"><div class="sc-wm"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div class="sc-label g"><span class="sc-dot"></span>Respondidas</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sResp">0</div><div class="sc-desc">atendente interagiu</div><div class="sc-delta" id="dResp"></div><div class="sc-progress"><div class="sc-progress-bar" id="respProgress"></div></div><div class="bgn" id="bgResp">0</div></div>
+      <div class="sc r"><div class="sc-wm"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg></div><div class="sc-label r"><span class="sc-dot"></span>Sem resposta</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sNResp">0</div><div class="sc-desc">aguardando atendimento</div><div class="sc-delta" id="dNResp"></div><div class="bgn" id="bgNResp">0</div></div>
+      <div class="sc b"><div class="sc-wm"><svg viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div><div class="sc-label b"><span class="sc-dot"></span>Msgs clientes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sMsgsTotal">0</div><div class="sc-desc">total de mensagens</div><div class="sc-delta" id="dMsgs"></div><div class="bgn" id="bgMsgsTotal">0</div></div>
+      <div class="sc r"><div class="sc-wm"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sc-label r"><span class="sc-dot"></span>Pendentes</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPend">0</div><div class="sc-desc">sem resposta agora</div><div class="sc-delta" id="dPend"></div><div class="bgn" id="bgPend">0</div></div>
+      <div class="sc a"><div class="sc-wm"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="sc-label a"><span class="sc-dot"></span>TMA</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sTMA">—</div><div class="sc-desc">tempo médio por turno</div><div class="bgn" id="bgTMA">—</div></div>
+      <div class="sc b"><div class="sc-wm"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="sc-label b"><span class="sc-dot"></span>Pico</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sPico">—</div><div class="sc-desc">hora com mais contatos</div><div class="bgn" id="bgPico">—</div></div>
+      <div class="sc g"><div class="sc-wm"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg></div><div class="sc-label g"><span class="sc-dot"></span>IA Ativa</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIASim">—</div><div class="sc-desc">contatos com IA ativa</div><div class="bgn" id="bgIASim">—</div></div>
+      <div class="sc r"><div class="sc-wm"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg></div><div class="sc-label r"><span class="sc-dot"></span>IA Pausada</div><div class="sc-skel"></div><div class="sc-skel-sm"></div><div class="sc-val" id="sIANao">—</div><div class="sc-desc">aguardando humano</div><div class="bgn" id="bgIANao">—</div></div>
     </div>
 
     <!-- GRID -->
@@ -881,9 +971,19 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
           </div>
           <div class="chip" id="chipC">—</div>
         </div>
+        <div class="panel-toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input class="search-input" type="text" id="tableSearch" placeholder="Buscar nome ou telefone..." oninput="filterTable(this.value)">
+          </div>
+          <button class="density-btn" id="densityBtn" onclick="toggleDensity()" title="Modo compacto">
+            <svg viewBox="0 0 24 24" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            Compacto
+          </button>
+        </div>
         <div class="twrap">
-          <table>
-            <thead><tr><th>Cliente</th><th>1ª mensagem</th><th>1ª resposta</th><th>Msgs</th><th>Espera</th><th>Turnos</th><th>Status</th></tr></thead>
+          <table id="mainTable">
+            <thead><tr><th class="sortable" data-col="0">Cliente</th><th class="sortable" data-col="1">1ª mensagem</th><th class="sortable" data-col="2">1ª resposta</th><th class="sortable" data-col="3">Msgs</th><th class="sortable" data-col="4">Espera</th><th class="sortable" data-col="5">Turnos</th><th class="sortable" data-col="6">Status</th></tr></thead>
             <tbody id="tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="empty-txt">Carregando...</div></div></td></tr></tbody>
           </table>
         </div>
@@ -919,9 +1019,11 @@ tbody tr { animation:rowIn 0.35s cubic-bezier(0.16,1,0.3,1) both }
 <div class="overlay" id="overlay" onclick="fecharDrawer()"></div>
 <div class="drawer" id="drawer">
   <div class="dhead">
-    <div><div class="dname" id="dname">—</div><div class="dphone" id="dphone">—</div></div>
+    <div id="dav" class="dav g" style="display:none;margin-right:14px"></div>
+    <div style="flex:1;min-width:0"><div class="dname" id="dname">—</div><div class="dphone" id="dphone">—</div></div>
     <button class="dclose" onclick="fecharDrawer()">✕</button>
   </div>
+  <div class="dquick" id="dquick" style="display:none"></div>
   <div class="dbody" id="dbody"></div>
 </div>
 
@@ -937,6 +1039,7 @@ const CORES = ['g','a','b','r']
 const colorMap = {}, colorIdx = [0]
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 let dataAtual = dHoje(), cache = null, instAtual = 'todas', ontemCache = null
+let _allContatos = [], _tableFilter = '', _dense = false, _sortCol = -1, _sortDir = 1
 
 /* ── SCROLL REVEAL ── */
 function initScrollReveal() {
@@ -975,6 +1078,10 @@ function inicializar() {
     document.body.classList.add('light')
     document.getElementById('iconMoon').style.display = 'none'
     document.getElementById('iconSun').style.display  = 'block'
+  } else if (!t && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light')
+    document.getElementById('iconMoon').style.display = 'none'
+    document.getElementById('iconSun').style.display  = 'block'
   }
   /* preenche nome da empresa no splash se CONFIG disponível */
   const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
@@ -991,6 +1098,7 @@ function inicializar() {
   initPageTransitions()
   initScrollTop()
   initKeyboardShortcuts()
+  initSortableHeaders()
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializar)
 else inicializar()
@@ -1217,8 +1325,12 @@ function renderTudo(d) {
   document.getElementById('sPico').textContent=pico
   document.getElementById('chipPico').textContent=d.hora_pico!==undefined?`pico ${pico}`:'—'
   document.getElementById('chipC').textContent=`${conv} conversa${conv!==1?'s':''}`
+  /* progress bar: respondidas/total */
+  const prog = document.getElementById('respProgress')
+  if (prog) prog.style.width = (conv > 0 ? Math.round((resp/conv)*100) : 0) + '%'
   renderBars(d.por_hora||Array(24).fill(0),d.hora_pico)
-  renderTabela(d.contatos||[]); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
+  _allContatos = d.contatos||[]
+  renderTabela(applyTableFilters(_allContatos)); renderUltList(d.contatos||[]); renderInstList(d.contatos||[])
   /* skeleton → dados reais */
   document.getElementById('statsGrid')?.classList.add('loaded')
   /* deltas vs ontem */
@@ -1273,14 +1385,16 @@ function renderUltList(contatos) {
 function renderTabela(contatos) {
   const tb=document.getElementById('tbody')
   if(!contatos.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">Nenhuma conversa neste dia</div></div></td></tr>`;return}
+  const copyIcon=`<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`
   tb.innerHTML=contatos.map((c,idx)=>{
     const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
     const rowDelay=`animation-delay:${idx*38}ms`
+    const rowCls=c.tem_pendencia?'row-pend':c.respondida?'row-resp':'row-wait'
     const turnosBadge=c.turnos_pendentes>0
       ?`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ⚠${c.turnos_pendentes}</span>`
       :`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
-    return `<tr onclick="abrirDrawer('${c.telefone}')" style="${rowDelay}">
-      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${c.nome||'Desconhecido'}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${fTel(c.telefone)}</div></div></div></td>
+    return `<tr onclick="abrirDrawer('${c.telefone}')" class="${rowCls}" style="${rowDelay}">
+      <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${c.nome||'Desconhecido'}${c.tem_pendencia?' ⚠️':''}</div><div class="cphone">${fTel(c.telefone)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
       <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
       <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
       <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)">${c.total_msgs_cliente}<span style="color:var(--ink4);font-size:9px"> cli</span> / ${c.total_msgs_atendente}<span style="color:var(--ink4);font-size:9px"> ate</span></span></td>
@@ -1297,6 +1411,12 @@ function renderInstList(contatos){const inst={};contatos.forEach(c=>{inst[c.inst
 function abrirDrawer(tel) {
   if(!cache)return; const d=cache.contatos.find(x=>x.telefone===tel); if(!d)return
   document.getElementById('dname').textContent=d.nome||'Desconhecido'; document.getElementById('dphone').textContent=fTel(tel)
+  /* avatar */
+  const dav=document.getElementById('dav')
+  if(dav){dav.className=`dav ${corC(tel)}`;dav.textContent=(d.nome||'?')[0].toUpperCase();dav.style.display='flex'}
+  /* quick stats */
+  const dquick=document.getElementById('dquick')
+  if(dquick){dquick.style.display='flex';dquick.innerHTML=`<div class="dqs"><div class="dqs-val">${d.total_msgs_cliente}</div><div class="dqs-lbl">Msgs cliente</div></div><div class="dqs"><div class="dqs-val">${d.total_msgs_atendente}</div><div class="dqs-lbl">Msgs atend.</div></div><div class="dqs"><div class="dqs-val">${d.total_turnos}</div><div class="dqs-lbl">Turnos</div></div><div class="dqs"><div class="dqs-val">${fTMA(d.tma_segundos)}</div><div class="dqs-lbl">TMA</div></div>`}
   const resumo=`<div class="dresume"><div class="dresume-title">Resumo</div>
     <div class="dresume-row"><span class="dresume-label">Primeiro contato</span><span class="dresume-val">${fH(d.primeira_msg_cliente?.horario)}</span></div>
     <div class="dresume-row"><span class="dresume-label">Primeira resposta</span><span class="dresume-val">${d.primeira_msg_atendente?fH(d.primeira_msg_atendente.horario):'—'}</span></div>
@@ -1323,6 +1443,59 @@ function abrirDrawer(tel) {
   document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('show')
 }
 function fecharDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+
+/* ── TABLE SEARCH, SORT, DENSITY ── */
+function applyTableFilters(list) {
+  let out = list
+  if (_tableFilter) {
+    const q = _tableFilter
+    out = out.filter(c => (c.nome||'').toLowerCase().includes(q) || String(c.telefone||'').includes(q))
+  }
+  if (_sortCol >= 0) {
+    out = [...out].sort((a, b) => {
+      let va, vb
+      switch(_sortCol) {
+        case 0: va=(a.nome||'').toLowerCase(); vb=(b.nome||'').toLowerCase(); break
+        case 1: va=a.primeira_msg_cliente?.horario||''; vb=b.primeira_msg_cliente?.horario||''; break
+        case 2: va=a.primeira_msg_atendente?.horario||''; vb=b.primeira_msg_atendente?.horario||''; break
+        case 3: va=a.total_msgs_cliente||0; vb=b.total_msgs_cliente||0; break
+        case 4: va=a.tempo_espera_segundos??9999; vb=b.tempo_espera_segundos??9999; break
+        case 5: va=a.total_turnos||0; vb=b.total_turnos||0; break
+        case 6: va=a.tem_pendencia?2:a.respondida?0:1; vb=b.tem_pendencia?2:b.respondida?0:1; break
+        default: return 0
+      }
+      return _sortDir * (va > vb ? 1 : va < vb ? -1 : 0)
+    })
+  }
+  return out
+}
+function filterTable(q) { _tableFilter = q.toLowerCase().trim(); renderTabela(applyTableFilters(_allContatos)) }
+function toggleDensity() {
+  _dense = !_dense
+  const tbl = document.getElementById('mainTable')
+  if (tbl) tbl.classList.toggle('dense', _dense)
+  const btn = document.getElementById('densityBtn')
+  if (btn) btn.classList.toggle('dense-on', _dense)
+}
+function initSortableHeaders() {
+  document.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = parseInt(th.dataset.col)
+      if (_sortCol === col) { _sortDir = -_sortDir }
+      else { _sortCol = col; _sortDir = 1 }
+      document.querySelectorAll('th.sortable').forEach(h => h.classList.remove('sort-asc','sort-desc'))
+      th.classList.add(_sortDir === 1 ? 'sort-asc' : 'sort-desc')
+      renderTabela(applyTableFilters(_allContatos))
+    })
+  })
+}
+function copyPhone(e, tel) {
+  e.stopPropagation()
+  const clean = String(tel||'').replace(/\D/g,'')
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText('+' + clean).then(() => showToast('Telefone copiado', 'ok'))
+  }
+}
 function conectarSSE(){try{const es=new EventSource(`${API}/stream`);es.onmessage=()=>{carregar();showToast('Nova mensagem recebida','info')};es.onerror=()=>setTimeout(conectarSSE,5000)}catch{}}
 function fH(ts){if(!ts)return'—';return new Date(ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function fTel(tel){const t=String(tel||'').replace(/\D/g,'');if(t.length>=12)return`+${t.slice(0,2)} (${t.slice(2,4)}) ${t.slice(4,9)}-${t.slice(9)}`;return tel}
