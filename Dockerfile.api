@@ -7,6 +7,7 @@ RUN mkdir -p public
 COPY dashboard-leads.html public/
 COPY dashboard.css public/
 COPY shared.css public/
+COPY shared.js public/
 COPY relatorio-ia.html public/
 COPY contatos.html public/
 COPY config.js public/

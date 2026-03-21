@@ -85,9 +85,17 @@ function calcularTurnos(msgs) {
   return turnos
 }
 
+/* ── CACHE /relatorio ── */
+const _relCache = new Map()
+const _CACHE_TTL = 30000
+function _relCacheGet(key) { const e=_relCache.get(key); return e&&(Date.now()-e.ts<_CACHE_TTL)?e.data:null }
+function _relCacheSet(key,data) { _relCache.set(key,{data,ts:Date.now()}) }
+
 app.get('/relatorio', async (req, res) => {
   try {
     const data = req.query.data || hoje()
+    const cached = _relCacheGet(data)
+    if (cached) return res.json(cached)
     const keys = await redisMensagens.keys('*')
     if (!keys.length) return res.json({
       data, total_conversas:0, respondidas:0, nao_respondidas:0,
@@ -171,7 +179,7 @@ contatos.forEach(c => {
 })
 const horaP = porHora.indexOf(Math.max(...porHora))
 
-    res.json({
+    const result = {
       data,
       total_conversas: contatos.length,
       respondidas: respondidas.length,
@@ -181,7 +189,9 @@ const horaP = porHora.indexOf(Math.max(...porHora))
       hora_pico: horaP,
       por_hora: porHora,
       contatos
-    })
+    }
+    _relCacheSet(data, result)
+    res.json(result)
   } catch(err) {
     console.error(err)
     res.status(500).json({ erro: err.message })
