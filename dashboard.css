@@ -907,4 +907,5 @@ mark { background:rgba(245,166,35,0.38); color:inherit; border-radius:2px; paddi
 .pag-btn{width:26px;height:26px;border-radius:7px;background:var(--card);border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
 .pag-btn:hover:not(:disabled){border-color:var(--green);color:var(--green)}
 .pag-btn:disabled{opacity:0.3;cursor:not-allowed}
+.msgs-total{font-size:13px;font-weight:600;color:var(--ink2)}
 

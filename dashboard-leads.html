@@ -170,7 +170,7 @@
         </div>
         <div class="twrap">
           <table id="mainTable">
-            <thead><tr><th class="sortable" data-col="0">Cliente</th><th class="sortable" data-col="1">1ª mensagem</th><th class="sortable" data-col="2">1ª resposta</th><th class="sortable" data-col="3">Msgs</th><th class="sortable" data-col="4">Espera</th><th class="sortable" data-col="5">Turnos</th><th class="sortable" data-col="6">Status</th></tr></thead>
+            <thead><tr><th class="sortable" data-col="0">Cliente</th><th class="sortable" data-col="1">1ª mensagem</th><th class="sortable" data-col="2">1ª resposta</th><th class="sortable" data-col="3">Msgs</th><th class="sortable" data-col="4">Turnos</th><th class="sortable" data-col="5">Status</th></tr></thead>
             <tbody id="tbody"><tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="empty-txt">Carregando...</div></div></td></tr></tbody>
           </table>
         </div>
@@ -594,7 +594,7 @@ function renderTabela(contatos) {
     const msg = _tableFilter
       ? `Nenhum resultado para "<strong>${_tableFilter}</strong>"`
       : (_statusFilter !== 'todos' ? 'Nenhuma conversa neste filtro' : 'Nenhuma conversa neste dia')
-    tb.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">${msg}</div></div></td></tr>`
+    tb.innerHTML=`<tr><td colspan="6"><div class="empty"><div class="empty-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="11" y2="13"/></svg></div><div class="empty-txt">${msg}</div></div></td></tr>`
     renderPaginacao(0)
     return
   }
@@ -605,20 +605,15 @@ function renderTabela(contatos) {
   const pagina = contatos.slice(inicio, inicio + _PAGE_SIZE)
   const copyIcon=`<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`
   tb.innerHTML=pagina.map((c,idx)=>{
-    const cor=corC(c.telefone),espera=c.respondida?teClass(c.tempo_espera_segundos):null
+    const cor=corC(c.telefone)
     const rowDelay=`animation-delay:${idx*38}ms`
     const rowCls=c.tem_pendencia?'row-pend':c.respondida?'row-resp':'row-wait'
-    const svgWarn=`<svg viewBox="0 0 24 24" style="width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-left:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`
-    const turnosBadge=c.turnos_pendentes>0
-      ?`<span style="font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:11px;font-weight:600;color:var(--rose)">${c.turnos_respondidos}/${c.total_turnos} ${svgWarn}${c.turnos_pendentes}</span>`
-      :`<span style="font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:11px;font-weight:600;color:var(--green)">${c.turnos_respondidos}/${c.total_turnos}</span>`
     return `<tr onclick="abrirDrawer('${c.telefone}')" class="${rowCls}" style="${rowDelay}">
       <td><div class="cwrap"><div class="av ${cor}">${(c.nome||'?')[0].toUpperCase()}</div><div><div class="cname">${hlText(c.nome||'Desconhecido',_tableFilter)}${c.tem_pendencia?` <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:var(--rose);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`:''}</div><div class="cphone">${hlText(fTel(c.telefone),_tableFilter)}<button class="copy-btn" onclick="copyPhone(event,'${c.telefone}')" title="Copiar">${copyIcon}</button></div></div></div></td>
       <td><div class="mtxt">${c.primeira_msg_cliente?.texto||'—'}</div><div class="mhr">${fH(c.primeira_msg_cliente?.horario)}</div></td>
       <td><div class="mtxt">${c.primeira_msg_atendente?.texto||'—'}</div><div class="mhr">${c.primeira_msg_atendente?fH(c.primeira_msg_atendente.horario):'—'}</div></td>
-      <td><span style="font-family:'Cascadia Code',Consolas,'Courier New',monospace;font-size:11px;color:var(--ink3)">${c.total_msgs_cliente}<span style="color:var(--ink4);font-size:9px"> cli</span> / ${c.total_msgs_atendente}<span style="color:var(--ink4);font-size:9px"> ate</span></span></td>
-      <td>${c.respondida?`<span class="tespera ${espera.cls}">${espera.label}</span>`:`<span class="tespera none">—</span>`}</td>
-      <td>${turnosBadge}</td>
+      <td><span class="msgs-total">${(c.total_msgs_cliente||0)+(c.total_msgs_atendente||0)}</span></td>
+      <td><span style="font-size:12px;font-weight:600;color:${c.turnos_pendentes>0?'var(--rose)':'var(--green)'}">${c.turnos_respondidos}/${c.total_turnos}</span></td>
       <td>${c.tem_pendencia
         ?`<span class="sbadge pend"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>Pendente</span>`
         :c.respondida
@@ -708,10 +703,9 @@ function applyTableFilters(list) {
         case 0: va=(a.nome||'').toLowerCase(); vb=(b.nome||'').toLowerCase(); break
         case 1: va=a.primeira_msg_cliente?.horario||''; vb=b.primeira_msg_cliente?.horario||''; break
         case 2: va=a.primeira_msg_atendente?.horario||''; vb=b.primeira_msg_atendente?.horario||''; break
-        case 3: va=a.total_msgs_cliente||0; vb=b.total_msgs_cliente||0; break
-        case 4: va=a.tempo_espera_segundos??9999; vb=b.tempo_espera_segundos??9999; break
-        case 5: va=a.total_turnos||0; vb=b.total_turnos||0; break
-        case 6: va=a.tem_pendencia?2:a.respondida?0:1; vb=b.tem_pendencia?2:b.respondida?0:1; break
+        case 3: va=(a.total_msgs_cliente||0)+(a.total_msgs_atendente||0); vb=(b.total_msgs_cliente||0)+(b.total_msgs_atendente||0); break
+        case 4: va=a.total_turnos||0; vb=b.total_turnos||0; break
+        case 5: va=a.tem_pendencia?2:a.respondida?0:1; vb=b.tem_pendencia?2:b.respondida?0:1; break
         default: return 0
       }
       return _sortDir * (va > vb ? 1 : va < vb ? -1 : 0)
