@@ -118,6 +118,12 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 
 @media(max-width:700px){.exec-grid{grid-template-columns:repeat(2,1fr)};.hor-grid{grid-template-columns:1fr}}
 
+/* ── SELETOR DE INSTÂNCIA ── */
+.inst-select{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--ink);font-size:12px;font-weight:600;cursor:pointer;outline:none;transition:border-color 0.15s;appearance:none;padding-right:26px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.inst-select:hover,.inst-select:focus{border-color:var(--green)}
+.inst-wrap{display:flex;align-items:center;gap:6px}
+.inst-lbl{font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--ink4)}
+
 /* ── CURSOR POINTER ── */
 .dnavbtn,.today-btn,.itab{ cursor:pointer }
 </style>
@@ -176,7 +182,10 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 
   <div class="content">
     <div class="toolbar">
-      <div></div>
+      <div class="inst-wrap" id="instWrap" style="display:none">
+        <span class="inst-lbl">Loja</span>
+        <select class="inst-select" id="instSelect" onchange="trocarInstancia(this.value)"></select>
+      </div>
       <div class="date-nav">
         <button class="dnavbtn" onclick="mudarDia(-1)">‹</button>
         <div class="dlabel" id="dlabel">--/--/----</div>
@@ -206,17 +215,40 @@ input[type=date].dpick{background:var(--card);border:1px solid var(--border);bor
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
 function dHoje() { return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }) }
 let dataAtual = dHoje()
+let instAtual = null
 
 function setDateLabel(d) { const [y,m,dia]=d.split('-'); document.getElementById('dlabel').textContent=`${dia}/${m}/${y}`; document.getElementById('dpick').value=d }
-function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(dt.getDate()+delta); dataAtual=dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregar() }
-function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregar() }
-function irHoje() { dataAtual=dHoje(); setDateLabel(dataAtual); carregar() }
+function mudarDia(delta) { const dt=new Date(dataAtual+'T12:00:00'); dt.setDate(dt.getDate()+delta); dataAtual=dt.toISOString().split('T')[0]; setDateLabel(dataAtual); carregarComInstancias() }
+function irData(v) { if(!v)return; dataAtual=v; setDateLabel(v); carregarComInstancias() }
+function irHoje() { dataAtual=dHoje(); setDateLabel(dataAtual); carregarComInstancias() }
+function trocarInstancia(v) { instAtual=v; carregar() }
+
+async function carregarComInstancias() {
+  try {
+    const r = await fetch(`${API}/relatorio-instancias?data=${dataAtual}`)
+    const { instancias } = await r.json()
+    const wrap = document.getElementById('instWrap')
+    const sel = document.getElementById('instSelect')
+    if (instancias.length > 0) {
+      sel.innerHTML = instancias.map(i => `<option value="${i}">${i}</option>`).join('')
+      // manter seleção atual se ainda existir, senão pega a primeira
+      if (!instancias.includes(instAtual)) instAtual = instancias[0]
+      sel.value = instAtual
+      wrap.style.display = 'flex'
+    } else {
+      instAtual = null
+      wrap.style.display = 'none'
+    }
+  } catch { instAtual = null }
+  carregar()
+}
 
 async function carregar() {
   const el=document.getElementById('conteudo')
   el.innerHTML=`<div class="page-loading"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div> Carregando relatório...</div>`
   try {
-    const r=await fetch(`${API}/relatorio-ia?data=${dataAtual}`); if(!r.ok)throw new Error()
+    const qs = instAtual ? `data=${dataAtual}&instancia=${encodeURIComponent(instAtual)}` : `data=${dataAtual}`
+    const r=await fetch(`${API}/relatorio-ia?${qs}`); if(!r.ok)throw new Error()
     renderRelatorio(await r.json())
   } catch {
     el.innerHTML=`<div class="page-empty"><div class="page-empty-icon">📭</div><div class="page-empty-title">Nenhum relatório para este dia</div><div class="page-empty-sub">O relatório é gerado automaticamente às 20h</div></div>`
@@ -275,7 +307,7 @@ function renderRelatorio(d) {
 }
 
 ;(function(){
-  setDateLabel(dataAtual); carregar()
+  setDateLabel(dataAtual); carregarComInstancias()
 })()
 </script>
 <script>

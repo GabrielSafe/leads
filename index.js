@@ -199,15 +199,34 @@ const horaP = porHora.indexOf(Math.max(...porHora))
 })
 
 
+app.get('/relatorio-instancias', async (req, res) => {
+  try {
+    const data = req.query.data || hoje()
+    const keys = await redisRelatorios.keys(`relatorio:*:${data}`)
+    const instancias = keys
+      .map(k => { const p = k.split(':'); return p.length === 3 ? p[1] : null })
+      .filter(Boolean)
+      .sort()
+    res.json({ instancias })
+  } catch(err) {
+    res.status(500).json({ erro: err.message })
+  }
+})
+
 app.get('/relatorio-ia', async (req, res) => {
   try {
     const data = req.query.data || hoje()
-    // Tenta buscar o relatório do dia específico (db2), depois o latest
-    let raw = await redisRelatorios.get(`relatorio:${data}`)
+    const instancia = req.query.instancia
+    let raw = null
+    if (instancia) {
+      raw = await redisRelatorios.get(`relatorio:${instancia}:${data}`)
+      if (!raw) raw = await redisRelatorios.get(`relatorio:${instancia}:latest`)
+    }
+    // fallback: formato antigo sem instância na chave
+    if (!raw) raw = await redisRelatorios.get(`relatorio:${data}`)
     if (!raw) raw = await redisRelatorios.get('relatorio:latest')
     if (!raw) return res.status(404).json({ erro: 'Nenhum relatório encontrado' })
     const relatorio = JSON.parse(raw)
-    // Se veio array (como o agente retorna), pega o primeiro
     const dados = Array.isArray(relatorio) ? relatorio[0] : relatorio
     res.json(dados)
   } catch(err) {
