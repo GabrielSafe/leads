@@ -4,15 +4,24 @@ COPY package*.json ./
 RUN npm install
 COPY index.js .
 RUN mkdir -p public
-COPY dashboard-leads.html public/
-COPY dashboard.css public/
 COPY shared.css public/
 COPY shared.js public/
+COPY dashboard-leads.html public/
+COPY dashboard.css public/
+COPY dashboard.js public/
 COPY relatorio-ia.html public/
+COPY relatorio.css public/
+COPY relatorio.js public/
 COPY contatos.html public/
-COPY config.js public/
-COPY ferramentas.html public/
+COPY contatos.css public/
+COPY contatos.js public/
 COPY chat.html public/
+COPY chat.css public/
+COPY chat.js public/
+COPY ferramentas.html public/
+COPY ferramentas.css public/
+COPY ferramentas.js public/
+COPY config.js public/
 COPY logo.pn[g] public/
 EXPOSE 3001
 CMD ["node", "index.js"]
