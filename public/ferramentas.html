@@ -100,15 +100,36 @@
               <button class="file-remove" onclick="removeFile()" title="Remover">✕</button>
             </div>
             <div class="preview-wrap" id="previewWrap">
-              <div class="preview-label">Prévia dos dados</div>
+              <div class="preview-header">
+                <span class="preview-label">Prévia dos dados</span>
+                <div class="preview-badges">
+                  <span class="preview-badge rows" id="previewRows">—</span>
+                  <span class="preview-badge cols" id="previewCols">—</span>
+                </div>
+              </div>
               <div class="preview-table-wrap"><table class="preview-table" id="previewTable"></table></div>
               <div class="preview-count" id="previewCount"></div>
+            </div>
+          </div>
+          <div class="field batch-field" id="batchField" style="display:none">
+            <label>Registros por lote</label>
+            <div class="batch-row">
+              <input type="number" id="batchSize" value="100" min="10" max="1000" step="10">
+              <span class="batch-hint">Recomendado: 100–200</span>
             </div>
           </div>
           <button class="btn-send" id="btnSend" onclick="enviar()" disabled>
             <span class="btn-txt">Enviar Webhook</span>
             <div class="btn-spinner"></div>
           </button>
+          <div class="progress-wrap" id="progressWrap">
+            <div class="progress-info">
+              <span class="progress-text" id="progressText">Preparando...</span>
+              <span class="progress-pct" id="progressPct">0%</span>
+            </div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+            <button class="progress-cancel" id="cancelBtn" onclick="cancelarEnvio()">Cancelar</button>
+          </div>
           <div class="result" id="result"></div>
         </div>
       </div>
