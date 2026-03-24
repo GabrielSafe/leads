@@ -10,6 +10,43 @@
   }
 })()
 
+/* ── BRANDING ── */
+function applyBranding() {
+  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
+  if (!cfg.empresa) return
+
+  // Textos da sidebar
+  const nameEl = document.querySelector('.sidebar-brand-name')
+  const slugEl = document.querySelector('.sidebar-brand-slug')
+  if (nameEl) nameEl.textContent = cfg.empresa
+  if (slugEl) slugEl.textContent = cfg.slogan || 'Painel de Atendimento'
+
+  // Logo na sidebar
+  const logoEl = document.querySelector('.sidebar-logo')
+  if (logoEl) {
+    if (cfg.logo_type === 'image' && cfg.logo_data) {
+      logoEl.innerHTML = `<img src="${cfg.logo_data}" style="width:28px;height:28px;border-radius:7px;object-fit:cover;display:block">`
+      logoEl.style.background = 'transparent'
+      logoEl.style.border = 'none'
+    } else if (cfg.logo_type === 'emoji' && cfg.logo_emoji) {
+      logoEl.innerHTML = `<span style="font-size:18px;line-height:1">${cfg.logo_emoji}</span>`
+    } else if (cfg.logo_type === 'none') {
+      logoEl.style.display = 'none'
+    }
+  }
+
+  // Favicon
+  const favicon = document.querySelector("link[rel='icon']")
+  if (favicon) {
+    if (cfg.logo_type === 'image' && cfg.logo_data) {
+      favicon.href = cfg.logo_data
+    } else if (cfg.logo_type === 'emoji' && cfg.logo_emoji) {
+      favicon.href = `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${cfg.logo_emoji}</text></svg>`
+    }
+  }
+}
+document.addEventListener('DOMContentLoaded', applyBranding)
+
 /* ── THEME ── */
 function toggleTheme() {
   document.body.classList.add('theme-transitioning')

@@ -26,14 +26,15 @@ app.get('/config.js', (req, res) => {
 // Setup: salva configuração no arquivo
 app.post('/setup', (req, res) => {
   try {
-    const { empresa, slogan, logo_emoji, favicon_emoji } = req.body
+    const { empresa, slogan, logo_type, logo_data, logo_emoji } = req.body
     if (!empresa?.trim()) return res.status(400).json({ erro: 'Nome da empresa obrigatório' })
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true })
     const cfg = {
       empresa: empresa.trim(),
       slogan: slogan?.trim() || 'Painel de Atendimento',
-      logo_emoji: logo_emoji?.trim() || '💬',
-      favicon_emoji: favicon_emoji?.trim() || '💬'
+      logo_type: logo_type || 'emoji',
+      logo_data: logo_type === 'image' ? (logo_data || null) : null,
+      logo_emoji: logo_type === 'emoji' ? (logo_emoji?.trim() || '💬') : null
     }
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(cfg, null, 2))
     res.json({ ok: true })

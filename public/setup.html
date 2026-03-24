@@ -9,36 +9,70 @@
 :root{
   --bg:#0d1117;--card:#161b22;--card2:#1c2128;--border:#30363d;--border2:#484f58;
   --ink:#e6edf3;--ink2:#cdd9e5;--ink3:#8b949e;--ink4:#6e7681;
-  --green:#25d366;--green-lt:rgba(37,211,102,0.08);--green-dk:rgba(37,211,102,0.04);
+  --green:#25d366;--green-lt:rgba(37,211,102,0.08);
   --rose:#f15c6d;--rose-lt:rgba(241,92,109,0.1);
   --r:10px;--r-lg:14px;--shadow:0 4px 24px rgba(0,0,0,0.4)
 }
 body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-
 .setup-wrap{width:100%;max-width:480px}
 
-.setup-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
-.logo-emoji-big{font-size:52px;line-height:1;filter:drop-shadow(0 4px 16px rgba(37,211,102,0.3))}
+/* Header */
+.setup-header{display:flex;flex-direction:column;align-items:center;margin-bottom:28px;gap:10px}
+.logo-preview-big{width:72px;height:72px;border-radius:18px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden;transition:all 0.2s;box-shadow:0 4px 20px rgba(37,211,102,0.15)}
+.logo-preview-big img{width:100%;height:100%;object-fit:cover;border-radius:17px}
 .setup-title{font-size:22px;font-weight:700;color:var(--ink);text-align:center}
-.setup-sub{font-size:13px;color:var(--ink4);text-align:center;margin-top:4px}
+.setup-sub{font-size:13px;color:var(--ink4);text-align:center}
 
+/* Card */
 .setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow)}
+.divider{height:1px;background:var(--border);margin:22px 0}
 
-.field{margin-bottom:20px}
-.field:last-of-type{margin-bottom:0}
+/* Fields */
+.field{margin-bottom:18px}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:7px;letter-spacing:0.3px;text-transform:uppercase}
-.field input{width:100%;padding:10px 13px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink);font-size:13px;outline:none;transition:border-color 0.2s}
-.field input:focus{border-color:var(--green)}
+.field input[type=text]{width:100%;padding:10px 13px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink);font-size:13px;outline:none;transition:border-color 0.2s}
+.field input[type=text]:focus{border-color:var(--green)}
 .field input::placeholder{color:var(--ink4)}
 .field-hint{font-size:10px;color:var(--ink4);margin-top:5px}
 
+/* Logo type tabs */
+.logo-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:16px}
+.logo-tab{padding:10px 6px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink3);font-size:12px;font-weight:500;cursor:pointer;text-align:center;transition:all 0.15s;line-height:1.4}
+.logo-tab:hover{border-color:var(--border2);color:var(--ink2)}
+.logo-tab.active{background:var(--green-lt);border-color:rgba(37,211,102,0.3);color:var(--green);font-weight:600}
+.logo-tab-icon{font-size:16px;display:block;margin-bottom:3px}
+
+/* Logo sections */
+.logo-section{display:none}
+.logo-section.show{display:block}
+
+/* Upload area */
+.upload-area{position:relative;border:2px dashed var(--border2);border-radius:var(--r);padding:24px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--card2)}
+.upload-area:hover,.upload-area.dragover{border-color:var(--green);background:rgba(37,211,102,0.04)}
+.upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:24px;margin-bottom:6px;opacity:0.5}
+.upload-txt{font-size:12px;font-weight:500;color:var(--ink3)}
+.upload-sub{font-size:10px;color:var(--ink4);margin-top:3px}
+.upload-preview{display:none;align-items:center;gap:12px;padding:10px 12px;background:var(--green-lt);border:1px solid rgba(37,211,102,0.2);border-radius:var(--r);margin-top:10px}
+.upload-preview.show{display:flex}
+.upload-preview img{width:40px;height:40px;border-radius:8px;object-fit:cover;flex-shrink:0}
+.upload-preview-info{flex:1;min-width:0}
+.upload-preview-name{font-size:12px;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.upload-preview-size{font-size:10px;color:var(--ink4);margin-top:2px}
+.upload-remove{background:none;border:none;color:var(--ink4);cursor:pointer;font-size:14px;padding:2px;transition:color 0.15s}
+.upload-remove:hover{color:var(--rose)}
+
+/* Emoji input */
 .emoji-row{display:flex;align-items:center;gap:10px}
-.emoji-row input{flex:1}
-.emoji-preview{width:42px;height:42px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:border-color 0.2s}
+.emoji-row input{flex:1;padding:10px 13px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink);font-size:20px;outline:none;transition:border-color 0.2s}
+.emoji-row input:focus{border-color:var(--green)}
+.emoji-box{width:48px;height:48px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
 
-.divider{height:1px;background:var(--border);margin:24px 0}
+/* None option */
+.none-info{padding:16px;background:var(--card2);border-radius:var(--r);font-size:12px;color:var(--ink4);text-align:center}
 
-.btn-setup{width:100%;padding:13px;border-radius:var(--r);background:var(--green);border:none;color:#111b21;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px}
+/* Button */
+.btn-setup{width:100%;padding:13px;border-radius:var(--r);background:var(--green);border:none;color:#111b21;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px}
 .btn-setup:hover:not(:disabled){background:#1db954;color:#fff}
 .btn-setup:disabled{opacity:0.5;cursor:not-allowed}
 .btn-spinner{display:none;width:16px;height:16px;border:2px solid rgba(17,27,33,0.3);border-top-color:#111b21;border-radius:50%;animation:spin 0.7s linear infinite}
@@ -50,15 +84,14 @@ body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSys
 .result.show{display:flex}
 .result.error{background:var(--rose-lt);border:1px solid rgba(241,92,109,0.25);color:var(--rose)}
 .result.success{background:var(--green-lt);border:1px solid rgba(37,211,102,0.25);color:var(--green)}
-
-.setup-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--ink4)}
+.setup-footer{text-align:center;margin-top:18px;font-size:11px;color:var(--ink4)}
 </style>
 </head>
 <body>
 <div class="setup-wrap">
 
-  <div class="setup-logo">
-    <div class="logo-emoji-big" id="logoPreviewBig">💬</div>
+  <div class="setup-header">
+    <div class="logo-preview-big" id="logoPreviewBig">💬</div>
     <div>
       <div class="setup-title">Configuração inicial</div>
       <div class="setup-sub">Preencha as informações do seu sistema</div>
@@ -66,6 +99,7 @@ body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSys
   </div>
 
   <div class="setup-card">
+
     <div class="field">
       <label>Nome da empresa *</label>
       <input type="text" id="empresa" placeholder="Ex: Madalena Brigadeiros" maxlength="60" autofocus>
@@ -80,28 +114,56 @@ body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSys
     <div class="divider"></div>
 
     <div class="field">
-      <label>Emoji do logo</label>
-      <div class="emoji-row">
-        <input type="text" id="logo_emoji" placeholder="💬" maxlength="4" value="💬">
-        <div class="emoji-preview" id="logoPreview">💬</div>
+      <label>Ícone / Logo</label>
+      <div class="logo-tabs">
+        <button class="logo-tab" onclick="setLogoType('image')">
+          <span class="logo-tab-icon">🖼</span>Imagem
+        </button>
+        <button class="logo-tab active" onclick="setLogoType('emoji')">
+          <span class="logo-tab-icon">😊</span>Emoji
+        </button>
+        <button class="logo-tab" onclick="setLogoType('none')">
+          <span class="logo-tab-icon">—</span>Sem ícone
+        </button>
       </div>
-      <div class="field-hint">Aparece na sidebar e no splash de carregamento</div>
-    </div>
 
-    <div class="field">
-      <label>Emoji do favicon</label>
-      <div class="emoji-row">
-        <input type="text" id="favicon_emoji" placeholder="💬" maxlength="4" value="💬">
-        <div class="emoji-preview" id="faviconPreview">💬</div>
+      <!-- Imagem -->
+      <div class="logo-section" id="secImage">
+        <div class="upload-area" id="uploadArea">
+          <input type="file" id="logoInput" accept="image/*" onchange="handleLogo(this)">
+          <div class="upload-icon">📁</div>
+          <div class="upload-txt">Clique ou arraste uma imagem</div>
+          <div class="upload-sub">PNG, JPG, SVG · Máx. 500 KB</div>
+        </div>
+        <div class="upload-preview" id="uploadPreview">
+          <img id="previewImg" src="">
+          <div class="upload-preview-info">
+            <div class="upload-preview-name" id="previewName">—</div>
+            <div class="upload-preview-size" id="previewSize">—</div>
+          </div>
+          <button class="upload-remove" onclick="removerLogo()">✕</button>
+        </div>
       </div>
-      <div class="field-hint">Ícone que aparece na aba do navegador</div>
+
+      <!-- Emoji -->
+      <div class="logo-section show" id="secEmoji">
+        <div class="emoji-row">
+          <input type="text" id="logo_emoji" placeholder="💬" maxlength="4" value="💬">
+          <div class="emoji-box" id="emojiBox">💬</div>
+        </div>
+        <div class="field-hint" style="margin-top:8px">Cole ou digite qualquer emoji</div>
+      </div>
+
+      <!-- Sem ícone -->
+      <div class="logo-section" id="secNone">
+        <div class="none-info">Somente o nome da empresa será exibido na sidebar, sem ícone ao lado.</div>
+      </div>
     </div>
 
     <button class="btn-setup" id="btnSalvar" onclick="salvar()">
       <span class="btn-txt">Salvar e entrar no sistema</span>
       <div class="btn-spinner"></div>
     </button>
-
     <div class="result" id="result"></div>
   </div>
 
@@ -110,34 +172,94 @@ body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSys
 
 <script>
 const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
+let _logoType = 'emoji', _logoData = null
+
+function setLogoType(type) {
+  _logoType = type
+  document.querySelectorAll('.logo-tab').forEach((t,i) => t.classList.toggle('active', ['image','emoji','none'][i] === type))
+  document.getElementById('secImage').classList.toggle('show', type === 'image')
+  document.getElementById('secEmoji').classList.toggle('show', type === 'emoji')
+  document.getElementById('secNone').classList.toggle('show', type === 'none')
+  atualizarPreviewBig()
+}
+
+function atualizarPreviewBig() {
+  const el = document.getElementById('logoPreviewBig')
+  if (_logoType === 'image' && _logoData) {
+    el.innerHTML = `<img src="${_logoData}" style="width:100%;height:100%;object-fit:cover;border-radius:17px">`
+  } else if (_logoType === 'emoji') {
+    el.innerHTML = document.getElementById('logo_emoji').value || '💬'
+  } else {
+    el.innerHTML = '🏢'
+  }
+}
 
 document.getElementById('logo_emoji').addEventListener('input', function() {
-  const v = this.value || '💬'
-  document.getElementById('logoPreview').textContent = v
-  document.getElementById('logoPreviewBig').textContent = v
+  document.getElementById('emojiBox').textContent = this.value || '💬'
+  atualizarPreviewBig()
 })
-document.getElementById('favicon_emoji').addEventListener('input', function() {
-  document.getElementById('faviconPreview').textContent = this.value || '💬'
+
+function handleLogo(input) {
+  const file = input.files[0]
+  if (!file) return
+  if (file.size > 512000) {
+    alert('Imagem muito grande. Use uma imagem de até 500 KB.')
+    input.value = ''; return
+  }
+  const reader = new FileReader()
+  reader.onload = e => {
+    _logoData = e.target.result
+    document.getElementById('previewImg').src = _logoData
+    document.getElementById('previewName').textContent = file.name
+    document.getElementById('previewSize').textContent = (file.size/1024).toFixed(1) + ' KB'
+    document.getElementById('uploadPreview').classList.add('show')
+    atualizarPreviewBig()
+  }
+  reader.readAsDataURL(file)
+}
+
+function removerLogo() {
+  _logoData = null
+  document.getElementById('logoInput').value = ''
+  document.getElementById('uploadPreview').classList.remove('show')
+  atualizarPreviewBig()
+}
+
+const ua = document.getElementById('uploadArea')
+ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('dragover') })
+ua.addEventListener('dragleave', () => ua.classList.remove('dragover'))
+ua.addEventListener('drop', e => {
+  e.preventDefault(); ua.classList.remove('dragover')
+  const f = e.dataTransfer.files[0]
+  if (f && f.type.startsWith('image/')) {
+    const dt = new DataTransfer(); dt.items.add(f)
+    document.getElementById('logoInput').files = dt.files
+    handleLogo(document.getElementById('logoInput'))
+  }
 })
 
 async function salvar() {
   const empresa = document.getElementById('empresa').value.trim()
   if (!empresa) { document.getElementById('empresa').focus(); return }
+  if (_logoType === 'image' && !_logoData) {
+    alert('Selecione uma imagem ou escolha outra opção de ícone.'); return
+  }
 
-  const btn = document.getElementById('btnSalvar')
-  const result = document.getElementById('result')
+  const btn = document.getElementById('btnSalvar'), result = document.getElementById('result')
   btn.disabled = true; btn.classList.add('loading'); result.classList.remove('show')
+
+  const payload = {
+    empresa,
+    slogan: document.getElementById('slogan').value.trim(),
+    logo_type: _logoType,
+    logo_data: _logoType === 'image' ? _logoData : null,
+    logo_emoji: _logoType === 'emoji' ? (document.getElementById('logo_emoji').value.trim() || '💬') : null
+  }
 
   try {
     const resp = await fetch(`${API}/setup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        empresa,
-        slogan: document.getElementById('slogan').value.trim(),
-        logo_emoji: document.getElementById('logo_emoji').value.trim() || '💬',
-        favicon_emoji: document.getElementById('favicon_emoji').value.trim() || '💬'
-      })
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     })
     const json = await resp.json()
     if (!resp.ok) throw new Error(json.erro || 'Erro ao salvar')
@@ -151,7 +273,7 @@ async function salvar() {
   }
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Enter') salvar() })
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') salvar() })
 </script>
 </body>
 </html>
