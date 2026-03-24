@@ -1,10 +1,44 @@
 const express = require('express')
 const Redis = require('ioredis')
 const cors = require('cors')
+const fs = require('fs')
+const path = require('path')
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data')
+const CONFIG_FILE = path.join(DATA_DIR, 'config.json')
+
+function lerConfig() {
+  try { return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) } catch { return null }
+}
+
+// /config.js dinâmico — retorna configuração ou sinaliza setup pendente
+app.get('/config.js', (req, res) => {
+  const cfg = lerConfig()
+  res.type('application/javascript')
+  if (!cfg) return res.send('var CONFIG = { _setup_required: true }')
+  res.send(`var CONFIG = ${JSON.stringify(cfg)}`)
+})
+
+// Setup: salva configuração no arquivo
+app.post('/setup', (req, res) => {
+  try {
+    const { empresa, slogan, logo_emoji, favicon_emoji } = req.body
+    if (!empresa?.trim()) return res.status(400).json({ erro: 'Nome da empresa obrigatório' })
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true })
+    const cfg = {
+      empresa: empresa.trim(),
+      slogan: slogan?.trim() || 'Painel de Atendimento',
+      logo_emoji: logo_emoji?.trim() || '💬',
+      favicon_emoji: favicon_emoji?.trim() || '💬'
+    }
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(cfg, null, 2))
+    res.json({ ok: true })
+  } catch(err) { res.status(500).json({ erro: err.message }) }
+})
 
 // Serve static HTML files
 app.use(express.static(__dirname + '/public'))

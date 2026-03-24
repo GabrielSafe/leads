@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuração Inicial</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--card:#161b22;--card2:#1c2128;--border:#30363d;--border2:#484f58;
+  --ink:#e6edf3;--ink2:#cdd9e5;--ink3:#8b949e;--ink4:#6e7681;
+  --green:#25d366;--green-lt:rgba(37,211,102,0.08);--green-dk:rgba(37,211,102,0.04);
+  --rose:#f15c6d;--rose-lt:rgba(241,92,109,0.1);
+  --r:10px;--r-lg:14px;--shadow:0 4px 24px rgba(0,0,0,0.4)
+}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+
+.setup-wrap{width:100%;max-width:480px}
+
+.setup-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;gap:12px}
+.logo-emoji-big{font-size:52px;line-height:1;filter:drop-shadow(0 4px 16px rgba(37,211,102,0.3))}
+.setup-title{font-size:22px;font-weight:700;color:var(--ink);text-align:center}
+.setup-sub{font-size:13px;color:var(--ink4);text-align:center;margin-top:4px}
+
+.setup-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;box-shadow:var(--shadow)}
+
+.field{margin-bottom:20px}
+.field:last-of-type{margin-bottom:0}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--ink3);margin-bottom:7px;letter-spacing:0.3px;text-transform:uppercase}
+.field input{width:100%;padding:10px 13px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);color:var(--ink);font-size:13px;outline:none;transition:border-color 0.2s}
+.field input:focus{border-color:var(--green)}
+.field input::placeholder{color:var(--ink4)}
+.field-hint{font-size:10px;color:var(--ink4);margin-top:5px}
+
+.emoji-row{display:flex;align-items:center;gap:10px}
+.emoji-row input{flex:1}
+.emoji-preview{width:42px;height:42px;border-radius:var(--r);background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:border-color 0.2s}
+
+.divider{height:1px;background:var(--border);margin:24px 0}
+
+.btn-setup{width:100%;padding:13px;border-radius:var(--r);background:var(--green);border:none;color:#111b21;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px}
+.btn-setup:hover:not(:disabled){background:#1db954;color:#fff}
+.btn-setup:disabled{opacity:0.5;cursor:not-allowed}
+.btn-spinner{display:none;width:16px;height:16px;border:2px solid rgba(17,27,33,0.3);border-top-color:#111b21;border-radius:50%;animation:spin 0.7s linear infinite}
+.btn-setup.loading .btn-txt{display:none}
+.btn-setup.loading .btn-spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.result{display:none;margin-top:14px;padding:12px 14px;border-radius:var(--r);font-size:12px;font-weight:500;align-items:center;gap:8px}
+.result.show{display:flex}
+.result.error{background:var(--rose-lt);border:1px solid rgba(241,92,109,0.25);color:var(--rose)}
+.result.success{background:var(--green-lt);border:1px solid rgba(37,211,102,0.25);color:var(--green)}
+
+.setup-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--ink4)}
+</style>
+</head>
+<body>
+<div class="setup-wrap">
+
+  <div class="setup-logo">
+    <div class="logo-emoji-big" id="logoPreviewBig">💬</div>
+    <div>
+      <div class="setup-title">Configuração inicial</div>
+      <div class="setup-sub">Preencha as informações do seu sistema</div>
+    </div>
+  </div>
+
+  <div class="setup-card">
+    <div class="field">
+      <label>Nome da empresa *</label>
+      <input type="text" id="empresa" placeholder="Ex: Madalena Brigadeiros" maxlength="60" autofocus>
+    </div>
+
+    <div class="field">
+      <label>Slogan / subtítulo</label>
+      <input type="text" id="slogan" placeholder="Painel de Atendimento" maxlength="60">
+      <div class="field-hint">Aparece abaixo do nome na sidebar</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field">
+      <label>Emoji do logo</label>
+      <div class="emoji-row">
+        <input type="text" id="logo_emoji" placeholder="💬" maxlength="4" value="💬">
+        <div class="emoji-preview" id="logoPreview">💬</div>
+      </div>
+      <div class="field-hint">Aparece na sidebar e no splash de carregamento</div>
+    </div>
+
+    <div class="field">
+      <label>Emoji do favicon</label>
+      <div class="emoji-row">
+        <input type="text" id="favicon_emoji" placeholder="💬" maxlength="4" value="💬">
+        <div class="emoji-preview" id="faviconPreview">💬</div>
+      </div>
+      <div class="field-hint">Ícone que aparece na aba do navegador</div>
+    </div>
+
+    <button class="btn-setup" id="btnSalvar" onclick="salvar()">
+      <span class="btn-txt">Salvar e entrar no sistema</span>
+      <div class="btn-spinner"></div>
+    </button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <div class="setup-footer">As configurações ficam salvas no servidor</div>
+</div>
+
+<script>
+const API = window.location.port === '3001' || window.location.hostname === 'localhost' ? 'http://localhost:3001' : ''
+
+document.getElementById('logo_emoji').addEventListener('input', function() {
+  const v = this.value || '💬'
+  document.getElementById('logoPreview').textContent = v
+  document.getElementById('logoPreviewBig').textContent = v
+})
+document.getElementById('favicon_emoji').addEventListener('input', function() {
+  document.getElementById('faviconPreview').textContent = this.value || '💬'
+})
+
+async function salvar() {
+  const empresa = document.getElementById('empresa').value.trim()
+  if (!empresa) { document.getElementById('empresa').focus(); return }
+
+  const btn = document.getElementById('btnSalvar')
+  const result = document.getElementById('result')
+  btn.disabled = true; btn.classList.add('loading'); result.classList.remove('show')
+
+  try {
+    const resp = await fetch(`${API}/setup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        empresa,
+        slogan: document.getElementById('slogan').value.trim(),
+        logo_emoji: document.getElementById('logo_emoji').value.trim() || '💬',
+        favicon_emoji: document.getElementById('favicon_emoji').value.trim() || '💬'
+      })
+    })
+    const json = await resp.json()
+    if (!resp.ok) throw new Error(json.erro || 'Erro ao salvar')
+    result.className = 'result show success'
+    result.innerHTML = '✅ Configurações salvas! Redirecionando...'
+    setTimeout(() => window.location.replace('/dashboard-leads.html'), 1200)
+  } catch(err) {
+    result.className = 'result show error'
+    result.innerHTML = '❌ ' + err.message
+    btn.disabled = false; btn.classList.remove('loading')
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') salvar() })
+</script>
+</body>
+</html>

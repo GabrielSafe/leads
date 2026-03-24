@@ -1,6 +1,15 @@
 /* ── SHARED UTILITIES ── */
 /* Loaded before each page's inline <script>. Plain declarations — no IIFE, no module. */
 
+/* ── SETUP GUARD ── */
+;(function(){
+  if (typeof CONFIG !== 'undefined' && CONFIG._setup_required) {
+    if (!window.location.pathname.includes('setup')) {
+      window.location.replace('/setup.html')
+    }
+  }
+})()
+
 /* ── THEME ── */
 function toggleTheme() {
   document.body.classList.add('theme-transitioning')
