@@ -1,14 +1,5 @@
 let csvData = [], csvFile = null, _cancelEnvio = false
 
-document.addEventListener('DOMContentLoaded', () => {
-  const cfg = typeof CONFIG !== 'undefined' ? CONFIG : {}
-  if (cfg.empresa) {
-    document.getElementById('cfgEmpresa').textContent = cfg.empresa
-    document.getElementById('cfgSlogan').textContent = cfg.slogan || 'Painel de Atendimento'
-    const icone = cfg.logo_type === 'image' ? '🖼 Imagem' : cfg.logo_type === 'none' ? '— Sem ícone' : (cfg.logo_emoji || '💬') + ' Emoji'
-    document.getElementById('cfgIcone').textContent = icone
-  }
-})
 
 const uploadArea = document.getElementById('uploadArea')
 uploadArea.addEventListener('dragover', e=>{ e.preventDefault(); uploadArea.classList.add('dragover') })
