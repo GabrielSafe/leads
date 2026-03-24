@@ -11,6 +11,8 @@ services:
       - PORT=3001
     expose:
       - "3001"
+    volumes:
+      - leads_data:/app/data
     networks:
       - easypanel
 
@@ -26,8 +28,13 @@ services:
       - PORT=80
     expose:
       - "80"
+    volumes:
+      - leads_data:/app/data
     networks:
       - easypanel
+
+volumes:
+  leads_data:
 
 networks:
   easypanel:
