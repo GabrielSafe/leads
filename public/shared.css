@@ -53,6 +53,18 @@ body.light{
     linear-gradient(rgba(0,0,0,0.04) 1px,transparent 1px),
     linear-gradient(90deg,rgba(0,0,0,0.04) 1px,transparent 1px);
 }
+/* Fundo alternativo: pontos */
+body.bg-dots{
+  background-image:radial-gradient(circle,rgba(255,255,255,0.07) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+body.light.bg-dots{
+  background-image:radial-gradient(circle,rgba(0,0,0,0.07) 1px,transparent 1px);
+}
+/* Sem fundo: só cor sólida */
+body:not(.bg-grid):not(.bg-dots){
+  background-image:none;
+}
 
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:4px;height:4px}

@@ -116,13 +116,76 @@ function showToast(msg, type='success') {
   }
 })()
 
-/* ── THEME RESTORE + CLOCK ── */
+/* ── THEME RESTORE (early — antes do DOMContentLoaded para evitar flash) ── */
 ;(function(){
   const t = localStorage.getItem('theme')
-  if (t === 'light') {
-    document.body.classList.add('light')
-    document.getElementById('iconMoon').style.display = 'none'
-    document.getElementById('iconSun').style.display  = 'block'
-  }
+  if (t === 'light') document.body.classList.add('light')
+  const bg = localStorage.getItem('bg') || 'bg-grid'
+  if (bg) document.body.classList.add(bg)
   setInterval(() => { const el = document.getElementById('clock'); if (el) el.textContent = new Date().toLocaleTimeString('pt-BR') }, 1000)
 })()
+
+/* ── THEME CONTROLS (pill bar) ── */
+function _initThemeControls() {
+  const saved = localStorage.getItem('theme') || 'dark'
+  const bg = localStorage.getItem('bg') || 'bg-grid'
+  _applyThemeMode(saved, false)
+  _applyBg(bg, false)
+}
+
+function setThemeMode(t) {
+  _applyThemeMode(t, true)
+  localStorage.setItem('theme', t)
+}
+
+function _applyThemeMode(t, animate) {
+  if (animate) document.body.classList.add('theme-transitioning')
+  document.body.classList.toggle('light', t === 'light')
+  const tcL = document.getElementById('tcLight')
+  const tcD = document.getElementById('tcDark')
+  if (tcL) tcL.classList.toggle('active', t === 'light')
+  if (tcD) tcD.classList.toggle('active', t === 'dark')
+  // manter ícone legado (topbar moon/sun) sincronizado
+  const moon = document.getElementById('iconMoon')
+  const sun  = document.getElementById('iconSun')
+  if (moon) moon.style.display = t === 'light' ? 'none'  : 'block'
+  if (sun)  sun.style.display  = t === 'light' ? 'block' : 'none'
+  if (animate) setTimeout(() => document.body.classList.remove('theme-transitioning'), 380)
+}
+
+function setBg(cls) {
+  _applyBg(cls, true)
+  localStorage.setItem('bg', cls)
+}
+
+function _applyBg(cls, _) {
+  document.body.classList.remove('bg-grid', 'bg-dots')
+  if (cls) document.body.classList.add(cls)
+  const map = { 'bg-grid': 'bgOptGrid', 'bg-dots': 'bgOptDots', '': 'bgOptNone' }
+  Object.entries(map).forEach(([k, id]) => {
+    const el = document.getElementById(id)
+    if (el) el.classList.toggle('active', cls === k)
+  })
+  closeBgPanel()
+}
+
+function toggleBgPanel() {
+  const p = document.getElementById('bgPanel')
+  if (!p) return
+  p.classList.toggle('show')
+  const btn = document.getElementById('tcBg')
+  if (btn) btn.classList.toggle('active', p.classList.contains('show'))
+}
+
+function closeBgPanel() {
+  const p = document.getElementById('bgPanel')
+  if (p) p.classList.remove('show')
+  const btn = document.getElementById('tcBg')
+  if (btn) btn.classList.remove('active')
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#bgPanel') && !e.target.closest('#tcBg')) closeBgPanel()
+})
+
+document.addEventListener('DOMContentLoaded', _initThemeControls)
