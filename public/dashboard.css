@@ -416,11 +416,11 @@ mark{background:rgba(251,191,36,0.3);color:inherit;border-radius:2px;padding:0 1
 }
 @media(max-width:700px){
   /* Topbar */
-  .topbar{padding:0 12px;gap:6px}
+  .topbar{padding:0 14px;gap:8px}
   .clock{display:none}
-  .page-title{font-size:14px}
-  .page-sub{display:none}
-  .status-pill span{display:none}
+  .page-title{font-size:15px}
+  .page-sub{display:block;font-size:10px}
+  .status-pill{font-size:10px;padding:4px 10px}
 
   /* Content */
   .content{padding:12px 12px 90px}
