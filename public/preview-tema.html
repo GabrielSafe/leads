@@ -21,9 +21,81 @@
   --red-lt:rgba(230,57,70,0.08);
   --red-dim:rgba(230,57,70,0.15);
   --err:#ff6b6b;
+  --green-badge:#16a34a;
+  --green-badge-bg:#f0fdf4;
+  --red-badge:#dc2626;
+  --red-badge-bg:#fef2f2;
+  --neu-badge:#555;
+  --neu-badge-bg:#f5f5f5;
   --r:8px;--r-lg:12px;
 }
+
+/* ── BADGES — 3 estilos para comparar ── */
+
+/* Estilo A: tint escuro (fundo semi-transparente colorido) */
+.badge-a{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600;line-height:1;white-space:nowrap}
+.badge-a svg{width:9px;height:9px;flex-shrink:0}
+.badge-a.up{background:rgba(34,197,94,0.12);color:#4ade80}
+.badge-a.down{background:rgba(239,68,68,0.14);color:#f87171}
+.badge-a.neu{background:rgba(255,255,255,0.07);color:#888}
+
+/* Estilo B: só borda + texto, sem fundo */
+.badge-b{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600;line-height:1;white-space:nowrap;border:1px solid}
+.badge-b svg{width:9px;height:9px;flex-shrink:0}
+.badge-b.up{border-color:rgba(34,197,94,0.35);color:#4ade80}
+.badge-b.down{border-color:rgba(239,68,68,0.35);color:#f87171}
+.badge-b.neu{border-color:rgba(255,255,255,0.12);color:#666}
+
+/* Estilo C: só ícone + texto, sem pill */
+.badge-c{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;line-height:1;white-space:nowrap}
+.badge-c svg{width:9px;height:9px;flex-shrink:0}
+.badge-c.up{color:#4ade80}
+.badge-c.down{color:#f87171}
+.badge-c.neu{color:#666}
 body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;display:flex;height:100vh;overflow:hidden}
+
+/* ── MODO CLARO ── */
+body.light{
+  --bg:#f4f4f5;--bg2:#ececed;--card:#ffffff;--card2:#f8f8f9;
+  --border:#e4e4e7;--border2:#d4d4d8;
+  --ink:#09090b;--ink2:#27272a;--ink3:#71717a;--ink4:#a1a1aa;
+  --red:#dc2626;--red-lt:rgba(220,38,38,0.07);--red-dim:rgba(220,38,38,0.12);
+}
+body.light .badge-a.up{background:rgba(22,163,74,0.1);color:#15803d}
+body.light .badge-a.down{background:rgba(220,38,38,0.1);color:#dc2626}
+body.light .badge-a.neu{background:rgba(0,0,0,0.06);color:#71717a}
+body.light .bg-grid{
+  background-image:
+    linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+body.light .card-bar.white{background:rgba(0,0,0,0.08)}
+body.light .hpico-bar-bg{background:var(--border2)}
+
+/* ── BACKGROUND PATTERN — troque a classe no <body> para ver cada um ── */
+/* .bg-grid    → linhas (quadrícula) */
+/* .bg-dots    → pontos */
+/* .bg-none    → sem padrão */
+
+.bg-grid{
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.bg-dots{
+  background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+/* Grid + ponto nas interseções */
+.bg-grid-dots{
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px, 40px 40px;
+}
 
 /* ── SIDEBAR ── */
 .sidebar{width:200px;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;padding:0}
@@ -130,7 +202,70 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 </style>
 </head>
-<body>
+<body class="bg-grid">
+<style>
+#previewControls{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:999;display:flex;gap:0;background:rgba(20,20,20,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:99px;padding:4px;box-shadow:0 4px 24px rgba(0,0,0,0.5)}
+.ctrl-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:99px;border:none;background:transparent;color:#888;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;white-space:nowrap;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+.ctrl-btn:hover{color:#ccc}
+.ctrl-btn.active{background:rgba(255,255,255,0.1);color:#fff;font-weight:600}
+.ctrl-btn svg{width:13px;height:13px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ctrl-sep{width:1px;background:rgba(255,255,255,0.1);margin:4px 0;flex-shrink:0}
+
+/* Painel Settings (dropdown acima do botão) */
+#bgPanel{display:none;position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:998;background:rgba(20,20,20,0.95);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:8px;box-shadow:0 4px 24px rgba(0,0,0,0.5);min-width:180px}
+#bgPanel.show{display:block}
+.bg-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:none;background:transparent;color:#888;font-size:12px;cursor:pointer;width:100%;text-align:left;font-family:inherit;transition:all 0.12s}
+.bg-opt:hover{background:rgba(255,255,255,0.06);color:#ccc}
+.bg-opt.active{color:#fff;background:rgba(255,255,255,0.08)}
+.bg-opt svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+.bg-opt-sep{height:1px;background:rgba(255,255,255,0.07);margin:4px 0}
+
+/* Ajuste quando light */
+body.light #previewControls{background:rgba(255,255,255,0.9);border-color:rgba(0,0,0,0.1);box-shadow:0 4px 24px rgba(0,0,0,0.15)}
+body.light .ctrl-btn{color:#666}
+body.light .ctrl-btn:hover{color:#333}
+body.light .ctrl-btn.active{background:rgba(0,0,0,0.07);color:#111}
+body.light .ctrl-sep{background:rgba(0,0,0,0.1)}
+body.light #bgPanel{background:rgba(255,255,255,0.97);border-color:rgba(0,0,0,0.1)}
+body.light .bg-opt{color:#777}
+body.light .bg-opt:hover{background:rgba(0,0,0,0.04);color:#333}
+body.light .bg-opt.active{color:#111;background:rgba(0,0,0,0.06)}
+body.light .bg-opt-sep{background:rgba(0,0,0,0.08)}
+</style>
+
+<!-- Dropdown de fundo -->
+<div id="bgPanel">
+  <button class="bg-opt active" id="bgOptGrid" onclick="setBg('bg-grid')">
+    <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+    Grid
+  </button>
+  <button class="bg-opt" id="bgOptDots" onclick="setBg('bg-dots')">
+    <svg viewBox="0 0 24 24"><circle cx="5" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="5" r="1.5" fill="currentColor" stroke="none"/><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="5" cy="19" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="19" r="1.5" fill="currentColor" stroke="none"/></svg>
+    Pontos
+  </button>
+  <div class="bg-opt-sep"></div>
+  <button class="bg-opt" id="bgOptNone" onclick="setBg('')">
+    <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    Sem fundo
+  </button>
+</div>
+
+<div id="previewControls">
+  <button class="ctrl-btn active" id="btnLight" onclick="setTema('light')">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+    Claro
+  </button>
+  <div class="ctrl-sep"></div>
+  <button class="ctrl-btn" id="btnDark" onclick="setTema('dark')">
+    <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    Escuro
+  </button>
+  <div class="ctrl-sep"></div>
+  <button class="ctrl-btn" id="btnSettings" onclick="toggleBgPanel()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    Fundo
+  </button>
+</div>
 
 <!-- SIDEBAR -->
 <nav class="sidebar">
@@ -189,25 +324,40 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
     <div class="cards-row">
       <div class="card">
         <div class="card-label">Total</div>
-        <div class="card-num">51</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+          <div class="card-num">51</div>
+          <span class="badge-a up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>9.3%</span>
+        </div>
         <div class="card-sub">conversas hoje</div>
         <div class="card-bar" style="width:100%"></div>
       </div>
+
       <div class="card">
         <div class="card-label">Respondidas</div>
-        <div class="card-num">19</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+          <div class="card-num">19</div>
+          <span class="badge-a up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>4.1%</span>
+        </div>
         <div class="card-sub">37% do total</div>
         <div class="card-bar white" style="width:37%"></div>
       </div>
+
       <div class="card">
         <div class="card-label">Pendentes</div>
-        <div class="card-num red">9</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+          <div class="card-num red">9</div>
+          <span class="badge-a down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>1.9%</span>
+        </div>
         <div class="card-sub">aguardando resposta</div>
         <div class="card-bar" style="width:18%"></div>
       </div>
+
       <div class="card">
         <div class="card-label">Sem resposta</div>
-        <div class="card-num red">23</div>
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+          <div class="card-num red">23</div>
+          <span class="badge-a neu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>0.6%</span>
+        </div>
         <div class="card-sub">45% do total</div>
         <div class="card-bar" style="width:45%"></div>
       </div>
@@ -253,7 +403,7 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
                 <td class="mono">07:49</td>
                 <td class="mono">—</td>
                 <td>12</td>
-                <td class="turns pend">1/3</td>
+                <td><span class="badge-a down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>1/3</span></td>
                 <td><span class="status pend"><span class="status-dot-sm"></span>Pendente</span></td>
               </tr>
               <tr>
@@ -261,7 +411,7 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
                 <td class="mono">09:00</td>
                 <td class="mono">11:58</td>
                 <td>8</td>
-                <td class="turns ok">3/3</td>
+                <td><span class="badge-a up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>3/3</span></td>
                 <td><span class="status resp"><span class="status-dot-sm"></span>Respondido</span></td>
               </tr>
               <tr class="row-pend">
@@ -269,7 +419,7 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
                 <td class="mono">09:57</td>
                 <td class="mono">12:06</td>
                 <td>5</td>
-                <td class="turns pend">0/2</td>
+                <td><span class="badge-a down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg>0/2</span></td>
                 <td><span class="status pend"><span class="status-dot-sm"></span>Pendente</span></td>
               </tr>
               <tr>
@@ -277,7 +427,7 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
                 <td class="mono">13:26</td>
                 <td class="mono">—</td>
                 <td>3</td>
-                <td class="turns ok">2/2</td>
+                <td><span class="badge-a neu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>2/2</span></td>
                 <td><span class="status wait"><span class="status-dot-sm"></span>Sem resposta</span></td>
               </tr>
               <tr>
@@ -285,7 +435,7 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
                 <td class="mono">10:14</td>
                 <td class="mono">10:22</td>
                 <td>14</td>
-                <td class="turns ok">4/4</td>
+                <td><span class="badge-a up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>4/4</span></td>
                 <td><span class="status resp"><span class="status-dot-sm"></span>Respondido</span></td>
               </tr>
               <tr>
@@ -293,7 +443,7 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
                 <td class="mono">14:06</td>
                 <td class="mono">—</td>
                 <td>2</td>
-                <td class="turns ok">1/1</td>
+                <td><span class="badge-a neu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="9 18 15 12 9 6"/></svg>1/1</span></td>
                 <td><span class="status wait"><span class="status-dot-sm"></span>Sem resposta</span></td>
               </tr>
             </tbody>
@@ -304,7 +454,10 @@ td.mono{font-family:'Cascadia Code',Consolas,monospace;font-size:11px;color:var(
       <!-- SIDE -->
       <div class="side-col">
         <div class="sc">
-          <div class="sc-title">Atividade por Hora</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div class="sc-title" style="margin-bottom:0">Atividade por Hora</div>
+            <span class="badge-a up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"/></svg>pico 13h</span>
+          </div>
           <div class="bar-row" id="barRow"></div>
           <div class="bar-labels"><span>06h</span><span>12h</span><span>18h</span></div>
         </div>
@@ -336,6 +489,48 @@ wrap.innerHTML = dados.slice(6,20).map((v,i) => {
   const isPico = (i+6) === picoIdx
   return `<div class="bar ${isPico?'pico':''}" style="height:${Math.max(h,3)}%"></div>`
 }).join('')
+
+// ── Tema & Fundo ──
+let _tema = 'dark', _bg = 'bg-grid'
+
+// Inicia escuro
+document.body.classList.remove('light')
+document.getElementById('btnDark').classList.add('active')
+document.getElementById('btnLight').classList.remove('active')
+
+function setTema(t) {
+  _tema = t
+  document.body.classList.toggle('light', t === 'light')
+  document.getElementById('btnLight').classList.toggle('active', t === 'light')
+  document.getElementById('btnDark').classList.toggle('active', t === 'dark')
+  closeBgPanel()
+}
+
+function setBg(cls) {
+  _bg = cls
+  document.body.classList.remove('bg-grid','bg-dots','bg-grid-dots')
+  if (cls) document.body.classList.add(cls)
+  document.getElementById('bgOptGrid').classList.toggle('active', cls === 'bg-grid')
+  document.getElementById('bgOptDots').classList.toggle('active', cls === 'bg-dots')
+  document.getElementById('bgOptNone').classList.toggle('active', cls === '')
+  document.getElementById('btnSettings').classList.toggle('active', false)
+  closeBgPanel()
+}
+
+function toggleBgPanel() {
+  const p = document.getElementById('bgPanel')
+  p.classList.toggle('show')
+  document.getElementById('btnSettings').classList.toggle('active', p.classList.contains('show'))
+}
+
+function closeBgPanel() {
+  document.getElementById('bgPanel').classList.remove('show')
+  document.getElementById('btnSettings').classList.remove('active')
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('#bgPanel') && !e.target.closest('#btnSettings')) closeBgPanel()
+})
 </script>
 </body>
 </html>

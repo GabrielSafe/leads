@@ -111,7 +111,7 @@ function showToast(msg, type='success') {
   }
   if (cfg.cores) {
     const r = document.documentElement
-    if (cfg.cores.primaria) { r.style.setProperty('--green', cfg.cores.primaria); r.style.setProperty('--green2', cfg.cores.primaria) }
+    if (cfg.cores.primaria) { r.style.setProperty('--accent', cfg.cores.primaria); r.style.setProperty('--accent2', cfg.cores.primaria) }
     if (cfg.cores.secundaria) r.style.setProperty('--rose', cfg.cores.secundaria)
   }
 })()
