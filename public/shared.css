@@ -222,7 +222,7 @@ body.light .topbar{background:rgba(244,244,245,0.88)}
   .sidebar{transform:translateX(-100%);transition:transform 0.28s cubic-bezier(0.32,0,0.08,1)}
   .sidebar.open{transform:translateX(0)}
   .main{margin-left:0}
-  .content{padding-bottom:80px !important}
+  .content{padding-bottom:148px !important}
   .menu-toggle{display:none !important}
 }
 

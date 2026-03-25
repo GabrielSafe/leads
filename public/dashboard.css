@@ -518,5 +518,15 @@ body.light .bg-opt.active{color:var(--ink);background:rgba(0,0,0,0.07)}
 .bg-opt-sep{height:1px;background:rgba(255,255,255,0.07);margin:4px 0}
 body.light .bg-opt-sep{background:rgba(0,0,0,0.08)}
 
-/* ocultar no mobile (bottom nav ocupa esse espaço) */
-@media(max-width:700px){#themeControls,#bgPanel{display:none !important}}
+/* mobile: posicionar acima da bottom nav */
+@media(max-width:700px){
+  #themeControls{
+    bottom:calc(58px + env(safe-area-inset-bottom,0px) + 10px);
+    padding:3px;
+  }
+  .tc-btn{padding:6px 12px;font-size:11px;gap:5px}
+  .tc-btn svg{width:12px;height:12px}
+  #bgPanel{
+    bottom:calc(58px + env(safe-area-inset-bottom,0px) + 56px);
+  }
+}
